@@ -1,0 +1,13 @@
+# -*- coding: utf-8 -*-
+#
+# Usage: Download all stock code info from TWSE
+#
+# TWSE equities = 上市證券
+# TPEx equities = 上櫃證券
+#
+
+import csv
+from collections import namedtuple
+
+import requests
+from lxml import etree
