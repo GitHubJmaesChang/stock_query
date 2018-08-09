@@ -19,6 +19,9 @@ Savefiledir = 'D://Stock/stock_trade//'
 # example_2_year  :http://www.twse.com.tw/exchangeReport/FMSRFK?response=html&date=20180806&stockNo=1101 
 url="http://www.twse.com.tw/exchangeReport/STOCK_DAY?response=html&date="
 stock ="&stockNo="
+headers = {
+		'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36'	
+}
 
 last_year_month_days=[]
 this_year_month_days=[]
@@ -74,7 +77,7 @@ def query_stock_value_by_continue_days_and_save_csv(file_path, stock_number):
         print query_date
         query_addr = url + query_date + stock+ stock_number
         print query_addr
-        r = requests.get(query_addr)
+        r = requests.get(query_addr,headers=headers)
         time.sleep(5)
         df = pd.read_html(r.text)
         df = pd.concat(df)
@@ -93,7 +96,7 @@ def query_stock_value_by_continue_days_and_save_csv(file_path, stock_number):
     current_date = '{:%Y%m%d}'.format(now)        
     query_addr = url + current_date + stock+ stock_number
     time.sleep(5)
-    r = requests.get(query_addr)
+    r = requests.get(query_addr, headers=headers)
     df = pd.read_html(r.text)
     df = pd.concat(df)
     for item in range(0, df.shape[0]):

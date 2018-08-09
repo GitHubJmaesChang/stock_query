@@ -14,6 +14,9 @@ blance_sheet  = "blance_0"
 benefit_sheet = "benefit"
 target_sheet  = "basic_report"
 company_id_list =[]
+headers = {
+		'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36'	
+}
 
 
 def csv_create(path, target, year, season):
@@ -34,7 +37,7 @@ def statement_comprehensive_income_to_csv(year, season, url, path):
         'TYPEK':'sii',
         'year':str(year),
         'season':str(season),
-    })
+    }, headers=headers)
 	
     r.encoding = 'utf8'
     source_1 = pd.read_html(r.text)[3]
@@ -72,7 +75,7 @@ def blance_sheet_to_csv(year, season, url, path):
         'TYPEK':'sii',
         'year':str(year),
         'season':str(season),
-    })
+    }, headers=headers)
 	
     r.encoding = 'utf8'
     source_1 = pd.read_html(r.text)[3]
