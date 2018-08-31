@@ -14,9 +14,6 @@ blance_sheet  = "blance_0"
 benefit_sheet = "benefit"
 target_sheet  = "basic_report"
 company_id_list =[]
-headers = {
-		'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36'	
-}
 
 
 def csv_create(path, target, year, season):
@@ -37,7 +34,7 @@ def statement_comprehensive_income_to_csv(year, season, url, path):
         'TYPEK':'sii',
         'year':str(year),
         'season':str(season),
-    }, headers=headers)
+    })
 	
     r.encoding = 'utf8'
     source_1 = pd.read_html(r.text)[3]
@@ -75,7 +72,7 @@ def blance_sheet_to_csv(year, season, url, path):
         'TYPEK':'sii',
         'year':str(year),
         'season':str(season),
-    }, headers=headers)
+    })
 	
     r.encoding = 'utf8'
     source_1 = pd.read_html(r.text)[3]
@@ -144,7 +141,6 @@ def finacial_statement_to_csv(year, season, url, path):
     
     fileoption.close()
 
-    print source
 
 def Stock_query_data(year, season, query_table, path):
     url=''
@@ -170,27 +166,57 @@ def query_stock_sheet(year, season, path):
     print "benefit sheet done"
 
 def Stock_roe_roa_eps_prepare(year, season, path):
-
+    roe =[]
+    roa =[]
+    income_data_temp=[]
+    update_idx =0
+     
     if year>=1000:
-       year -= 1911
+        year -= 1911
 
     inclome_file = path + income_sheet + str(year) +"_s"+ str(season)+".csv"
     income_data = pd.read_csv(inclome_file)
     balance_file = path + blance_sheet + str(year) +"_s"+ str(season)+".csv"
-    balance_data = pd.read_csv(balance_file) 
+    balance_data = pd.read_csv(balance_file)
 
-    roe =[]
-    for idx in range(0, income_data.shape[0]):
-        roe.append(float(income_data[u'本期淨利（淨損）'.encode('utf-8')][idx])/
+    # to create ROE and ROA
+    # open pre-section report and re-arrange the table list when some company be added or deleted
+    
+    if(season >= 2):
+        inclome_file_pre_section = inclome_file = path + income_sheet + str(year) +"_s"+ str(season-1)+".csv"
+        income_data_pre_section = pd.read_csv(inclome_file_pre_section)
+
+        #check the length
+        if(income_data.shape[0] != income_data_pre_section.shape[0]):
+            for idx in range(0, income_data.shape[0]):
+                if(income_data[u'公司代號'.encode('utf-8')][idx] == income_data_pre_section[u'公司代號'.encode('utf-8')][update_idx]):
+                   income_data_temp.append(income_data[u'本期淨利（淨損）'.encode('utf-8')][idx] - income_data_pre_section[u'本期淨利（淨損）'.encode('utf-8')][update_idx])
+                   print("check",idx, update_idx)
+                   update_idx+=1
+                else:
+                   income_data_temp.append(income_data[u'本期淨利（淨損）'.encode('utf-8')][idx])
+                   print("fail",idx, update_idx)
+
+        print update_idx
+        
+        for idx in range(0, income_data.shape[0]):
+            roe.append(float( income_data_temp[idx] )/ float(balance_data[u'權益總計'.encode('utf-8')][idx]))
+
+        for idx in range(0, income_data.shape[0]):
+            roa.append(float( income_data_temp[idx] )/ float(balance_data[u'資產總計'.encode('utf-8')][idx]))
+
+    else :
+        for idx in range(0, income_data.shape[0]):
+            roe.append(float( income_data[u'本期淨利（淨損）'.encode('utf-8')][idx])/
                    float(balance_data[u'權益總計'.encode('utf-8')][idx]))
-    roe_form = pd.DataFrame({ u' ROE ' : roe})
-
-    roa =[]
-    for idx in range(0, income_data.shape[0]):
-        roa.append(float(income_data[u'本期淨利（淨損）'.encode('utf-8')][idx])/
+        for idx in range(0, income_data.shape[0]):
+            roa.append(float( income_data[u'本期淨利（淨損）'.encode('utf-8')][idx])/
                    float(balance_data[u'資產總計'.encode('utf-8')][idx]))
-    roa_form = pd.DataFrame({ u' ROA ' : roa})
 
+
+    roe_form = pd.DataFrame({ u' ROE ' : roe})
+    roa_form = pd.DataFrame({ u' ROA ' : roa})
+    section_income = pd.DataFrame({ u'NET-income' : income_data_temp})
 
     #update company id to global list "company_id_list"
     
@@ -199,9 +225,9 @@ def Stock_roe_roa_eps_prepare(year, season, path):
                balance_data[u'資產總計'.encode('utf-8')],
                balance_data[u'權益總計'.encode('utf-8')],
                income_data[u'營業收入'.encode('utf-8')],
-               income_data[u'本期淨利（淨損）'.encode('utf-8')],
                income_data[u'基本每股盈餘（元）'.encode('utf-8')],
-               balance_data[u'每股參考淨值'.encode('utf-8')],
+               balance_data[u'每股參考淨值'.encode('utf-8')],           
+               section_income[u'NET-income'.encode('utf-8')],
                roe_form[u' ROE '.encode('utf-8')],
                roa_form[u' ROA '.encode('utf-8')]],
                axis=1)
@@ -210,7 +236,6 @@ def Stock_roe_roa_eps_prepare(year, season, path):
     new_form.to_csv (save_merge_file, encoding = "utf-8")
 
     id_data = pd.concat([balance_data[u'公司代號'.encode('utf-8')]],axis=1)
-    print id_data
     id_data.to_csv( path + "comp_id"+".csv", encoding = "utf-8") 
                          
 
@@ -221,4 +246,4 @@ def update_company_state(year, season, filePath):
    Stock_roe_roa_eps_prepare(year, season, filePath)
    
 if __name__ == '__main__':
-   update_company_state(2018, 1, Savefiledir)
+   update_company_state(2018, 2, Savefiledir)
