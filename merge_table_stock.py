@@ -59,6 +59,18 @@ def update_list(cmp1, cmp2):
         if(cmp1[idx] == 0 and (cmp2[idx])):
             cmp1[idx] = cmp2[idx]
 
+def add_data_to_list(stock_numb_table, Qx_table, column):
+    row =[]
+    checked =0
+    for idx in range(0, len(stock_numb_table)):
+        for chk in range(checked, Qx_table.shape[0]):
+            if(stock_numb_table[idx] == Qx_table.loc[chk][column]):
+                row.append(Qx_table.loc[chk][column])
+                checked+=1
+
+    return row
+    
+
 def merge_table(year, FilePath):
     table_numbs =0
     if year>=1000:
@@ -176,8 +188,28 @@ def merge_table(year, FilePath):
         company_name_temp = list(get_data_from_table_list(stock_numbs, Q4_table, Q4_table.columns[2]))
         update_list(company_name, company_name_temp)
 
+    #prepare stock number and stock name
     sotck_id_form = pd.DataFrame({ Q1_table.columns[1] : stock_numbs})
     name_form = pd.DataFrame({ Q1_table.columns[2] : company_name})
+
+    #prepare other data
+    sotck_info_Q1 = [[0 for x in range(len(stock_numbs))] for y in range(len(Q1_table.columns)-2)]
+    sotck_info_Q2 = [[0 for x in range(len(stock_numbs))] for y in range(len(Q1_table.columns)-2)]
+    sotck_info_Q3 = [[0 for x in range(len(stock_numbs))] for y in range(len(Q1_table.columns)-2)]
+    sotck_info_Q4 = [[0 for x in range(len(stock_numbs))] for y in range(len(Q1_table.columns)-2)]
+
+    
+    #capture data from column index 3
+    for idx in range(0, (len(Q1_table.columns)-2)):
+        if(table_numbs==2):
+           sotck_info_Q1[idx] = list(add_data_to_list(stock_numbs, Q1_table, idx+3))
+           sotck_info_Q2[idx] = list(add_data_to_list(stock_numbs, Q2_table, idx+3))
+        if(table_numbs==2):
+           sotck_info_Q3[idx] = list(add_data_to_list(stock_numbs, Q3_table, idx+3))
+        if(table_numbs==2):
+           sotck_info_Q4[idx] = list(add_data_to_list(stock_numbs, Q4_table, idx+3))
+
+    
     df = pd.concat( [ sotck_id_form[Q1_table.columns[1] ],
                       name_form[Q1_table.columns[2]]], axis =1)
 
