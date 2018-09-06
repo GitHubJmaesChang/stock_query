@@ -42,7 +42,7 @@ def get_data_from_table_list(stock_numbs_table, Qx_target_table, column_idx):
     searched = 0
     row=[]
     for idx in range(0, len(stock_numbs_table)):
-        for chk in range(current_search_pos, current_search_pos + 10 ):
+        for chk in range(current_search_pos, current_search_pos + 20 ):
             if(stock_numbs_table[idx] == Qx_target_table.loc[current_search_pos][1]):
                 row.append(Qx_target_table.loc[current_search_pos][column_idx])
                 current_search_pos+=1
@@ -60,13 +60,14 @@ def update_list(cmp1, cmp2):
             cmp1[idx] = cmp2[idx]
 
 def add_data_to_list(stock_numb_table, Qx_table, column):
-    row =[]
+    row = [ 0 for x in range(len(stock_numb_table))]
     checked =0
     for idx in range(0, len(stock_numb_table)):
-        for chk in range(checked, Qx_table.shape[0]):
-            if(stock_numb_table[idx] == Qx_table.loc[chk][column]):
-                row.append(Qx_table.loc[chk][column])
+        for chk in range(checked, checked+10):
+            if(stock_numb_table[idx] == Qx_table.loc[chk][1]):
+                row[idx] = (Qx_table.loc[chk][column])
                 checked+=1
+                break
 
     return row
     
@@ -188,57 +189,48 @@ def merge_table(year, FilePath):
         company_name_temp = list(get_data_from_table_list(stock_numbs, Q4_table, Q4_table.columns[2]))
         update_list(company_name, company_name_temp)
 
-    #prepare stock number and stock name
-    sotck_id_form = pd.DataFrame({ Q1_table.columns[1] : stock_numbs})
-    name_form = pd.DataFrame({ Q1_table.columns[2] : company_name})
+
 
     #prepare other data
     sotck_info_Q1 = [[0 for x in range(len(stock_numbs))] for y in range(len(Q1_table.columns)-2)]
     sotck_info_Q2 = [[0 for x in range(len(stock_numbs))] for y in range(len(Q1_table.columns)-2)]
     sotck_info_Q3 = [[0 for x in range(len(stock_numbs))] for y in range(len(Q1_table.columns)-2)]
     sotck_info_Q4 = [[0 for x in range(len(stock_numbs))] for y in range(len(Q1_table.columns)-2)]
-
-    
+   
+    print "start merge data, total columns", len(Q1_table.columns), "items = ",Q1_table.columns 
     #capture data from column index 3
-    for idx in range(0, (len(Q1_table.columns)-2)):
+    for idx in range(0, (len(Q1_table.columns)-3)):
+        print "to merge index at ", idx+3
         if(table_numbs==2):
            sotck_info_Q1[idx] = list(add_data_to_list(stock_numbs, Q1_table, idx+3))
            sotck_info_Q2[idx] = list(add_data_to_list(stock_numbs, Q2_table, idx+3))
-        if(table_numbs==2):
+        if(table_numbs==3):
            sotck_info_Q3[idx] = list(add_data_to_list(stock_numbs, Q3_table, idx+3))
-        if(table_numbs==2):
+        if(table_numbs==4):
            sotck_info_Q4[idx] = list(add_data_to_list(stock_numbs, Q4_table, idx+3))
-
+           
+    data_Q ={}
+    columns_list =[]
+    data_Q.update({Q1_table.columns[1]: stock_numbs})
+    columns_list.append(Q1_table.columns[1])
+    data_Q.update({Q1_table.columns[2]: company_name})
+    columns_list.append(Q1_table.columns[2])
+    # total 14 items
+    for column_idx in range(0, len(Q1_table.columns)-3):
+        columns_list.append("Q1 "+ Q1_table.columns[column_idx+3])
+        columns_list.append("Q2 "+ Q1_table.columns[column_idx+3])
+        columns_list.append("Q3 "+ Q1_table.columns[column_idx+3])
+        columns_list.append("Q4 "+ Q1_table.columns[column_idx+3])
+        data_Q.update({"Q1 "+ Q1_table.columns[column_idx+3]: sotck_info_Q1[column_idx]})
+        data_Q.update({"Q2 "+ Q1_table.columns[column_idx+3]: sotck_info_Q2[column_idx]})
+        data_Q.update({"Q3 "+ Q1_table.columns[column_idx+3]: sotck_info_Q3[column_idx]})
+        data_Q.update({"Q4 "+ Q1_table.columns[column_idx+3]: sotck_info_Q4[column_idx]})
+       
+    #prepare stock number and stock name
+    data_form     = pd.DataFrame(data_Q, columns = columns_list)
+    data_form.to_csv( FilePath + "Q1_Q4_report"+ ".csv", encoding = "utf-8")
     
-    df = pd.concat( [ sotck_id_form[Q1_table.columns[1] ],
-                      name_form[Q1_table.columns[2]]], axis =1)
-
-    df.to_csv( FilePath + "test" + str(1) + ".csv", encoding = "utf-8") 
     return 
-    
-    for idx in range(0, max_length[1]):
-        if(table_numbs<=2):
-            if(Q1_table.loc[idx][1] != Q2_table.loc[idx][1] ) :
-                #Step 1 : check who's data has lost
-                for c in range(idx ,Q2_table.shape[0]):
-                    if(Q1_table.loc[idx][1] == Q2_table.loc[c][1]) :
-                       lost_data_target_is_numb = Q1_TABLE
-                       break
-                    else:
-                        lost_data_target_is_numb = Q2_TABLE
-                if(lost_data_target_is_numb ==Q1_TABLE):
-                    Q1_table = insert_row(idx, Q1_table, Q2_table.loc[idx])
-                    print "Q1_table drop"
-                if(lost_data_target_is_numb ==Q2_TABLE):
-                    Q2_table = insert_row(idx, Q2_table, Q1_table.loc[idx])
-                    print "Q2_table drop"
-                if(Q1_table.columns[0] == "Unnamed: 0"):
-                    Q1_table = Q1_table.drop([Q1_table.columns[0]], axis =1)
-
-                if(Q2_table.columns[0] == "Unnamed: 0"):
-                    Q2_table = Q2_table.drop([Q2_table.columns[0]], axis =1)
-                print ("lost item at Q")+str(lost_data_target_is_numb) + ", position is " + str(idx)
      
 if __name__ == '__main__':
     merge_table(2018, File_Location)
-    
