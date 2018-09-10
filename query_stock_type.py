@@ -11,6 +11,7 @@ import time
 import pdb
 import codecs
 import calendar
+from collections import OrderedDict
 
 
 Savefiledir = 'D:/Stock/finacial/'
@@ -21,7 +22,7 @@ def stock_query_html_table_by_type(date , mode):
     target_url = url + str(date) + stock_type + str(mode)
     print target_url
     html_report = requests.get(target_url)
-    DataFrame_form = pd.read_html(html_report.text)
+    DataFrame_form = pd.read_html(html_report.text.encode('utf8'))
     return pd.concat(DataFrame_form)
 
 def daily_query_stock_exchange_information(date, mode):
@@ -48,25 +49,10 @@ def daily_information(FilePath, date):
     exchange_volume=[]
     start_price=[]
     end_price=[]
+    
     #水泥
     merge_data(stock_num, stock_name, exchange_volume, start_price, end_price,
                daily_query_stock_exchange_information(date, "01"))
-
-    infomation={}
-    infomation.update({'Number':stock_num})
-    infomation.update({'Name':stock_name})
-    infomation.update({'ExChangeVolume':exchange_volume})
-    infomation.update({'StrPrice':start_price})
-    infomation.update({'EndPrice':end_price})
-    print infomation
-    return 
-    information ={'Number':stock_num,'ExChangeVolume':exchange_volume,'StrPrice':start_price,'EndPrice':end_price}
-    print information
-    #micolumns = pd.MultiIndex.from_tuples([(date,'Number'),(date,'Name'),(date,'ExChangeVolume'),(date,'StrPrice'),(date,'EndPrice')])
-    #pd_form = pd.DataFrame(information).sort_index().sort_index(axis=1)
-    #print pd_form
-    #pd_form.to_csv(FilePath + date +".csv")
-    return 
     #食品
     merge_data(stock_num, stock_name, exchange_volume, start_price, end_price,
                daily_query_stock_exchange_information(date, "02"))
@@ -155,8 +141,23 @@ def daily_information(FilePath, date):
     merge_data(stock_num, stock_name, exchange_volume, start_price, end_price,
                daily_query_stock_exchange_information(date, "20"))
 
-    pd_form = pd.DataFrame([stock_num, stock_name, exchange_volume, start_price, end_price], columns=[[date]["Number", "Name", "ExChangeVolume", "StrPrice", "EndPrice"]])
-    pd_form.to_csv(FilePath + date +".csv")
+    row_form1 = pd.DataFrame({ u' ID '     : stock_num})
+    row_form2 = pd.DataFrame({ u' Name '   : stock_name})
+    row_form3 = pd.DataFrame({ u' Volume ' : exchange_volume})
+    row_form4 = pd.DataFrame({ u' StrP '   : start_price})
+    row_form5 = pd.DataFrame({ u' EndP '   : end_price})
+    form1 = pd.concat([row_form1[u' ID '],
+                       row_form2[u' Name '],
+                       row_form3[u' Volume '],
+                       row_form4[u' StrP '],
+                       row_form5[u' EndP ']], axis =1)
+
+    micolumns  = pd.MultiIndex.from_tuples([(date,'ID'), (date,'Name'),(date,'Volume'),(date,'StrP'),(date,'EndP')], names = ['date', 'stock info'])
+    form1.columns = micolumns
+    print form1
+    #print pd_form
+    form1.to_csv(FilePath + date +".csv", encoding = "utf-8")
+    return 
 
 
 if  __name__ == '__main__':
