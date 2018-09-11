@@ -152,21 +152,33 @@ def Stock_roe_roa_eps_prepare(year, season, path):
     balance_file = path + blance_sheet + str(year) +"_s"+ str(season)+".csv"
     balance_data = pd.read_csv(balance_file) 
     roe =[]
+
+    equity_str = 0
+    cmp_value_str =0
+
+    if(year>106):
+        equity_str = u'權益總計'.encode('utf-8')
+        cmp_value_str = u'資產總計'.encode('utf-8')
+    else:
+        equity_str = u'權益總額'.encode('utf-8')
+        cmp_value_str = u'資產總額'.encode('utf-8')
+        
     for idx in range(0, income_data.shape[0]):
         roe.append(float(income_data[u'本期淨利（淨損）'.encode('utf-8')][idx])/
-                   float(balance_data[u'權益總計'.encode('utf-8')][idx]))
+                   float(balance_data[equity_str][idx]))
     roe_form = pd.DataFrame({ u' ROE ' : roe})
+        
     roa =[]
     for idx in range(0, income_data.shape[0]):
         roa.append(float(income_data[u'本期淨利（淨損）'.encode('utf-8')][idx])/
-                   float(balance_data[u'資產總計'.encode('utf-8')][idx]))
+                   float(balance_data[equity_str][idx]))
+
     roa_form = pd.DataFrame({ u' ROA ' : roa})
     #update company id to global list "company_id_list"
-    
     new_form = pd.concat([balance_data[u'公司代號'.encode('utf-8')],
                balance_data[u'公司名稱'.encode('utf-8')],
-               balance_data[u'資產總計'.encode('utf-8')],
-               balance_data[u'權益總計'.encode('utf-8')],
+               balance_data[cmp_value_str],
+               balance_data[equity_str],
                income_data[u'營業收入'.encode('utf-8')],
                income_data[u'營業利益（損失）'.encode('utf-8')],
                income_data[u'營業外收入及支出'.encode('utf-8')],
@@ -177,7 +189,7 @@ def Stock_roe_roa_eps_prepare(year, season, path):
                roe_form[u' ROE '.encode('utf-8')],
                roa_form[u' ROA '.encode('utf-8')]],
                axis=1)
-    
+   
     save_merge_file = path + target_sheet + str(year) +"_s"+str(season)+".csv"
     new_form.to_csv (save_merge_file, encoding = "utf-8")
     id_data = pd.concat([balance_data[u'公司代號'.encode('utf-8')]],axis=1)
@@ -190,4 +202,4 @@ def update_company_state(year, season, filePath):
    Stock_roe_roa_eps_prepare(year, season, filePath)
    
 if __name__ == '__main__':
-   update_company_state(2018, 1, Savefiledir)
+   update_company_state(2017, 4, Savefiledir)
