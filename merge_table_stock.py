@@ -9,7 +9,7 @@ import numpy
 import csv, codecs, urllib, datetime, time, pdb
 import copy
 
-File_Location = 'D://Stock/finacial/'
+File_Location = 'D:/Stock/finacial/'
 Table_name    = "basic_report"
 
 NO_UPDATE = 0
@@ -80,18 +80,17 @@ def merge_table(year, FilePath):
     FileName =  Table_name + str(year) + "_s"
     
 # to check how many file in the folder "D://Stock/finacial/"
+    table_numbs =0
     for file in os.listdir(FilePath):
         if file.endswith(".csv"):
-            table_numbs +=1
-            File_idx = FilePath + FileName + str(table_numbs)+".csv"
-            print File_idx
-            if(os.path.join(FilePath, file) != File_idx):
-                table_numbs -=1
-                break
+            File_idx = FilePath + FileName + str(table_numbs+1)+".csv"
+            if(os.path.join(FilePath, file) == File_idx):
+                table_numbs +=1
 
     print table_numbs
-    if(table_numbs ==1):
+    if(table_numbs <=1):
         print ("only one table, can't be merge")
+        return
 
     max_length =[0,0];
     if(table_numbs >=2):
@@ -101,8 +100,7 @@ def merge_table(year, FilePath):
         Q2_table = pd.read_csv(FilePath + FileName + str(2) + ".csv")
         if(max_length>Q2_table.shape[0]):
             max_length[0]= 2
-            max_length[1]= Q2_table.shape[0]        
-        print "create two table"
+            max_length[1]= Q2_table.shape[0]
         print ("max- length at Q", max_length[0],"L=", max_length[1])
 
     if(table_numbs >=3):
@@ -121,7 +119,7 @@ def merge_table(year, FilePath):
     # be used to check which table lost items
     lost_data_target_is_numb =0
     update_table = 0
-
+   
     stock_numbs=[]
   #add Q1 company id at first
     for idx in range(0, Q1_table.shape[0]):
@@ -130,7 +128,7 @@ def merge_table(year, FilePath):
   # Q2 table vs Q1 list
     print "check Q2 table"
     numbs_idx =0
-    if(table_numbs==2):
+    if(table_numbs>=2):
         for idx in range(0, Q2_table.shape[0]):
             if(stock_numbs[numbs_idx] != Q2_table.loc[idx][1]):
                 update_table = Q1_TABLE
@@ -146,7 +144,7 @@ def merge_table(year, FilePath):
     print "check Q2 table done"
    # Q3 table vs Q1 list
     numbs_idx =0
-    if(table_numbs ==3):
+    if(table_numbs >=3):
         for idx in range(0, Q3_table.shape[0]):
             if(stock_numbs[numbs_idx] != Q3_table.loc[idx][1]):
                 update_table = Q3_TABLE
@@ -159,9 +157,10 @@ def merge_table(year, FilePath):
                 if(update_table == Q3_TABLE):
                     stock_numbs.insert(numbs_idx, Q3_table.loc[idx][1])
 
+
    # Q4 table vs Q1 list
     numbs_idx =0
-    if(table_numbs==4):
+    if(table_numbs>=4):
         for idx in range(0, Q4_table.shape[0]):
             if(stock_numbs[numbs_idx] != Q4_table.loc[idx][1]):
                 update_table = Q4_TABLE
@@ -174,18 +173,26 @@ def merge_table(year, FilePath):
                 if(update_table == Q4_TABLE):
                     stock_numbs.insert(numbs_idx, Q4_table.loc[idx][1])
 
+    
+    check_repeat = []
+    [check_repeat.append(x) for x in stock_numbs if x not in check_repeat]
+    stock_numbs = check_repeat
+    
     stock_numbs = sorted(stock_numbs)
     print "add company name"
     company_name =[]
     company_name_temp =[]
     company_name = list(get_data_from_table_list(stock_numbs, Q1_table, Q1_table.columns[2]))
     if(table_numbs >= 2):
+        print "add Q2 "
         company_name_temp = list(get_data_from_table_list(stock_numbs, Q2_table, Q2_table.columns[2]))
         update_list(company_name, company_name_temp)
     if(table_numbs >= 3):
+        print "add Q3 "
         company_name_temp = list(get_data_from_table_list(stock_numbs, Q3_table, Q3_table.columns[2]))
         update_list(company_name, company_name_temp)
     if(table_numbs >= 4):
+        print "add Q4 "
         company_name_temp = list(get_data_from_table_list(stock_numbs, Q4_table, Q4_table.columns[2]))
         update_list(company_name, company_name_temp)
 
@@ -201,12 +208,12 @@ def merge_table(year, FilePath):
     #capture data from column index 3
     for idx in range(0, (len(Q1_table.columns)-3)):
         print "to merge index at ", idx+3
-        if(table_numbs==2):
+        if(table_numbs>=2):
            sotck_info_Q1[idx] = list(add_data_to_list(stock_numbs, Q1_table, idx+3))
            sotck_info_Q2[idx] = list(add_data_to_list(stock_numbs, Q2_table, idx+3))
-        if(table_numbs==3):
+        if(table_numbs>=3):
            sotck_info_Q3[idx] = list(add_data_to_list(stock_numbs, Q3_table, idx+3))
-        if(table_numbs==4):
+        if(table_numbs>=4):
            sotck_info_Q4[idx] = list(add_data_to_list(stock_numbs, Q4_table, idx+3))
            
     data_Q ={}
@@ -228,7 +235,7 @@ def merge_table(year, FilePath):
        
     #prepare stock number and stock name
     data_form     = pd.DataFrame(data_Q, columns = columns_list)
-    data_form.to_csv( FilePath + "Q1_Q4_report"+ ".csv", encoding = "utf-8")
+    data_form.to_csv( FilePath + "Q1_Q4_"+str(year)+ ".csv", encoding = "utf-8")
     
     return 
      
