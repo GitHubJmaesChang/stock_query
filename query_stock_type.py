@@ -161,5 +161,5 @@ def daily_information(FilePath, date):
 
 
 if  __name__ == '__main__':
-    daily_information(Savefiledir , "20180907")
+    daily_information(Savefiledir , "20180910")
     print "query 1101 data done"
