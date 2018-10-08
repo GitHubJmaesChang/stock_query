@@ -76,7 +76,7 @@ def check_record(sID, date, table):
 
 
 
-def InsertIncomeStatement(stockid, oprevenu, opprofit, nonoprevenu, \
+def InsertIncomeStatement(stockid, oprevenu, opprofit, netincome, \
                                 nonoprevenueexpense, revenuebeforetax, date):
         if (stockid.strip() == "" or date.strip() == ""):
                 dbgPrint("InsertIncomeStatement: StockID and Date cannot be empty")
@@ -94,7 +94,7 @@ def InsertIncomeStatement(stockid, oprevenu, opprofit, nonoprevenu, \
                  dbgPrint("InsertIncomeStatement: Operational Profit must be digits")
                  return(-1)
 
-        if (not nonoprevenu.strip() == "") and (not nonoprevenu.isdigit()):
+        if (not netincome.strip() == "") and (not netincome.isdigit()):
                  dbgPrint("InsertIncomeStatement: Non-Operational Revenue must be digits")
                  return(-1)
 
@@ -125,8 +125,8 @@ def InsertIncomeStatement(stockid, oprevenu, opprofit, nonoprevenu, \
                         return(-1)
 
                 add_is = ("INSERT INTO IncomeStatement " \
-                           "(FinId, StockID, OpRevenue, OpProfit, NonOpRevenue, NonOpRevenueExpense, RevenueBeforeTax, Date) " \
-                           "VALUES (%(_finid)s, %(_stockid)s, %(_oprevenue)s, %(_opprofit)s, %(_nonoprevenu)s, \
+                           "(FinId, StockID, OpRevenue, OpProfit, NetIncome, NonOpRevenueExpense, RevenueBeforeTax, Date) " \
+                           "VALUES (%(_finid)s, %(_stockid)s, %(_oprevenue)s, %(_opprofit)s, %(_netincome)s, \
                                 %(_nonoprevenueexpense)s, %(_revenuebeforetax)s, %(_date)s)")
 
                 data_is = {
@@ -134,7 +134,7 @@ def InsertIncomeStatement(stockid, oprevenu, opprofit, nonoprevenu, \
                         '_stockid': int(stockid),
                         '_oprevenue': int(oprevenu),
                         '_opprofit': int(opprofit),
-                        '_nonoprevenu': int(nonoprevenu),
+                        '_netincome': int(netincome),
                         '_nonoprevenueexpense': int(nonoprevenueexpense),
                         '_revenuebeforetax': int(revenuebeforetax),
                         '_date': date,

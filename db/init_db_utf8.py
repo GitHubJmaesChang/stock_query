@@ -83,7 +83,7 @@ def CreatFinancialTable(db):
                                 StockID INT NOT NULL, \
                                 OpRevenue BIGINT, \
                                 OpProfit BIGINT, \
-                                NonOpRevenue BIGINT, \
+                                NetIncome BIGINT, \
                                 NonOpRevenueExpense BIGINT, \
                                 RevenueBeforeTax BIGINT, \
                                 Date varchar(20), \
