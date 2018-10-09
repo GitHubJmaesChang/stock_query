@@ -144,6 +144,7 @@ def query_stock_sheet(year, season, path):
     print "blance sheet done"
     Stock_query_data(year, season,'營益分析彙總表', path)
     print "benefit sheet done"
+
 def Stock_roe_roa_eps_prepare(year, season, path):
     if year>=1000:
        year -= 1911
@@ -192,14 +193,15 @@ def Stock_roe_roa_eps_prepare(year, season, path):
    
     save_merge_file = path + target_sheet + str(year) +"_s"+str(season)+".csv"
     new_form.to_csv (save_merge_file, encoding = "utf-8")
-    id_data = pd.concat([balance_data[u'公司代號'.encode('utf-8')]],axis=1)
-    id_data.to_csv( path + "comp_id"+".csv", encoding = "utf-8") 
+    #id_data = pd.concat([balance_data[u'公司代號'.encode('utf-8')]],axis=1)
+    #id_data.to_csv( path + "comp_id"+".csv", encoding = "utf-8")
+    return new_form
                          
 def update_company_state(year, season, filePath):
    if not os.path.isdir(filePath):
        os.makedirs(filePath)
    query_stock_sheet(year, season, filePath)
-   Stock_roe_roa_eps_prepare(year, season, filePath)
+   #Stock_roe_roa_eps_prepare(year, season, filePath)
    
 if __name__ == '__main__':
    update_company_state(2017, 4, Savefiledir)
