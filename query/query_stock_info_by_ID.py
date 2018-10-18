@@ -126,7 +126,7 @@ def query_stock_value_by_continue_days_and_save_csv(file_path, stock_number):
                            row_form9[u' trade_volume ']], axis=1)
 
     file_name = file_path+stock_number +'.csv'
-    Total_info.to_csv(file_name, encoding = "utf-8")
+    Total_info.to_csv(file_name,index = False, encoding = "utf-8")
 
 def stock_query(stock, path):
     if not os.path.isdir(path):

@@ -56,7 +56,7 @@ def query_public_trade_company_ID():
     form1 = pd.concat([row_form1[u' ID '],
                        row_form2[u' Name '],], axis =1)
     
-    form1.to_csv(File_Path + comp_id, encoding = "utf-8")
+    form1.to_csv(File_Path + comp_id, index = False, encoding = "utf-8")
     
 if __name__ == '__main__':
     query_public_trade_company_ID()

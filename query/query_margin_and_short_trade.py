@@ -240,7 +240,7 @@ def daily_information(FilePath, date):
     form1.columns = micolumns
     print form1
     #print pd_form
-    form1.to_csv(FilePath + date +"margin_trade.csv", encoding = "utf-8")
+    form1.to_csv(FilePath + date +"margin_trade.csv", index = False, encoding = "utf-8")
     return 
 
 

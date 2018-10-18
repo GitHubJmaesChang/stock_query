@@ -42,7 +42,7 @@ def monthly_report(path, year, month):
     
     # 偽停頓
     time.sleep(5)
-    df.to_csv(path + str(year) + str(month) + "income.csv", encoding = "utf-8")
+    df.to_csv(path + str(year) + str(month) + "income.csv",  index = False, encoding = "utf-8")
     return df
 
 

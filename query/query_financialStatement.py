@@ -201,14 +201,14 @@ def Stock_roe_roa_eps_prepare(year, season, path):
                axis=1)
    
     save_merge_file = path + target_sheet + str(year) +"_s"+str(season)+".csv"
-    new_form.to_csv (save_merge_file, encoding = "utf-8")
+    new_form.to_csv (save_merge_file, index = False, encoding = "utf-8")
     return new_form
                          
 def update_company_state(year, season, filePath):
    if not os.path.isdir(filePath):
        os.makedirs(filePath)
    query_stock_sheet(year, season, filePath)
-   #Stock_roe_roa_eps_prepare(year, season, filePath)
+   Stock_roe_roa_eps_prepare(year, season, filePath)
    
 
 def test():
