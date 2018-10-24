@@ -57,10 +57,15 @@ def valid_date(strDate):
 
 def check_record(sID, date, table):
         try:
-                cursor.execute( \
-                        "SELECT COUNT(1) FROM " + table + " WHERE StockID = %s and Date = %s limit 1", \
-                        (sID, date) \
-                )
+		if(date.strip() == ""):
+			cursor.execute( \
+				"SELECT COUNT(1) FROM " + table + " WHERE StockID = %s limit 1", (sID) \
+			)
+		else:
+			cursor.execute( \
+                        	"SELECT COUNT(1) FROM " + table + " WHERE StockID = %s and Date = %s limit 1", \
+                        	(sID, date) \
+                	)
 
                 res = cursor.fetchone()
                 if res[0] > 0:
@@ -113,24 +118,24 @@ def InsertIncomeStatement(stockid, oprevenu, opprofit, netincome, \
                          dbgPrint("InsertIncomeStatement: Error: Record already exist, please make sure no duplicates")
                          return(-1)
 
-                # Get FinId
-                cursor.execute("SELECT FinId FROM FinancialStatement WHERE StockID = %s AND Date = %s", (stockid, date))
+                # Get CoId
+                cursor.execute("SELECT CoId FROM Company WHERE StockID = %s", (stockid))
                 row = cursor.fetchall()
                 #if(cursor.rowcount > 1): # this is to be enabled later
                 #       dbgPrint("IncomeStatement: Error: Too many FinID" + str(cursor.rowcount))
                 #       return(-1)
 
                 if(cursor.rowcount <= 0):
-                        dbgPrint("IncomeStatement: Error: Cannot locate FinID" + str(cursor.rowcount))
+                        dbgPrint("IncomeStatement: Error: Cannot locate Company ID" + str(cursor.rowcount))
                         return(-1)
 
                 add_is = ("INSERT INTO IncomeStatement " \
-                           "(FinId, StockID, OpRevenue, OpProfit, NetIncome, NonOpRevenueExpense, RevenueBeforeTax, Date) " \
-                           "VALUES (%(_finid)s, %(_stockid)s, %(_oprevenue)s, %(_opprofit)s, %(_netincome)s, \
+                           "(CoId, StockID, OpRevenue, OpProfit, NetIncome, NonOpRevenueExpense, RevenueBeforeTax, Date) " \
+                           "VALUES (%(_coid)s, %(_stockid)s, %(_oprevenue)s, %(_opprofit)s, %(_netincome)s, \
                                 %(_nonoprevenueexpense)s, %(_revenuebeforetax)s, %(_date)s)")
 
                 data_is = {
-                        '_finid': int(row[0][0]),
+                        '_coid': int(row[0][0]),
                         '_stockid': int(stockid),
                         '_oprevenue': int(oprevenu),
                         '_opprofit': int(opprofit),
@@ -153,13 +158,46 @@ def InsertIncomeStatement(stockid, oprevenu, opprofit, netincome, \
         return(0)
 
 
+def InsertCompany(stockID, name):
+	if (stockID.strip()=="" or name.strip()==""):
+                dbgPrint("InsertCompany: Parameters cannot be empty")
+                return(-1)
+
+        if not (stockID.isdigit()):
+                dbgPrint("InsertCompany: stockID must be numbers")
+                return(-1)
+
+        try:
+		if(check_record(stockID, "", "Company") != 0):
+			dbgPrint("InsertCompany: Error: Record already exist, please make sure no duplicates")
+			return(-1)
+
+		add_fs = ("INSERT INTO Company " \
+			  "(StockID, CompanyName) " \
+			  "VALUES (%(_stockid)s, %(_name)s")
+
+		data_fs = (
+			'_stockid': int(stockID),
+			'_name': name,
+		)
+
+		cursor.execute(add_fs, data_fs)
+		db.commit()
+
+	except mcon.Error as err:
+		dbgPrint("InsertCompany: Connect to DB Error [" + str(err) + "] ")
+		return(-1)
+
+	dbgPrint("InsertCompany: Insert Completed: " + str(data_fs))
+        return(0)
+
 
 # API to insert into Financial Statement Table
 # stockID, asset and equity must be numbers
 # date must be in the format of yyyy-mm-dd
 # all parameters must be provided
-def InsertFinancialStatement(stockID, name, asset, equity, date):
-        if (stockID.strip()=="" or name.strip()=="" or asset.strip()=="" or equity.strip()=="" or date.strip()==""):
+def InsertFinancialStatement(stockID, asset, equity, date):
+        if (stockID.strip()=="" or asset.strip()=="" or equity.strip()=="" or date.strip()==""):
                 dbgPrint("InsertFinancialStatement: Parameters cannot be empty")
                 return(-1)
 
@@ -174,8 +212,8 @@ def InsertFinancialStatement(stockID, name, asset, equity, date):
                         return(-1)
 
                 add_fs = ("INSERT INTO FinancialStatement " \
-                          "(StockID, CompanyName, TotalAsset, TotalEquity, Date) " \
-                          "VALUES (%(_stockid)s, %(_name)s, %(_asset)s, %(_equity)s, %(_date)s)")
+                          "(StockID, TotalAsset, TotalEquity, Date) " \
+                          "VALUES (%(_stockid)s, %(_asset)s, %(_equity)s, %(_date)s)")
 
                 data_fs = {
                         '_stockid': int(stockID),
