@@ -200,7 +200,7 @@ def Stock_roe_roa_eps_prepare(year, season, path):
                roa_form[u' ROA '.encode('utf-8')]],
                axis=1)
 
-    new_form.columns =[u'公司代號', u'公司名稱', u'權益總計', u'資產總計' ,\
+    new_form.columns =[u'公司代號', u'公司名稱', u'資產總計', u'權益總計' ,\
                        u'營業收入', u'營業利益(損失)', u'營業外收入及支出',\
                        u'稅前淨利(淨損)', u'本期淨利(淨損)', u'基本每股盈餘(元)',\
                        u'每股參考淨值', u'ROE', u'ROA']
@@ -220,4 +220,4 @@ def test():
     return
 
 if  __name__ == '__main__':
-    update_company_state(2017, 4, Savefiledir)
+    update_company_state(2018, 2, Savefiledir)

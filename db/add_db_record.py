@@ -34,7 +34,7 @@ def ConnectDB(host_addr, dbname):
 	try:
 		db = mcon.connect(host=host_addr,		# the host
 			user="root",	# username
-			passwd="ftdi1234",
+			passwd="1234",
 			database=dbname,
 			charset='utf8',
 			use_unicode=True)
@@ -78,45 +78,44 @@ def check_record(sID, date, table):
 	return(0)
 
 
-def InsertCalStatement(stockid, eps, netaps, roe, roa, date):
-	if (stockid.strip() == "" or date.strip() == ""):
+def Inse1rtCalStatement(stockid, eps, netaps, roe, roa, date):
+        if (stockid.strip() == "" or date.strip() == ""):
                 dbgPrint("InsertCalStatement: StockID and Date cannot be empty")
                 return(-1)
-	
-	if not (stockid.isdigit()):
+
+        if not (stockid.isdigit()):
                 dbgPrint("InsertCalStatement: StockID must be a digit")
                 return(-1)
-	
-	if (not eps.strip() == "") and (not eps.isdigit()):
+        if (not eps.strip() == "") and (not eps.isdigit()):
                 dbgPrint("CalIncomeStatement: Earning Per Share must be digits")
                 return(-1)
 
         if (not netaps.strip() == "") and (not netaps.isdigit()):
-                 dbgPrint("InsertCalStatement: Net Asset Per Share must be digits")
-                 return(-1)
+                dbgPrint("InsertCalStatement: Net Asset Per Share must be digits")
+                return(-1)
 	
-	if (not roe.strip() == "") and (not roe.isdigit()):
-                 dbgPrint("InsertCalStatement: Net Asset Per Share must be digits")
-                 return(-1)
+        if (not roe.strip() == "") and (not roe.isdigit()):
+                dbgPrint("InsertCalStatement: Net Asset Per Share must be digits")
+                return(-1)
 
-	if (not roa.strip() == "") and (not roa.isdigit()):
-                 dbgPrint("InsertCalStatement: Net Asset Per Share must be digits")
-                 return(-1)
+        if (not roa.strip() == "") and (not roa.isdigit()):
+                dbgPrint("InsertCalStatement: Net Asset Per Share must be digits")
+                return(-1)
 
-	try:
-		valid_date(date)
-		if(check_record(stockid, date, "CalStatement") != 0):
-			dbgPrint("InsertCalStatement: Error: Record already exist, please make sure no duplicates")
+        try:
+                valid_date(date)
+                if(check_record(stockid, date, "CalStatement") != 0):
+                        dbgPrint("InsertCalStatement: Error: Record already exist, please make sure no duplicates")
                         return(-1)
 
 		# Get CoId
                 cursor.execute("SELECT CoId FROM Company WHERE StockID=%s", (stockid,))
                 row = cursor.fetchall()
 
-		print("#######get CoID########")
-		print(row)
+                print("#######get CoID########")
+                print(row)
 
-		if(cursor.rowcount <= 0):
+                if(cursor.rowcount <= 0):
                         dbgPrint("CalStatement: Error: Cannot locate Company ID" + str(cursor.rowcount))
                         return(-1)
 
@@ -301,6 +300,7 @@ def InsertFinancialStatement(stockID, asset, equity, date):
 
 if	__name__ == '__main__':
 	ConnectDB("localhost", "stock")
+	InsertCompany("2075", "abc")
 	#InsertFinancialStatement("2075", "abc", "1234567890", "1234567890", "2018-09-27")
 	#InsertIncomeStatement("2075","3333333333","4444444444","5555555555","6666666666","7777777777","2018-09-27")
 	InsertCalStatement("2075", "55555", "666666", "77777", "88888", "2018-09-27")

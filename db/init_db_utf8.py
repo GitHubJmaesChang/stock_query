@@ -13,7 +13,7 @@ def dbgPrint(s):
 def InitDB():
 	db = MS.connect(host="localhost",  # the host
 		user="root",       # username
-		passwd="ftdi1234",
+		passwd="1234",
 		charset='utf8',
 		use_unicode=True)
 
@@ -88,7 +88,7 @@ def CreatFinancialTable(db):
 
 		print("Create IncomeStatment Table")
 		# Table: IncomeStatment
-		# 營業收入, 營業利益, 營業外收入及支出, 稅前淨利
+		# 營業收入,營業利益(損失), 本期淨利(淨損), 營業外收入及支出, 稅前淨利(淨損)
 		cursor.execute("create table IF NOT EXISTS IncomeStatement( \
 			InId INT AUTO_INCREMENT PRIMARY KEY, \
 			CoId INT, \
