@@ -110,10 +110,10 @@ def CreatFinancialTable(db):
 			CalId INT AUTO_INCREMENT PRIMARY KEY, \
 			CoId INT, \
 			StockID INT NOT NULL, \
-			EarningPerShare BIGINT, \
-			NetAssetPerShare BIGINT, \
-			ROE BIGINT, \
-			ROA BIGINT, \
+			EarningPerShare DOUBLE, \
+			NetAssetPerShare DOULBE, \
+			ROE DOUBLE, \
+			ROA DOUBLE, \
 			Date varchar(20), \
 			FOREIGN KEY (CoId) REFERENCES Company(CoId) \
 			) DEFAULT CHARSET=utf8 ENGINE=INNODB \

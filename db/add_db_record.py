@@ -133,10 +133,10 @@ def Inse1rtCalStatement(stockid, eps, netaps, roe, roa, date):
                 data_is = {
                         '_coid': int(row[0][0]),
                         '_stockid': int(stockid),
-                        '_earningpershare': int(eps),
-                        '_netassetpershare': int(netaps),
-                        '_roe': int(roe),
-                        '_roa': int(roa),
+                        '_earningpershare': float(eps),
+                        '_netassetpershare': float(netaps),
+                        '_roe': float(roe),
+                        '_roa': float(roa),
                         '_date': date,
                         }
 
