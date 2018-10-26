@@ -34,7 +34,7 @@ def check_file_exist(filename):
 # crate database : 
 def intial_db():
     init_db_utf8.InitDB()
-    add_db_record.ConnectDB("localhost", "stock")
+    add_db_record.ConnectDB("10.34.0.100", "stock")
 
 # update company ID
 def data_query_company_id():
@@ -66,7 +66,7 @@ def data_query_stock_info_by_ID(path, Stock_id):
 # insert base_financail report into data base :
 
 def database_InsertCompany(name_id, name):
-    add_db_record.InsertCompany((name_id), name)
+    add_db_record.InsertCompany((name_id), (name) )
 
 def database_InsertFinancialStatement(stockID, asset, equity, date):
     add_db_record.InsertFinancialStatement((stockID), asset, equity, date)
@@ -91,30 +91,20 @@ def insert_date_into_database(file_name, date):
 
 
     for idx in range(0, table.shape[0]):
-        database_InsertCompany(str(table.iloc[idx]['公司代號']), \
-                               str(table.iloc[idx]['公司名稱']))
-        
-        database_InsertFinancialStatement((table.iloc[idx]['公司代號']), \
-                                          (table.iloc[idx]['資產總計']), \
-                                          (table.iloc[idx]['權益總計']), \
-                                          date)
-        
-        database_InsertIncomeStatement((table.iloc[idx]['公司代號']), \
-                                       (table.iloc[idx]['營業收入']), \
-                                       (table.iloc[idx]['營業利益(損失)']), \
-                                       (table.iloc[idx]['本期淨利(淨損)']), \
-                                       (table.iloc[idx]['營業外收入及支出']), \
-                                       (table.iloc[idx]['稅前淨利(淨損)']), \
+        database_InsertCompany(str(table.iloc[idx]['公司代號']), str(table.iloc[idx]['公司名稱']))
+        database_InsertFinancialStatement(str(table.iloc[idx]['公司代號']),str(table.iloc[idx]['資產總計']), \
+                                          str(table.iloc[idx]['權益總計']),date)
+        database_InsertIncomeStatement(str(table.iloc[idx]['公司代號']), str(table.iloc[idx]['營業收入']), \
+                                       str(table.iloc[idx]['營業利益(損失)']), str(table.iloc[idx]['本期淨利(淨損)']), \
+                                       str(table.iloc[idx]['營業外收入及支出']), str(table.iloc[idx]['稅前淨利(淨損)']), \
                                        date)
-        database_InsertCalStatement((table.iloc[idx]['公司代號']), \
-                                    (table.iloc[idx]['基本每股盈餘(元)']), \
-                                    (table.iloc[idx]['每股參考淨值']), \
-                                    (table.iloc[idx]['ROE']), \
-                                    (table.iloc[idx]['ROA']), \
-                                    date)   
+        database_InsertCalStatement(str(table.iloc[idx]['公司代號']),str(table.iloc[idx]['基本每股盈餘(元)']), \
+                                    str(table.iloc[idx]['每股參考淨值']),str(table.iloc[idx]['ROE']), \
+                                    str(table.iloc[idx]['ROA']), date)
+
 
 if __name__ == '__main__':
     target_file = File_Path + "basic_report106_s1.csv"
-    insert_date_into_database(target_file, "2018-08-01")
-    
+    print target_file
+    insert_date_into_database(target_file, "2017-08-01")    
     print "process done"
