@@ -14,6 +14,12 @@ def dbgPrint(s):
 	ts = str(datetime.datetime.now())
 	print("\n[" + ts + "]:" + str(s) + "\n")
 
+def isfloat(d):
+	try:
+		num = float(d)
+	except ValueError:
+		return False
+	return True
 
 # Must provide a database name and a host, either "localhost" or an IP address
 def ConnectDB(host_addr, dbname):
@@ -86,19 +92,19 @@ def Inse1rtCalStatement(stockid, eps, netaps, roe, roa, date):
         if not (stockid.isdigit()):
                 dbgPrint("InsertCalStatement: StockID must be a digit")
                 return(-1)
-        if (not eps.strip() == "") and (not eps.isdigit()):
+        if (not eps.strip() == "") and (not eps.isfloat()):
                 dbgPrint("CalIncomeStatement: Earning Per Share must be digits")
                 return(-1)
 
-        if (not netaps.strip() == "") and (not netaps.isdigit()):
+        if (not netaps.strip() == "") and (not netaps.isfloat()):
                 dbgPrint("InsertCalStatement: Net Asset Per Share must be digits")
                 return(-1)
 	
-        if (not roe.strip() == "") and (not roe.isdigit()):
+        if (not roe.strip() == "") and (not roe.isfloat()):
                 dbgPrint("InsertCalStatement: Net Asset Per Share must be digits")
                 return(-1)
 
-        if (not roa.strip() == "") and (not roa.isdigit()):
+        if (not roa.strip() == "") and (not roa.isfloat()):
                 dbgPrint("InsertCalStatement: Net Asset Per Share must be digits")
                 return(-1)
 
