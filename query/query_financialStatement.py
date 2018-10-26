@@ -199,7 +199,12 @@ def Stock_roe_roa_eps_prepare(year, season, path):
                roe_form[u' ROE '.encode('utf-8')],
                roa_form[u' ROA '.encode('utf-8')]],
                axis=1)
-   
+
+    new_form.columns =[u'公司代號', u'公司名稱', u'資產總計', u'權益總計' ,\
+                       u'營業收入', u'營業利益(損失)', u'營業外收入及支出',\
+                       u'稅前淨利(淨損)', u'本期淨利(淨損)', u'基本每股盈餘(元)',\
+                       u'每股參考淨值', u'ROE', u'ROA']
+    
     save_merge_file = path + target_sheet + str(year) +"_s"+str(season)+".csv"
     new_form.to_csv (save_merge_file, index = False, encoding = "utf-8")
     return new_form

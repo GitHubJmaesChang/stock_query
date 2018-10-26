@@ -34,6 +34,7 @@ def check_file_exist(filename):
 # crate database : 
 def intial_db():
     init_db_utf8.InitDB()
+    add_db_record.ConnectDB("localhost", "stock")
 
 # update company ID
 def data_query_company_id():
@@ -61,26 +62,59 @@ def data_query_stock_dailydata(path, date):
 def data_query_stock_info_by_ID(path, Stock_id):
     query_stock_info_by_ID.stock_query(Stock_id, path)
 
-def insert_date_into_database(file_name):
+
+# insert base_financail report into data base :
+
+def database_InsertCompany(name_id, name):
+    add_db_record.InsertCompany((name_id), name)
+
+def database_InsertFinancialStatement(stockID, asset, equity, date):
+    add_db_record.InsertFinancialStatement((stockID), asset, equity, date)
+
+def database_InsertIncomeStatement(stockid, oprevenu, opprofit, netincome, \
+			nonoprevenueexpense, revenuebeforetax, date):
+    
+    add_db_record.InsertIncomeStatement((stockid), oprevenu, opprofit, netincome, \
+			nonoprevenueexpense, revenuebeforetax, date)
+        
+def database_InsertCalStatement(stockid, eps, netaps, roe, roa, date):
+    add_db_record.InsertCalStatement((stockid), eps, netaps, roe, roa, date)
+    
+
+def insert_date_into_database(file_name, date):
     intial_db()
+    
     if(FALSE == check_file_exist(file_name)):
         return FALSE
-
-    pd_form = pd.read_csv(file_name)
-    return pd_form
-
     
+    table = pd.read_csv(file_name)
+
+
+    for idx in range(0, table.shape[0]):
+        database_InsertCompany(str(table.iloc[idx]['公司代號']), \
+                               str(table.iloc[idx]['公司名稱']))
+        
+        database_InsertFinancialStatement((table.iloc[idx]['公司代號']), \
+                                          (table.iloc[idx]['資產總計']), \
+                                          (table.iloc[idx]['權益總計']), \
+                                          date)
+        
+        database_InsertIncomeStatement((table.iloc[idx]['公司代號']), \
+                                       (table.iloc[idx]['營業收入']), \
+                                       (table.iloc[idx]['營業利益(損失)']), \
+                                       (table.iloc[idx]['本期淨利(淨損)']), \
+                                       (table.iloc[idx]['營業外收入及支出']), \
+                                       (table.iloc[idx]['稅前淨利(淨損)']), \
+                                       date)
+        database_InsertCalStatement((table.iloc[idx]['公司代號']), \
+                                    (table.iloc[idx]['基本每股盈餘(元)']), \
+                                    (table.iloc[idx]['每股參考淨值']), \
+                                    (table.iloc[idx]['ROE']), \
+                                    (table.iloc[idx]['ROA']), \
+                                    date)   
 
 if __name__ == '__main__':
-    #path = os.path.dirname(os.path.abspath(__file__))
-    #query_company_data.update_company_state(2018,1, path + "//fincial_report//")
-    #company_id = pd.read_csv(path + "/fincial_report/" + comp_id)
-    
-    #for idx in range(0, company_id.shape[0]):
-    #    query_stock_date.stock_query( str(company_id.iloc[idx][1]), path + "//stock_report//")
-    #    time.sleep(5)
-
-    target_file = File_Path + "basic_report107_s1.csv"
-    print "save data to DB = " + (insert_date_into_database(target_file))
+    target_file = File_Path + "basic_report106_s1.csv"
+    insert_date_into_database(target_file, "2018-08-01")
     
     print "process done"
