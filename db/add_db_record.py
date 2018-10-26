@@ -65,10 +65,10 @@ def check_record(sID, date, table):
 				"SELECT COUNT(1) FROM " + table + " WHERE StockID = %s and Date = %s limit 1", \
 				(sID, date))
 
-			res = cursor.fetchone()
-			if res[0] > 0:
-				dbgPrint("cehck_record: Error: Record already exist")
-				return(-1)
+		res = cursor.fetchone()
+		if res[0] > 0:
+			dbgPrint("cehck_record: Error: Record already exist")
+			return(-1)
 
 	except mcon.Error as err:
 		 dbgPrint("cehck_record: DB Error [" + str(err) + "] ")
@@ -237,10 +237,10 @@ def InsertCompany(stockID, name):
 		if(check_record(stockID, "", "Company") != 0):
 			dbgPrint("InsertCompany: Error: Record already exist, please make sure no duplicates")
 			return(-1)
+		print("########check_record########")
 
-		add_fs = ("INSERT INTO Company " \
-			  "(StockID, CompanyName) " \
-			  "VALUES (%(_stockid)s, %(_name)s")
+		add_fs = ("INSERT INTO Company (StockID, CompanyName) " \
+			  "VALUES (%(_stockid)s, %(_name)s)")
 
 		data_fs = { 
 			'_stockid': int(stockID),
@@ -251,7 +251,7 @@ def InsertCompany(stockID, name):
 		db.commit()
 
 	except mcon.Error as err:
-		dbgPrint("InsertCompany: Connect to DB Error [" + str(err) + "] ")
+		dbgPrint("InsertCompany: Insert Error  [" + str(err) + "] ")
 		return(-1)
 
 	dbgPrint("InsertCompany: Insert Completed: " + str(data_fs))
@@ -303,6 +303,6 @@ if	__name__ == '__main__':
 	ConnectDB("localhost", "stock")
 	#InsertFinancialStatement("2075", "abc", "1234567890", "1234567890", "2018-09-27")
 	#InsertIncomeStatement("2075","3333333333","4444444444","5555555555","6666666666","7777777777","2018-09-27")
-	InsertCalStatement("2075", "55555", "666666", "77777", "88888", "2018-09-27")
-
+	#InsertCalStatement("2075", "55555", "666666", "77777", "88888", "2018-09-27")
+	InsertCompany("7777", "Test Company Name")
 
