@@ -181,9 +181,9 @@ def Stock_roe_roa_eps_prepare(year, season, path):
     roa =[]
     for idx in range(0, income_data.shape[0]):
         roa.append(float(income_data[u'本期淨利（淨損）'.encode('utf-8')][idx])/
-                   float(balance_data[equity_str][idx]))
-
+                   float(balance_data[cmp_value_str][idx]))
     roa_form = pd.DataFrame({ u' ROA ' : roa})
+    
     #update company id to global list "company_id_list"
     new_form = pd.concat([balance_data[u'公司代號'.encode('utf-8')],
                balance_data[u'公司名稱'.encode('utf-8')],
@@ -220,4 +220,4 @@ def test():
     return
 
 if  __name__ == '__main__':
-    update_company_state(2018, 2, Savefiledir)
+    update_company_state(2017, 2, Savefiledir)
