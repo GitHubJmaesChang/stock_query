@@ -13,12 +13,12 @@ def monthly_report(path, year, month):
     
     # 假如是西元，轉成民國
     if year > 1990:
-        year -= 1911
+        china_year = year - 1911
     
-    url = 'http://mops.twse.com.tw/nas/t21/sii/t21sc03_'+str(year)+'_'+str(month)+'_0.html'
+    url = 'http://mops.twse.com.tw/nas/t21/sii/t21sc03_'+str(china_year)+'_'+str(month)+'_0.html'
     
-    if year <= 98:
-        url = 'http://mops.twse.com.tw/nas/t21/sii/t21sc03_'+str(year)+'_'+str(month)+'.html'
+    if china_year <= 98:
+        url = 'http://mops.twse.com.tw/nas/t21/sii/t21sc03_'+str(china_year)+'_'+str(month)+'.html'
     
     # 偽瀏覽器
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
@@ -42,10 +42,10 @@ def monthly_report(path, year, month):
     
     # 偽停頓
     time.sleep(5)
-    df.to_csv(path + str(year) + str(month) + "income.csv",  index = False, encoding = "utf-8")
+    df.to_csv(path + str(year) + "_"+str(month) + "_MonthRevenue.csv",  index = False, encoding = "utf-8")
     return df
 
 
 if  __name__ == '__main__':
-    print (monthly_report(Savefiledir, 2018, 8))
+    print (monthly_report(Savefiledir, 2018, 9))
     print "query all stock info sdone"

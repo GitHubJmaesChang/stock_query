@@ -220,4 +220,4 @@ def test():
     return
 
 if  __name__ == '__main__':
-    update_company_state(2017, 2, Savefiledir)
+    update_company_state(2018, 2, Savefiledir)

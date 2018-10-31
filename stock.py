@@ -34,7 +34,7 @@ def check_file_exist(filename):
 # crate database : 
 def intial_db():
     init_db_utf8.InitDB()
-    add_db_record.ConnectDB("10.34.0.100", "stock")
+    add_db_record.ConnectDB("localhost", "stock")
 
 # update company ID
 def data_query_company_id():
@@ -92,8 +92,10 @@ def insert_date_into_database(file_name, date):
 
     for idx in range(0, table.shape[0]):
         database_InsertCompany(str(table.iloc[idx]['公司代號']), str(table.iloc[idx]['公司名稱']))
+
         database_InsertFinancialStatement(str(table.iloc[idx]['公司代號']),str(table.iloc[idx]['資產總計']), \
                                           str(table.iloc[idx]['權益總計']),date)
+        
         database_InsertIncomeStatement(str(table.iloc[idx]['公司代號']), str(table.iloc[idx]['營業收入']), \
                                        str(table.iloc[idx]['營業利益(損失)']), str(table.iloc[idx]['本期淨利(淨損)']), \
                                        str(table.iloc[idx]['營業外收入及支出']), str(table.iloc[idx]['稅前淨利(淨損)']), \
@@ -106,5 +108,25 @@ def insert_date_into_database(file_name, date):
 if __name__ == '__main__':
     target_file = File_Path + "basic_report106_s1.csv"
     print target_file
-    insert_date_into_database(target_file, "2017-08-01")    
+    insert_date_into_database(target_file, "2017-05-15")
+    
+    target_file = File_Path + "basic_report106_s2.csv"
+    print target_file
+    insert_date_into_database(target_file, "2017-08-14")
+
+    target_file = File_Path + "basic_report106_s3.csv"
+    print target_file
+    insert_date_into_database(target_file, "2017-10-31")
+
+    target_file = File_Path + "basic_report106_s4.csv"
+    print target_file
+    insert_date_into_database(target_file, "2018-03-31")
+
+    target_file = File_Path + "basic_report107_s1.csv"
+    print target_file
+    insert_date_into_database(target_file, "2018-05-15")
+
+    target_file = File_Path + "basic_report107_s2.csv"
+    print target_file
+    insert_date_into_database(target_file, "2018-08-14")
     print "process done"

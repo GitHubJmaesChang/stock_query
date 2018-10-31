@@ -52,7 +52,7 @@ def merge_invest_data(stock_num, stock_name,
         Dealer_sell.append(pd_data.iloc[idx, 13])
         Total.append(pd_data.iloc[idx, 18])
 
-    time.sleep(10)
+    time.sleep(11)
 
 
 def daily_institutional_info(FilePath, date):
@@ -312,5 +312,5 @@ def daily_institutional_info(FilePath, date):
 
 
 if  __name__ == '__main__':
-    daily_institutional_info(Savefiledir , "20180911")
+    daily_institutional_info(Savefiledir , "20181031")
     print "query all stock info sdone"

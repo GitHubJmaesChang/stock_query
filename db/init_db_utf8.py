@@ -76,8 +76,9 @@ def CreatFinancialTable(db):
 		# 資產總額/總計, 權益總額/總計
 		# colums are created in the order as listed above.
 		cursor.execute("create table IF NOT EXISTS FinancialStatement( \
-			FinId INT AUTO_INCREMENT PRIMARY KEY, \
+			InId INT AUTO_INCREMENT PRIMARY KEY, \
 			CoId INT, \
+			StockID INT NOT NULL, \
 			TotalAsset BIGINT, \
 			TotalEquity BIGINT, \
 			Date varchar(20), \
@@ -111,9 +112,63 @@ def CreatFinancialTable(db):
 			CoId INT, \
 			StockID INT NOT NULL, \
 			EarningPerShare DOUBLE, \
-			NetAssetPerShare DOULBE, \
+			NetAssetPerShare DOUBLE, \
 			ROE DOUBLE, \
 			ROA DOUBLE, \
+			Date varchar(20), \
+			FOREIGN KEY (CoId) REFERENCES Company(CoId) \
+			) DEFAULT CHARSET=utf8 ENGINE=INNODB \
+			")
+
+
+		print("Create Stock excahnge Table")
+		# Table: CalStatment (Calculated Statment)
+		# 成交量, 開盤價格, 盤中最高價, 盤中最低價, 收盤價, 日期
+		cursor.execute("create table IF NOT EXISTS StockExchange( \
+			CalId INT AUTO_INCREMENT PRIMARY KEY, \
+			CoId INT, \
+			StockID INT NOT NULL, \
+			ExchangeVolume BIGINT, \
+			StartPrice DOUBLE, \
+			HighPrice DOUBLE, \
+			LowPrice DOUBLE, \
+			EndPrice DOUBLE, \
+			Date varchar(20), \
+			FOREIGN KEY (CoId) REFERENCES Company(CoId) \
+			) DEFAULT CHARSET=utf8 ENGINE=INNODB \
+			")
+
+		print("Create foundation excahnge Table")
+		# Table: CalStatment (Calculated Statment)
+		# 外資買入, 外資賣出, 卷商買入, 卷商賣出, 自營商買入, 自營商賣出, 當日總量, 日期    
+		cursor.execute("create table IF NOT EXISTS FoundationExchange( \
+			CalId INT AUTO_INCREMENT PRIMARY KEY, \
+			CoId INT, \
+			StockID INT NOT NULL, \
+			ExchangeVolume BIGINT, \
+			StartPrice DOUBLE, \
+			HighPrice DOUBLE, \
+			LowPrice DOUBLE, \
+			EndPrice DOUBLE, \
+			Date varchar(20), \
+			FOREIGN KEY (CoId) REFERENCES Company(CoId) \
+			) DEFAULT CHARSET=utf8 ENGINE=INNODB \
+			")
+                print("Create Month Income Table")
+
+		#當月營收,上月營收,去年當月營收,上月比較增減(%),去年同月增減(%),當月累計營收,去年累計營收,前期比較增減(%)
+                cursor.execute("create table IF NOT EXISTS MonthRevenue( \
+			CalId INT AUTO_INCREMENT PRIMARY KEY, \
+			CoId INT, \
+			StockID INT NOT NULL, \
+			MonthlyRevenue BIGINT, \
+			LastMonthlyRevenue BIGINT, \
+			LastYearMonthlyRevenue BIGINT, \
+			MonthlyIncreaseRevenue DOUBLE, \
+			LastYearMonthlyIncreaseRevenue DOUBLE, \
+			CumulativeRevenue BIGINT, \
+			LastYearCumulativeRevenue BIGINT, \
+			CompareCumulativeRevenue DOUBLE, \
 			Date varchar(20), \
 			FOREIGN KEY (CoId) REFERENCES Company(CoId) \
 			) DEFAULT CHARSET=utf8 ENGINE=INNODB \

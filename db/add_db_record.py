@@ -84,7 +84,7 @@ def check_record(sID, date, table):
 	return(0)
 
 
-def Inse1rtCalStatement(stockid, eps, netaps, roe, roa, date):
+def InsertCalStatement(stockid, eps, netaps, roe, roa, date):
         if (stockid.strip() == "" or date.strip() == ""):
                 dbgPrint("InsertCalStatement: StockID and Date cannot be empty")
                 return(-1)
@@ -92,19 +92,19 @@ def Inse1rtCalStatement(stockid, eps, netaps, roe, roa, date):
         if not (stockid.isdigit()):
                 dbgPrint("InsertCalStatement: StockID must be a digit")
                 return(-1)
-        if (not eps.strip() == "") and (not eps.isfloat()):
+        if (not eps.strip() == "") and (not isfloat(eps)):
                 dbgPrint("CalIncomeStatement: Earning Per Share must be digits")
                 return(-1)
 
-        if (not netaps.strip() == "") and (not netaps.isfloat()):
+        if (not netaps.strip() == "") and (not isfloat(netaps)):
                 dbgPrint("InsertCalStatement: Net Asset Per Share must be digits")
                 return(-1)
 	
-        if (not roe.strip() == "") and (not roe.isfloat()):
+        if (not roe.strip() == "") and (not isfloat(roe)):
                 dbgPrint("InsertCalStatement: Net Asset Per Share must be digits")
                 return(-1)
 
-        if (not roa.strip() == "") and (not roa.isfloat()):
+        if (not roa.strip() == "") and (not isfloat(roa)):
                 dbgPrint("InsertCalStatement: Net Asset Per Share must be digits")
                 return(-1)
 
@@ -162,23 +162,23 @@ def InsertIncomeStatement(stockid, oprevenu, opprofit, netincome, \
 		dbgPrint("InsertIncomeStatement: StockID must be a digit")
 		return(-1)
 
-	if (not oprevenu.strip() == "") and (not oprevenu.isdigit()):
+	if (not oprevenu.strip() == "") and (not oprevenu.lstrip('-+').isdigit()):
 		dbgPrint("InsertIncomeStatement: Operational Revenue must be digits")
 		return(-1)
 
-	if (not opprofit.strip() == "") and (not opprofit.isdigit()):
+	if (not opprofit.strip() == "") and (not opprofit.lstrip('-+').isdigit()):
 		 dbgPrint("InsertIncomeStatement: Operational Profit must be digits")
 		 return(-1)
 
-	if (not netincome.strip() == "") and (not netincome.isdigit()):
+	if (not netincome.strip() == "") and (not netincome.lstrip('-+').isdigit()):
 		 dbgPrint("InsertIncomeStatement: Non-Operational Revenue must be digits")
 		 return(-1)
 
-	if (not nonoprevenueexpense.strip() == "") and (not nonoprevenueexpense.isdigit()):
+	if (not nonoprevenueexpense.strip() == "") and (not nonoprevenueexpense.lstrip('-+').isdigit()):
 		 dbgPrint("InsertIncomeStatement: Non-Operational Revenue and Expense must be digits")
 		 return(-1)
 
-	if (not revenuebeforetax.strip() == "") and (not revenuebeforetax.isdigit()):
+	if (not revenuebeforetax.strip() == "") and (not revenuebeforetax.lstrip('-+').isdigit()):
 		 dbgPrint("InsertIncomeStatement: Revenue Before Tax must be digits")
 		 return(-1)
 
@@ -288,7 +288,6 @@ def InsertFinancialStatement(stockID, asset, equity, date):
 
 		data_fs = {
 			'_stockid': int(stockID),
-			'_name': name,
 			'_asset': int(asset),
 			'_equity': int(equity),
 			'_date': date,}
@@ -311,4 +310,3 @@ if	__name__ == '__main__':
 	#InsertIncomeStatement("2075","3333333333","4444444444","5555555555","6666666666","7777777777","2018-09-27")
 	#InsertCalStatement("2075", "55555", "666666", "77777", "88888", "2018-09-27")
 	InsertCompany("7777", "Test Company Name")
-
