@@ -124,7 +124,7 @@ def CreatFinancialTable(db):
 		# Table: CalStatment (Calculated Statment)
 		# 成交量, 開盤價格, 盤中最高價, 盤中最低價, 收盤價, 日期
 		cursor.execute("create table IF NOT EXISTS StockExchange( \
-			CalId INT AUTO_INCREMENT PRIMARY KEY, \
+			ExcId INT AUTO_INCREMENT PRIMARY KEY, \
 			CoId INT, \
 			StockID INT NOT NULL, \
 			ExchangeVolume BIGINT, \
@@ -143,11 +143,14 @@ def CreatFinancialTable(db):
 		cursor.execute("create table IF NOT EXISTS FoundationExchange( \
 			FexId INT AUTO_INCREMENT PRIMARY KEY, \
 			CoId INT, \
-			ExchangeVolume BIGINT, \
-			StartPrice DOUBLE, \
-			HighPrice DOUBLE, \
-			LowPrice DOUBLE, \
-			EndPrice DOUBLE, \
+			StockID INT NOT NULL, \
+			ForeignInvestorBuy BIGINT, \
+			ForeignInvestorSell BIGINT, \
+			InvestmentTrustBuy BIGINT, \
+			InvestmentTrustSell BIGINT, \
+			DealerBuy BIGINT, \
+			DealerSell BIGINT, \
+			TotalVolume BIGINT, \
 			Date varchar(20), \
 			FOREIGN KEY (CoId) REFERENCES Company(CoId) \
 			) DEFAULT CHARSET=utf8 ENGINE=INNODB \
@@ -157,9 +160,10 @@ def CreatFinancialTable(db):
 
 		# Table: MonthRevenue
 		#當月營收,上月營收,去年當月營收,上月比較增減(%),去年同月增減(%),當月累計營收,去年累計營收,前期比較增減(%)
-                cursor.execute("create table IF NOT EXISTS MonthRevenue( \
+                cursor.execute("create table IF NOT EXISTS MonthlyRevenue( \
 			MrevId INT AUTO_INCREMENT PRIMARY KEY, \
 			CoId INT, \
+			StockID INT NOT NULL, \
 			MonthlyRevenue BIGINT, \
 			LastMonthlyRevenue BIGINT, \
 			LastYearMonthlyRevenue BIGINT, \

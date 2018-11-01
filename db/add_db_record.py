@@ -302,6 +302,162 @@ def InsertFinancialStatement(stockID, asset, equity, date):
 	return(0)
 
 
+def InsertStockExchange(stockID, ExchangeVolume, StartPrice, HighPrice, LowPrice, EndPrice, date):
+        
+	if (stockID.strip()=="" or \
+            ExchangeVolume.strip()=="" or StartPrice.strip()=="" or \
+            HighPrice.strip()=="" or LowPrice.strip()=="" or        \
+            EndPrice.strip()=="" or date.strip()==""):
+		dbgPrint("InsertStockExchange: Parameters cannot be empty")
+		return(-1)
+
+	try:
+		valid_date(date)
+		if(check_record(stockID, date, "StockExchange") != 0):
+			dbgPrint("InsertStockExchange: Error: Record already exist, please make sure no duplicates")
+			return(-1)
+
+		add_fs = ("INSERT INTO StockExchange " \
+			"(StockID, ExchangeVolume, StartPrice, HighPrice, LowPrice, EndPrice, Date) " \
+			"VALUES (%(_StockID)s, %(_ExchangeVolume)s, %(_StartPrice)s, %(_HighPrice)s, %(_LowPrice)s, %(_EndPrice)s, %(_date)s)")
+
+		data_fs = {
+                        '_stockid': int(stockID),
+			'_ExchangeVolume': int(ExchangeVolume),
+			'_StartPrice': float(StartPrice),
+			'_HighPrice': float(HighPrice),
+                        '_LowPrice': float(LowPrice),
+			'_EndPrice': float(EndPrice),
+			'_date': date,}
+
+		cursor.execute(add_fs, data_fs)
+		db.commit()
+
+	except mcon.Error as err:
+		dbgPrint("InsertStockExchange: Connect to DB Error [" + str(err) + "] ")
+		return(-1)
+
+	dbgPrint("InsertStockExchange: Insert Completed: " + str(data_fs))
+	return(0)
+
+def InsertFoundationExchange(stockID, ForeignInvestorBuy, ForeignInvestorSell, \
+                             InvestmentTrustBuy, InvestmentTrustSell, \
+                             DealerBuy, DealerSell, \
+                             TotalVolume, date):
+        
+	if (stockID.strip()=="" or \
+            ForeignInvestorBuy.strip()=="" or ForeignInvestorSell.strip()=="" or \
+            InvestmentTrustBuy.strip()=="" or InvestmentTrustSell.strip()=="" or \
+            DealerBuy.strip()=="" or DealerSell.strip()=="" or \
+            TotalVolume.strip()=="" or date.strip()==""):
+		dbgPrint("InsertFoundationExchange: Parameters cannot be empty")
+		return(-1)
+
+	try:
+		valid_date(date)
+		if(check_record(StockID, date, "FoundationExchange") != 0):
+			dbgPrint("InsertFoundationExchange: Error: Record already exist, please make sure no duplicates")
+			return(-1)
+
+		add_fs = ("INSERT INTO FoundationExchange "
+                          "(StockID, ForeignInvestorBuy, ForeignInvestorSell "
+                          "InvestmentTrustBuy, InvestmentTrustSell, "
+                          "DealerBuy, DealerSell, TotalVolume, date) "
+                          "VALUES (%(_stockID)s, "
+                          "%(_ForeignInvestorBuy)s, "
+                          "%(_ForeignInvestorSell)s, "
+                          "%(_InvestmentTrustBuy)s, "
+                          "%(_InvestmentTrustSell)s, "
+                          "%(_DealerBuy)s, "
+                          "%(_DealerSell)s, "
+                          "%(_TotalVolume)s, "
+                          "%(_date)s)")
+
+		data_fs = {
+                        '_stockID'             : int(stockID),
+			'_ForeignInvestorBuy'  : int(ForeignInvestorBuy),
+			'_ForeignInvestorSell' : int(ForeignInvestorSell),
+			'_InvestmentTrustBuy'  : int(InvestmentTrustBuy),
+                        '_InvestmentTrustSell' : int(InvestmentTrustSell),
+                        '_DealerBuy'           : int(DealerBuy),
+			'_DealerSell'          : int(DealerSell),
+                        '_TotalVolume'         : int(TotalVolume),
+			'_date': date,}
+
+		cursor.execute(add_fs, data_fs)
+		db.commit()
+
+	except mcon.Error as err:
+		dbgPrint("FoundationExchange: Connect to DB Error [" + str(err) + "] ")
+		return(-1)
+
+	dbgPrint("FoundationExchange: Insert Completed: " + str(data_fs))
+	return(0)
+
+def InsertMonthlyRevenue(stockID, MonthlyRevenue, LastMonthlyRevenue, LastYearMonthlyRevenue\
+                         MonthlyIncreaseRevenue, LastYearMonthlyIncreaseRevenue, \
+                         CumulativeRevenue, LastYearCumulativeRevenue, CompareCumulativeRevenue\
+                         date):
+        
+	if (stockID.strip()=="" or \
+            MonthlyRevenue.strip()=="" or LastMonthlyRevenue.strip()=="" or \
+            LastYearMonthlyRevenue.strip()=="" or MonthlyIncreaseRevenue.strip()=="" or \
+            LastYearMonthlyIncreaseRevenue.strip()=="" or CumulativeRevenue.strip()=="" or \
+            LastYearCumulativeRevenue.strip()=="" or CompareCumulativeRevenue.strip()=="" or \
+            date.strip()==""):
+		dbgPrint("InsertMonthlyRevenue: Parameters cannot be empty")
+		return(-1)
+
+	try:
+		valid_date(date)
+		if(check_record(StockID, date, "MonthlyRevenue") != 0):
+			dbgPrint("InsertMonthlyRevenue: Error: Record already exist, please make sure no duplicates")
+			return(-1)
+
+		add_fs = ("INSERT INTO MonthlyRevenue "
+                          "(StockID, 
+                          "MonthlyRevenue, "
+                          "LastMonthlyRevenue, "
+                          "LastYearMonthlyRevenue, "
+                          "MonthlyIncreaseRevenue, "
+                          "LastYearMonthlyIncreaseRevenue, "
+                          "CumulativeRevenue, "
+                          "LastYearCumulativeRevenue, "
+                          "CompareCumulativeRevenue, "
+                          "date) "
+                          "VALUES (%(_stockID)s, "
+                          "%(_MonthlyRevenue)s, "
+                          "%(_LastMonthlyRevenue)s, "
+                          "%(_LastYearMonthlyRevenue)s, "
+                          "%(_MonthlyIncreaseRevenue)s, "
+                          "%(_LastYearMonthlyIncreaseRevenue)s, "
+                          "%(_CumulativeRevenue)s, "
+                          "%(_LastYearCumulativeRevenue)s, "
+                          "%(_CompareCumulativeRevenue)s, %(_date)s)")
+
+		data_fs = {
+                        '_stockID'             : int(stockID),
+			'_MonthlyRevenue'      : int(MonthlyRevenue),
+			'_LastMonthlyRevenue'  : int(LastMonthlyRevenue),
+			'_LastYearMonthlyRevenue'  : int(LastYearMonthlyRevenue),
+                        '_MonthlyIncreaseRevenue'  : float(MonthlyIncreaseRevenue),
+                        '_LastYearMonthlyIncreaseRevenue': float(LastYearMonthlyIncreaseRevenue),
+			'_CumulativeRevenue'          : int(CumulativeRevenue),
+                        '_LastYearCumulativeRevenue'  : int(LastYearCumulativeRevenue),
+                        '_CompareCumulativeRevenue'   : float(CompareCumulativeRevenue),
+			'_date': date,}
+
+		cursor.execute(add_fs, data_fs)
+		db.commit()
+
+	except mcon.Error as err:
+		dbgPrint("InsertMonthlyRevenue: Connect to DB Error [" + str(err) + "] ")
+		return(-1)
+
+	dbgPrint("InsertMonthlyRevenue: Insert Completed: " + str(data_fs))
+	return(0)
+
+
 if	__name__ == '__main__':
 	ConnectDB("localhost", "stock")
 	InsertCompany("2075", "abc")
