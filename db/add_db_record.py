@@ -118,7 +118,6 @@ def InsertCalStatement(stockid, eps, netaps, roe, roa, date):
                 cursor.execute("SELECT CoId FROM Company WHERE StockID=%s", (stockid,))
                 row = cursor.fetchall()
 
-                print("#######get CoID########")
                 print(row)
 
                 if(cursor.rowcount <= 0):
