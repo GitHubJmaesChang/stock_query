@@ -166,10 +166,10 @@ def daily_information(FilePath, date):
     form1.columns = micolumns
     print form1
     #print pd_form
-    form1.to_csv(FilePath + date +".csv", index = False, encoding = "utf-8")
+    form1.to_csv(FilePath + date +"_stockExchange.csv", index = False, encoding = "utf-8")
     return 
 
 
 if  __name__ == '__main__':
-    daily_information(Savefiledir , "20181031")
+    daily_information(Savefiledir , "20181105")
     print "query 1101 data done"

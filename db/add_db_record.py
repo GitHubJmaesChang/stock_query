@@ -394,9 +394,9 @@ def InsertFoundationExchange(stockID, ForeignInvestorBuy, ForeignInvestorSell, \
 	dbgPrint("FoundationExchange: Insert Completed: " + str(data_fs))
 	return(0)
 
-def InsertMonthlyRevenue(stockID, MonthlyRevenue, LastMonthlyRevenue, LastYearMonthlyRevenue\
+def InsertMonthlyRevenue(stockID, MonthlyRevenue, LastMonthlyRevenue, LastYearMonthlyRevenue,\
                          MonthlyIncreaseRevenue, LastYearMonthlyIncreaseRevenue, \
-                         CumulativeRevenue, LastYearCumulativeRevenue, CompareCumulativeRevenue\
+                         CumulativeRevenue, LastYearCumulativeRevenue, CompareCumulativeRevenue,\
                          date):
         
 	if (stockID.strip()=="" or \
@@ -410,12 +410,12 @@ def InsertMonthlyRevenue(stockID, MonthlyRevenue, LastMonthlyRevenue, LastYearMo
 
 	try:
 		valid_date(date)
-		if(check_record(StockID, date, "MonthlyRevenue") != 0):
+		if(check_record(stockID, date, "MonthlyRevenue") != 0):
 			dbgPrint("InsertMonthlyRevenue: Error: Record already exist, please make sure no duplicates")
 			return(-1)
 
 		add_fs = ("INSERT INTO MonthlyRevenue "
-                          "(StockID, 
+                          "(StockID, "
                           "MonthlyRevenue, "
                           "LastMonthlyRevenue, "
                           "LastYearMonthlyRevenue, "
@@ -455,6 +455,57 @@ def InsertMonthlyRevenue(stockID, MonthlyRevenue, LastMonthlyRevenue, LastYearMo
 		return(-1)
 
 	dbgPrint("InsertMonthlyRevenue: Insert Completed: " + str(data_fs))
+	return(0)
+
+def InsertMarginTrade(stockID, MarginBuy, \
+                      MarginSell, MarginRemine, \
+                      ShortSellBuy, ShortSellSell, \
+                      ShortSellRemine, date):
+        
+	if (stockID.strip()=="" or \
+            MarginBuy.strip()=="" or MarginSell.strip()=="" or \
+            MarginRemine.strip()=="" or ShortSellBuy.strip()=="" or \
+            ShortSellSell.strip()=="" or ShortSellRemine.strip()=="" or date.strip()==""):
+		dbgPrint("InsertMarginTrade: Parameters cannot be empty")
+		return(-1)
+
+	try:
+		valid_date(date)
+		if(check_record(StockID, date, "MarginTrading") != 0):
+			dbgPrint("InsertMarginTrade: Error: Record already exist, please make sure no duplicates")
+			return(-1)
+
+		add_fs = ("INSERT INTO MarginTrading "
+                          "(StockID, MarginBuy, MarginSell "
+                          "MarginRemine, ShortSellBuy, "
+                          "ShortSellSell, ShortSellRemine, date) "
+                          "VALUES (%(_stockID)s, "
+                          "%(_MarginBuy)s, "
+                          "%(_MarginSell)s, "
+                          "%(_MarginRemine)s, "
+                          "%(_ShortSellBuy)s, "
+                          "%(_ShortSellSells, "
+                          "%(_ShortSellRemine)s, "
+                          "%(_date)s)")
+
+		data_fs = {
+                        '_stockID'    : int(stockID),
+			'_MarginBuy'  : int(MarginBuy),
+			'_MarginSell' : int(MarginSell),
+			'_MarginRemine'  : int(MarginRemine),
+                        '_ShortSellBuy'  : int(ShortSellBuy),
+                        '_ShortSellSells'  : int(ShortSellSell),
+			'_ShortSellRemine' : int(ShortSellRemine),
+			'_date': date,}
+
+		cursor.execute(add_fs, data_fs)
+		db.commit()
+
+	except mcon.Error as err:
+		dbgPrint("MarginTrading: Connect to DB Error [" + str(err) + "] ")
+		return(-1)
+
+	dbgPrint("MarginTrading: Insert Completed: " + str(data_fs))
 	return(0)
 
 

@@ -139,7 +139,7 @@ def CreatFinancialTable(db):
 
 		print("Create foundation excahnge Table")
 		# Table: FoundationExchange
-		# 外資買入, 外資賣出, 卷商買入, 卷商賣出, 自營商買入, 自營商賣出, 當日總量, 日期    
+		# 外資買入, 外資賣出, 投信商買入, 投信商賣出, 自營商買入, 自營商賣出, 當日總量, 日期    
 		cursor.execute("create table IF NOT EXISTS FoundationExchange( \
 			FexId INT AUTO_INCREMENT PRIMARY KEY, \
 			CoId INT, \
@@ -155,13 +155,13 @@ def CreatFinancialTable(db):
 			FOREIGN KEY (CoId) REFERENCES Company(CoId) \
 			) DEFAULT CHARSET=utf8 ENGINE=INNODB \
 			")
-                print("Create Month FoundationExchange Table")
 
-
+		print("Create Month FoundationExchange Table")
 		# Table: MonthRevenue
 		#當月營收,上月營收,去年當月營收,上月比較增減(%),去年同月增減(%),當月累計營收,去年累計營收,前期比較增減(%)
-                cursor.execute("create table IF NOT EXISTS MonthlyRevenue( \
-			MrevId INT AUTO_INCREMENT PRIMARY KEY, \
+
+		cursor.execute("create table IF NOT EXISTS MonthlyRevenue( \
+                        MrevId INT AUTO_INCREMENT PRIMARY KEY, \
 			CoId INT, \
 			StockID INT NOT NULL, \
 			MonthlyRevenue BIGINT, \
@@ -176,6 +176,24 @@ def CreatFinancialTable(db):
 			FOREIGN KEY (CoId) REFERENCES Company(CoId) \
 			) DEFAULT CHARSET=utf8 ENGINE=INNODB \
 			")
+
+		print("Create Month MarginTrading Table")
+                #融資買入, 融資賣出, 融資餘額, 融卷買入, 融卷賣出, 融卷餘額,
+		cursor.execute("create table IF NOT EXISTS MarginTrading( \
+                        MrevId INT AUTO_INCREMENT PRIMARY KEY, \
+			CoId INT, \
+			StockID INT NOT NULL, \
+			MarginBuy BIGINT, \
+			MarginSell BIGINT, \
+			MarginRemine BIGINT, \
+			ShortSellBuy DOUBLE, \
+			ShortSellSell DOUBLE, \
+			ShortSellRemine BIGINT, \
+			Date varchar(20), \
+			FOREIGN KEY (CoId) REFERENCES Company(CoId) \
+			) DEFAULT CHARSET=utf8 ENGINE=INNODB \
+			")
+
 
 	except MS.Error as e:
 		dbgPrint("Error: unable to create tables [" + str(e) + "]")

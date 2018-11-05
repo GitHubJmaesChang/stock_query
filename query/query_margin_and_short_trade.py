@@ -224,26 +224,26 @@ def daily_information(FilePath, date):
     
     form1 = pd.concat([row_form1[u' ID '],
                        row_form2[u' Name '],
-                       row_form3[u' margin_buy '],
-                       row_form4[u' margin_sell '],
-                       row_form5[u' margin_remain '],
-                       row_form6[u' short_sale_buy '],
-                       row_form7[u' short_sale_sell '],
-                       row_form8[u' short_sale_remain ']],
+                       row_form3[u' MarginTradeBuy'],
+                       row_form4[u' MarginTradeSell'],
+                       row_form5[u' MarginTradeRemain'],
+                       row_form6[u' ShortSellBuy'],
+                       row_form7[u' ShortSellSell'],
+                       row_form8[u' ShortSellRemain']],
                        axis =1)
 
-    micolumns  = pd.MultiIndex.from_tuples([(date,'ID'), (date,'Name'),
-                                            (date,'margin_buy'),(date,'margin_sell'),(date,'margin_remain'),
-                                            (date,'short_sale_buy'),(date,'short_sale_sell'),(date,'short_sale_remain')],
-                                             names = ['date', 'margin trade and short sale'])
+    #micolumns  = pd.MultiIndex.from_tuples([(date,'ID'), (date,'Name'),
+    #                                        (date,'margin_buy'),(date,'margin_sell'),(date,'margin_remain'),
+    #                                        (date,'short_sale_buy'),(date,'short_sale_sell'),(date,'short_sale_remain')],
+    #                                         names = ['date', 'margin trade and short sale'])
     
-    form1.columns = micolumns
-    print form1
+    #form1.columns = micolumns
+    #print form1
     #print pd_form
-    form1.to_csv(FilePath + date +"margin_trade.csv", index = False, encoding = "utf-8")
-    return 
+    form1.to_csv(FilePath + date +"_MarginTrade.csv", index = False, encoding = "utf-8")
+    return
 
 
 if  __name__ == '__main__':
-    daily_information(Savefiledir , "20180911")
+    daily_information(Savefiledir , "20181105")
     print "query all stock info sdone"
