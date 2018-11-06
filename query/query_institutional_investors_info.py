@@ -299,13 +299,13 @@ def daily_institutional_info(FilePath, date):
                        row_form9[u' Total ']],
                        axis =1)
 
-    micolumns  = pd.MultiIndex.from_tuples([(date,'ID'), (date,'Name'),
-                                            (date,'Foreign_Investor_buy'),(date,'Foreign_Investor_sell'),
-                                            (date,'Investment_Trust_buy'),(date,'Investment_Trust_sell'),
-                                            (date,'Dealer_buy'),(date,'Dealer_sell'),(date,'Total')],
-                                           names = ['date', 'Institutional investors'])
-    form1.columns = micolumns
-    print form1
+    #micolumns  = pd.MultiIndex.from_tuples([(date,'ID'), (date,'Name'),
+    #                                        (date,'Foreign_Investor_buy'),(date,'Foreign_Investor_sell'),
+    #                                        (date,'Investment_Trust_buy'),(date,'Investment_Trust_sell'),
+    #                                        (date,'Dealer_buy'),(date,'Dealer_sell'),(date,'Total')],
+    #                                       names = ['date', 'Institutional investors'])
+    #form1.columns = micolumns
+    #print form1
     #print pd_form
     form1.to_csv(FilePath + date +"_FoundationExchange.csv",  index = False, encoding = "utf-8")
     return 

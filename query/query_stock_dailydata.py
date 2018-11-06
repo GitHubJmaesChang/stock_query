@@ -57,6 +57,7 @@ def daily_information(FilePath, date):
     #水泥
     merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
                daily_query_stock_exchange_information(date, "01"))
+    
     #食品
     merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
                daily_query_stock_exchange_information(date, "02"))
@@ -145,26 +146,37 @@ def daily_information(FilePath, date):
     merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
                daily_query_stock_exchange_information(date, "20"))
 
-    row_form1 = pd.DataFrame({ u' ID'     : stock_num})
-    row_form2 = pd.DataFrame({ u' Name'   : stock_name})
-    row_form3 = pd.DataFrame({ u' Volume' : exchange_volume})
-    row_form4 = pd.DataFrame({ u' StrPrice'   : start_price})
-    row_form5 = pd.DataFrame({ u' highPrice'   : high_price})
-    row_form6 = pd.DataFrame({ u' lowPrice'   : low_price})
-    row_form7 = pd.DataFrame({ u' EndPrice'   : end_price})
-    
-    form1 = pd.concat([row_form1[u' ID'],
-                       row_form2[u' Name'],
-                       row_form3[u' Volume'],
-                       row_form4[u' StrPrice'],
-                       row_form5[u' highPrice'],
-                       row_form6[u' lowPrice'],
-                       row_form7[u' EndPrice']], axis =1)
+    row_form1 = pd.DataFrame({ u'ID'     : stock_num})
+    row_form2 = pd.DataFrame({ u'Name'   : stock_name})
+    row_form3 = pd.DataFrame({ u'Volume' : exchange_volume})
+    row_form4 = pd.DataFrame({ u'StrPrice'   : start_price})
+    row_form5 = pd.DataFrame({ u'highPrice'   : high_price})
+    row_form6 = pd.DataFrame({ u'lowPrice'   : low_price})
+    row_form7 = pd.DataFrame({ u'EndPrice'   : end_price})
 
-    micolumns  = pd.MultiIndex.from_tuples([(date,'ID'), (date,'Name'),(date,'Volume'),(date,'StrPrice'),(date,'highPrice'),(date,'lowPrice'),(date,'EndPrice')], names = ['date', 'stock info'])
+
+    form1 = pd.concat([row_form1[u'ID'],
+                       row_form2[u'Name'],
+                       row_form3[u'Volume'],
+                       row_form4[u'StrPrice'],
+                       row_form5[u'highPrice'],
+                       row_form6[u'lowPrice'],
+                       row_form7[u'EndPrice']], axis =1)
+
+    #replace the "--" to "0"
+    form1[u'Volume'].replace('--', '0', inplace=True)
+    form1[u'StrPrice'].replace('--', '0.0', inplace=True)
+    form1[u'highPrice'].replace('--', '0.0', inplace=True)
+    form1[u'lowPrice'].replace('--', '0.0', inplace=True)
+    form1[u'EndPrice'].replace('--', '0.0', inplace=True)
     
-    form1.columns = micolumns
-    print form1
+
+    #micolumns  = pd.MultiIndex.from_tuples([(date,'ID'), (date,'Name'),
+    #                                         (date,'Volume'),(date,'StrPrice'),
+    #                                         (date,'highPrice'),(date,'lowPrice'),
+    #                                         (date,'EndPrice')], names = ['date', 'stock info'])  
+    #form1.columns = micolumns
+    #print form1
     #print pd_form
     form1.to_csv(FilePath + date +"_stockExchange.csv", index = False, encoding = "utf-8")
     return 

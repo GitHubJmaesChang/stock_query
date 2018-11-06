@@ -213,23 +213,23 @@ def daily_information(FilePath, date):
                              short_sale_buy, short_sale_sell, short_sale_remain,
                              margin_transaction(date, "20"))
     
-    row_form1 = pd.DataFrame({ u' ID '     : stock_num})
-    row_form2 = pd.DataFrame({ u' Name '   : stock_name})
-    row_form3 = pd.DataFrame({ u' margin_buy '    : margin_buy})
-    row_form4 = pd.DataFrame({ u' margin_sell '   : margin_sell})
-    row_form5 = pd.DataFrame({ u' margin_remain ' : margin_remain})
-    row_form6 = pd.DataFrame({ u' short_sale_buy '      : short_sale_buy})
-    row_form7 = pd.DataFrame({ u' short_sale_sell '     : short_sale_sell})
-    row_form8 = pd.DataFrame({ u' short_sale_remain '   : short_sale_remain})
+    row_form1 = pd.DataFrame({ u'ID'     : stock_num})
+    row_form2 = pd.DataFrame({ u'Name'   : stock_name})
+    row_form3 = pd.DataFrame({ u'MarginTradeBuy'    : margin_buy})
+    row_form4 = pd.DataFrame({ u'MarginTradeSell'   : margin_sell})
+    row_form5 = pd.DataFrame({ u'MarginTradeRemain' : margin_remain})
+    row_form6 = pd.DataFrame({ u'ShortSellBuy'      : short_sale_buy})
+    row_form7 = pd.DataFrame({ u'ShortSellSell'     : short_sale_sell})
+    row_form8 = pd.DataFrame({ u'ShortSellRemain'   : short_sale_remain})
     
-    form1 = pd.concat([row_form1[u' ID '],
-                       row_form2[u' Name '],
-                       row_form3[u' MarginTradeBuy'],
-                       row_form4[u' MarginTradeSell'],
-                       row_form5[u' MarginTradeRemain'],
-                       row_form6[u' ShortSellBuy'],
-                       row_form7[u' ShortSellSell'],
-                       row_form8[u' ShortSellRemain']],
+    form1 = pd.concat([row_form1[u'ID'],
+                       row_form2[u'Name'],
+                       row_form3[u'MarginTradeBuy'],
+                       row_form4[u'MarginTradeSell'],
+                       row_form5[u'MarginTradeRemain'],
+                       row_form6[u'ShortSellBuy'],
+                       row_form7[u'ShortSellSell'],
+                       row_form8[u'ShortSellRemain']],
                        axis =1)
 
     #micolumns  = pd.MultiIndex.from_tuples([(date,'ID'), (date,'Name'),
