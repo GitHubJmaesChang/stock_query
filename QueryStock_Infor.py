@@ -56,7 +56,7 @@ def data_query_month_income(path, year, month):
 # parameter ->path = "to save the csv file"
 #           ->date = "20181031"
 def data_query_stock_dailydata(path, date):
-    query_stock_dailydata.daily_information(File_Path , date)
+    query_stock_dailydata.daily_information(path , date)
 
 
 def data_query_stock_info_by_ID(path, Stock_id):
@@ -64,5 +64,10 @@ def data_query_stock_info_by_ID(path, Stock_id):
 
 
 if __name__ == '__main__':
-    data_query_institutional_investors_info("D:/Stock/finacial/", "20181101")
-    data_query_margin_and_short_trade("D:/Stock/finacial/", "20181101")
+    #data_query_institutional_investors_info("D:/Stock/finacial/", "20181105")
+    #time.sleep(60)
+    data_query_margin_and_short_trade("D:/Stock/finacial/", "20181105")
+    #time.sleep(70)
+    #data_query_stock_dailydata("D:/Stock/finacial/", "20181105")
+    #time.sleep(80)
+    #data_query_month_income("D:/Stock/finacial/", "2018", "09")
