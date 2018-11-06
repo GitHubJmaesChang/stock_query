@@ -24,7 +24,7 @@ def check_file_exist(filename):
 # crate database : 
 def intial_db():
     init_db_utf8.InitDB()
-    add_db_record.ConnectDB("localhost", "stock")
+    add_db_record.ConnectDB("10.34.0.100", "stock")
 
 
 
@@ -50,6 +50,7 @@ def insertFinancailSeate_to_database(file_name, date):
     intial_db()
     
     if((0) == check_file_exist(file_name)):
+        print(("insertFinancailSeate_to_database : No such file name : "), file_name)
         return (0)
     
     table = pd.read_csv(file_name)
@@ -101,6 +102,7 @@ def insertMonthlyRevenueDB(file_name, date):
     intial_db()
     
     if((0) == check_file_exist(file_name)):
+        print(("insertMonthlyRevenueDB : No such file name : "), file_name)
         return (0)
     
     table = pd.read_csv(file_name)
@@ -116,9 +118,9 @@ def insertMonthlyRevenueDB(file_name, date):
 
 def inserFoundationExchangeDB(file_name, date):
 
-    intial_db()
-    
+    intial_db()    
     if((0) == check_file_exist(file_name)):
+        print(("inserFoundationExchangeDB : No such file name : "), file_name)
         return (0)
     
     table = pd.read_csv(file_name)
@@ -131,13 +133,13 @@ def inserFoundationExchangeDB(file_name, date):
                                                str(table.iloc[idx]['Investment_Trust_sell']), str(table.iloc[idx]['Dealer_buy']), \
                                                str(table.iloc[idx]['Dealer_sell']), str(table.iloc[idx]['Total']),date)
 
-        
 
 def insertInsertStockExchangeDB(file_name, date):
 
     intial_db()
     
     if((0) == check_file_exist(file_name)):
+        print(("insertInsertStockExchangeDB : No such file name : "), file_name)
         return (0)
     
     table = pd.read_csv(file_name)
@@ -145,9 +147,9 @@ def insertInsertStockExchangeDB(file_name, date):
     #ID,Name,Volume,StrPrice,highPrice,lowPrice,EndPrice
     for idx in range(0, table.shape[0]):
         database_InsertCompany(str(table.iloc[idx]['ID']), str(table.iloc[idx]['Name']))
-        add_db_record.InsertFoundationExchange(str(table.iloc[idx]['ID']), str(int(table.iloc[idx]['Volume'])), \
-                                               str(int(table.iloc[idx]['StrPrice'])), str(int(table.iloc[idx]['highPrice'])), \
-                                               str(table.iloc[idx]['lowPrice']), str(table.iloc[idx]['EndPrice']) ,date)
+        add_db_record.InsertStockExchange(str(table.iloc[idx]['ID']), str(int(table.iloc[idx]['Volume'])), \
+                                          str((table.iloc[idx]['StrPrice'])), str((table.iloc[idx]['highPrice'])), \
+                                          str(table.iloc[idx]['lowPrice']), str(table.iloc[idx]['EndPrice']) ,date)
         
 
 def insertInsertMarginTradeDB(file_name, date):
@@ -155,22 +157,20 @@ def insertInsertMarginTradeDB(file_name, date):
     intial_db()
     
     if((0) == check_file_exist(file_name)):
+        print(("insertInsertMarginTradeDB : No such file name : "), file_name)
         return (0)
     
     table = pd.read_csv(file_name)
-
     #,ID,Name,MarginTradebuy,MarginTradeSell,MarginTradeRemine,ShortSellBuy,ShortSellSell,ShortSellRemine
     for idx in range(0, table.shape[0]):
         database_InsertCompany(str(table.iloc[idx]['ID']), str(table.iloc[idx]['Name']))
         add_db_record.InsertMarginTrade(str(table.iloc[idx]['ID']), str(int(table.iloc[idx]['MarginTradeBuy'])), \
-                                               str(int(table.iloc[idx]['MarginTradeSell'])), str(int(table.iloc[idx]['MarginTradeRemine'])), \
-                                               str(table.iloc[idx]['ShortSellBuy']), str(table.iloc[idx]['ShortSellSell']) ,str(table.iloc[idx]['ShortSellRemine']),date)
+                                               str(int(table.iloc[idx]['MarginTradeSell'])), str(int(table.iloc[idx]['MarginTradeRemain'])), \
+                                               str(table.iloc[idx]['ShortSellBuy']), str(table.iloc[idx]['ShortSellSell']) ,str(table.iloc[idx]['ShortSellRemain']),date)
         
-
-
 if __name__ == '__main__':
     #insertMonthlyRevenueDB("D:/Stock/finacial/2018_9_MonthlyRevenue.csv", "2018-09-01")
-    inserFoundationExchangeDB("D:/Stock/finacial/20181105_FoundationExchange.csv", "2018-11-05")
-    insertInsertStockExchangeDB("D:/Stock/finacial/20181105_stockExchange.csv", "2018-11-05")
+    #inserFoundationExchangeDB("D:/Stock/finacial/20181105_FoundationExchange.csv", "2018-11-05")
+    #insertInsertStockExchangeDB("D:/Stock/finacial/20181105_stockExchange.csv", "2018-11-05")
     insertInsertMarginTradeDB("D:/Stock/finacial/20181105_MarginTrade.csv", "2018-11-05")
 
