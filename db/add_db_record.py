@@ -62,6 +62,8 @@ def valid_date(strDate):
 
 
 def check_record(sID, date, table):
+        print sID
+        
 	try:
 		if(date.strip() == ""):
 			cursor.execute( \
@@ -81,150 +83,6 @@ def check_record(sID, date, table):
 		 return(-1)
 
 	dbgPrint("check_record Completed: table [" + table + "] StockID[" + str(sID) + "]")
-	return(0)
-
-
-def InsertCalStatement(stockid, eps, netaps, roe, roa, date):
-        if (stockid.strip() == "" or date.strip() == ""):
-                dbgPrint("InsertCalStatement: StockID and Date cannot be empty")
-                return(-1)
-
-        if not (stockid.isdigit()):
-                dbgPrint("InsertCalStatement: StockID must be a digit")
-                return(-1)
-        if (not eps.strip() == "") and (not isfloat(eps)):
-                dbgPrint("CalIncomeStatement: Earning Per Share must be digits")
-                return(-1)
-
-        if (not netaps.strip() == "") and (not isfloat(netaps)):
-                dbgPrint("InsertCalStatement: Net Asset Per Share must be digits")
-                return(-1)
-	
-        if (not roe.strip() == "") and (not isfloat(roe)):
-                dbgPrint("InsertCalStatement: Net Asset Per Share must be digits")
-                return(-1)
-
-        if (not roa.strip() == "") and (not isfloat(roa)):
-                dbgPrint("InsertCalStatement: Net Asset Per Share must be digits")
-                return(-1)
-
-        try:
-                valid_date(date)
-                if(check_record(stockid, date, "CalStatement") != 0):
-                        dbgPrint("InsertCalStatement: Error: Record already exist, please make sure no duplicates")
-                        return(-1)
-
-		# Get CoId
-                cursor.execute("SELECT CoId FROM Company WHERE StockID=%s", (stockid,))
-                row = cursor.fetchall()
-
-                print(row)
-
-                if(cursor.rowcount <= 0):
-                        dbgPrint("CalStatement: Error: Cannot locate Company ID" + str(cursor.rowcount))
-                        return(-1)
-
-                add_is = ("INSERT INTO CalStatement " \
-                        "(CoId, StockID, EarningPerShare, NetAssetPerShare, ROE, ROA, Date) " \
-                        "VALUES (%(_coid)s, %(_stockid)s, %(_earningpershare)s, %(_netassetpershare)s, %(_roe)s, \
-                        %(_roa)s, %(_date)s)")
-
-                data_is = {
-                        '_coid': int(row[0][0]),
-                        '_stockid': int(stockid),
-                        '_earningpershare': float(eps),
-                        '_netassetpershare': float(netaps),
-                        '_roe': float(roe),
-                        '_roa': float(roa),
-                        '_date': date,
-                        }
-
-                cursor.execute(add_is, data_is)
-                db.commit()
-
-        except mcon.Error as err:
-                 dbgPrint("InsertCalStatement: Connect to DB Error [" + str(err) + "] ")
-                 return(-1)
-
-
-        dbgPrint("InsertcalStatement: Insert Complete " + str(data_is))
-        return(0)
-
-
-def InsertIncomeStatement(stockid, oprevenu, opprofit, netincome, \
-			nonoprevenueexpense, revenuebeforetax, date):
-	if (stockid.strip() == "" or date.strip() == ""):
-		dbgPrint("InsertIncomeStatement: StockID and Date cannot be empty")
-		return(-1)
-
-	if not (stockid.isdigit()):
-		dbgPrint("InsertIncomeStatement: StockID must be a digit")
-		return(-1)
-
-	if (not oprevenu.strip() == "") and (not oprevenu.lstrip('-+').isdigit()):
-		dbgPrint("InsertIncomeStatement: Operational Revenue must be digits")
-		return(-1)
-
-	if (not opprofit.strip() == "") and (not opprofit.lstrip('-+').isdigit()):
-		 dbgPrint("InsertIncomeStatement: Operational Profit must be digits")
-		 return(-1)
-
-	if (not netincome.strip() == "") and (not netincome.lstrip('-+').isdigit()):
-		 dbgPrint("InsertIncomeStatement: Non-Operational Revenue must be digits")
-		 return(-1)
-
-	if (not nonoprevenueexpense.strip() == "") and (not nonoprevenueexpense.lstrip('-+').isdigit()):
-		 dbgPrint("InsertIncomeStatement: Non-Operational Revenue and Expense must be digits")
-		 return(-1)
-
-	if (not revenuebeforetax.strip() == "") and (not revenuebeforetax.lstrip('-+').isdigit()):
-		 dbgPrint("InsertIncomeStatement: Revenue Before Tax must be digits")
-		 return(-1)
-
-
-	try:
-		valid_date(date)
-		if(check_record(stockid, date, "IncomeStatement") != 0):
-			 dbgPrint("InsertIncomeStatement: Error: Record already exist, please make sure no duplicates")
-			 return(-1)
-
-		# Get CoId
-		cursor.execute("SELECT CoId FROM Company WHERE StockID = %s", (stockid,))
-		row = cursor.fetchall()
-		#if(cursor.rowcount > 1): # this is to be enabled later
-		#dbgPrint("IncomeStatement: Error: Too many FinID" + str(cursor.rowcount))
-		#return(-1)
-
-		if(cursor.rowcount <= 0):
-			dbgPrint("IncomeStatement: Error: Cannot locate Company ID" + str(cursor.rowcount))
-			return(-1)
-
-		add_is = ("INSERT INTO IncomeStatement " \
-			"(CoId, StockID, OpRevenue, OpProfit, NetIncome, NonOpRevenueExpense, RevenueBeforeTax, Date) " \
-			"VALUES (%(_coid)s, %(_stockid)s, %(_oprevenue)s, %(_opprofit)s, %(_netincome)s, \
-			%(_nonoprevenueexpense)s, %(_revenuebeforetax)s, %(_date)s)")
-
-		data_is = {
-			'_coid': int(row[0][0]),
-			'_stockid': int(stockid),
-			'_oprevenue': int(oprevenu),
-			'_opprofit': int(opprofit),
-			'_netincome': int(netincome),
-			'_nonoprevenueexpense': int(nonoprevenueexpense),
-			'_revenuebeforetax': int(revenuebeforetax),
-			'_date': date,
-		 	}
-
-		cursor.execute(add_is, data_is)
-		db.commit()
-
-
-	except mcon.Error as err:
-		 dbgPrint("InsertIncomeStatement: Connect to DB Error [" + str(err) + "] ")
-		 return(-1)
-
-
-	dbgPrint("InsertIncomeStatement: Insert Complete " + str(data_is))
 	return(0)
 
 
@@ -261,6 +119,147 @@ def InsertCompany(stockID, name):
 	dbgPrint("InsertCompany: Insert Completed: " + str(data_fs))
 	return(0)
 
+def InsertCalStatement(stockID, eps, netaps, roe, roa, date):
+        if (stockID.strip() == "" or date.strip() == ""):
+                dbgPrint("InsertCalStatement: StockID and Date cannot be empty")
+                return(-1)
+
+        if not (stockID.isdigit()):
+                dbgPrint("InsertCalStatement: stockID must be a digit")
+                return(-1)
+        if (not eps.strip() == "") and (not isfloat(eps)):
+                dbgPrint("CalIncomeStatement: Earning Per Share must be digits")
+                return(-1)
+
+        if (not netaps.strip() == "") and (not isfloat(netaps)):
+                dbgPrint("InsertCalStatement: Net Asset Per Share must be digits")
+                return(-1)
+	
+        if (not roe.strip() == "") and (not isfloat(roe)):
+                dbgPrint("InsertCalStatement: Net Asset Per Share must be digits")
+                return(-1)
+
+        if (not roa.strip() == "") and (not isfloat(roa)):
+                dbgPrint("InsertCalStatement: Net Asset Per Share must be digits")
+                return(-1)
+
+        try:
+                valid_date(date)
+                if(check_record(stockID, date, "CalStatement") != 0):
+                        dbgPrint("InsertCalStatement: Error: Record already exist, please make sure no duplicates")
+                        return(-1)
+
+		# Get CoId
+                cursor.execute("SELECT CoId FROM Company WHERE StockID=%s", (stockID,))
+                row = cursor.fetchall()
+
+                print(row)
+
+                if(cursor.rowcount <= 0):
+                        dbgPrint("CalStatement: Error: Cannot locate Company ID" + str(cursor.rowcount))
+                        return(-1)
+
+                add_is = ("INSERT INTO CalStatement " \
+                        "(CoId, EarningPerShare, NetAssetPerShare, ROE, ROA, Date) " \
+                        "VALUES (%(_coid)s, %(_earningpershare)s, %(_netassetpershare)s, %(_roe)s, \
+                        %(_roa)s, %(_date)s)")
+
+                data_is = {
+                        '_coid': int(row[0][0]),
+                        '_earningpershare': float(eps),
+                        '_netassetpershare': float(netaps),
+                        '_roe': float(roe),
+                        '_roa': float(roa),
+                        '_date': date,
+                        }
+
+                cursor.execute(add_is, data_is)
+                db.commit()
+
+        except mcon.Error as err:
+                 dbgPrint("InsertCalStatement: Connect to DB Error [" + str(err) + "] ")
+                 return(-1)
+
+
+        dbgPrint("InsertcalStatement: Insert Complete " + str(data_is))
+        return(0)
+
+
+def InsertIncomeStatement(stockID, oprevenu, opprofit, netincome, \
+			nonoprevenueexpense, revenuebeforetax, date):
+	if (stockID.strip() == "" or date.strip() == ""):
+		dbgPrint("InsertIncomeStatement: StockID and Date cannot be empty")
+		return(-1)
+
+	if not (stockID.isdigit()):
+		dbgPrint("InsertIncomeStatement: StockID must be a digit")
+		return(-1)
+
+	if (not oprevenu.strip() == "") and (not oprevenu.lstrip('-+').isdigit()):
+		dbgPrint("InsertIncomeStatement: Operational Revenue must be digits")
+		return(-1)
+
+	if (not opprofit.strip() == "") and (not opprofit.lstrip('-+').isdigit()):
+		 dbgPrint("InsertIncomeStatement: Operational Profit must be digits")
+		 return(-1)
+
+	if (not netincome.strip() == "") and (not netincome.lstrip('-+').isdigit()):
+		 dbgPrint("InsertIncomeStatement: Non-Operational Revenue must be digits")
+		 return(-1)
+
+	if (not nonoprevenueexpense.strip() == "") and (not nonoprevenueexpense.lstrip('-+').isdigit()):
+		 dbgPrint("InsertIncomeStatement: Non-Operational Revenue and Expense must be digits")
+		 return(-1)
+
+	if (not revenuebeforetax.strip() == "") and (not revenuebeforetax.lstrip('-+').isdigit()):
+		 dbgPrint("InsertIncomeStatement: Revenue Before Tax must be digits")
+		 return(-1)
+
+
+	try:
+		valid_date(date)
+		if(check_record(stockID, date, "IncomeStatement") != 0):
+			 dbgPrint("InsertIncomeStatement: Error: Record already exist, please make sure no duplicates")
+			 return(-1)
+
+		# Get CoId
+		cursor.execute("SELECT CoId FROM Company WHERE StockID = %s", (stockID,))
+		row = cursor.fetchall()
+		#if(cursor.rowcount > 1): # this is to be enabled later
+		#dbgPrint("IncomeStatement: Error: Too many FinID" + str(cursor.rowcount))
+		#return(-1)
+
+		if(cursor.rowcount <= 0):
+			dbgPrint("IncomeStatement: Error: Cannot locate Company ID" + str(cursor.rowcount))
+			return(-1)
+
+		add_is = ("INSERT INTO IncomeStatement " \
+			"(CoId, OpRevenue, OpProfit, NetIncome, NonOpRevenueExpense, RevenueBeforeTax, Date) " \
+			"VALUES (%(_coid)s, %(_oprevenue)s, %(_opprofit)s, %(_netincome)s, \
+			%(_nonoprevenueexpense)s, %(_revenuebeforetax)s, %(_date)s)")
+
+		data_is = {
+			'_coid': int(row[0][0]),
+			'_oprevenue': int(oprevenu),
+			'_opprofit': int(opprofit),
+			'_netincome': int(netincome),
+			'_nonoprevenueexpense': int(nonoprevenueexpense),
+			'_revenuebeforetax': int(revenuebeforetax),
+			'_date': date,
+		 	}
+
+		cursor.execute(add_is, data_is)
+		db.commit()
+
+
+	except mcon.Error as err:
+		 dbgPrint("InsertIncomeStatement: Connect to DB Error [" + str(err) + "] ")
+		 return(-1)
+
+
+	dbgPrint("InsertIncomeStatement: Insert Complete " + str(data_is))
+	return(0)
+
 
 # API to insert into Financial Statement Table
 # stockID, asset and equity must be numbers
@@ -281,12 +280,23 @@ def InsertFinancialStatement(stockID, asset, equity, date):
 			dbgPrint("InsertFinancialStatement: Error: Record already exist, please make sure no duplicates")
 			return(-1)
 
+		# Get CoId
+                cursor.execute("SELECT CoId FROM Company WHERE StockID=%s", (stockID,))
+                row = cursor.fetchall()
+
+                print(row)
+
+                if(cursor.rowcount <= 0):
+                        dbgPrint("InsertFinancialStatement: Error: Cannot locate Company ID" + str(cursor.rowcount))
+                        return(-1)
+                
+
 		add_fs = ("INSERT INTO FinancialStatement " \
-			"(StockID, TotalAsset, TotalEquity, Date) " \
-			"VALUES (%(_stockid)s, %(_asset)s, %(_equity)s, %(_date)s)")
+			"(CoId, TotalAsset, TotalEquity, Date) " \
+			"VALUES (%(_coid)s, %(_asset)s, %(_equity)s, %(_date)s)")
 
 		data_fs = {
-			'_stockid': int(stockID),
+                        '_coid': int(row[0][0]),
 			'_asset': int(asset),
 			'_equity': int(equity),
 			'_date': date,}
@@ -317,12 +327,35 @@ def InsertStockExchange(stockID, ExchangeVolume, StartPrice, HighPrice, LowPrice
 			dbgPrint("InsertStockExchange: Error: Record already exist, please make sure no duplicates")
 			return(-1)
 
-		add_fs = ("INSERT INTO StockExchange " \
-			"(StockID, ExchangeVolume, StartPrice, HighPrice, LowPrice, EndPrice, Date) " \
-			"VALUES (%(_StockID)s, %(_ExchangeVolume)s, %(_StartPrice)s, %(_HighPrice)s, %(_LowPrice)s, %(_EndPrice)s, %(_date)s)")
+		# Get CoId
+                cursor.execute("SELECT CoId FROM Company WHERE StockID=%s", (stockID,))
+                row = cursor.fetchall()
+
+                print(row)
+
+                if(cursor.rowcount <= 0):
+                        dbgPrint("InsertStockExchange: Error: Cannot locate Company ID" + str(cursor.rowcount))
+                        return(-1)
+                
+
+		add_fs = ("INSERT INTO StockExchange "
+                          "(CoId, "
+                          "ExchangeVolume, "
+                          "StartPrice, "
+                          "HighPrice, "
+                          "LowPrice, "
+                          "EndPrice, "
+                          "Date) "
+			  "VALUES (%(_coid)s, "
+                          "%(_ExchangeVolume)s, "
+                          "%(_StartPrice)s, "
+                          "%(_HighPrice)s, "
+                          "%(_LowPrice)s, "
+                          "%(_EndPrice)s, "
+                          "%(_date)s)")
 
 		data_fs = {
-                        '_stockid': int(stockID),
+                        '_coid': int(row[0][0]),
 			'_ExchangeVolume': int(ExchangeVolume),
 			'_StartPrice': float(StartPrice),
 			'_HighPrice': float(HighPrice),
@@ -355,15 +388,30 @@ def InsertFoundationExchange(stockID, ForeignInvestorBuy, ForeignInvestorSell, \
 
 	try:
 		valid_date(date)
-		if(check_record(StockID, date, "FoundationExchange") != 0):
+		if(check_record(stockID, date, "FoundationExchange") != 0):
 			dbgPrint("InsertFoundationExchange: Error: Record already exist, please make sure no duplicates")
 			return(-1)
 
+		# Get CoId
+                cursor.execute("SELECT CoId FROM Company WHERE StockID=%s", (stockID,))
+                row = cursor.fetchall()
+
+                print(row)
+
+                if(cursor.rowcount <= 0):
+                        dbgPrint("InsertFoundationExchange: Error: Cannot locate Company ID" + str(cursor.rowcount))
+                        return(-1)
+                
+
 		add_fs = ("INSERT INTO FoundationExchange "
-                          "(StockID, ForeignInvestorBuy, ForeignInvestorSell "
-                          "InvestmentTrustBuy, InvestmentTrustSell, "
-                          "DealerBuy, DealerSell, TotalVolume, date) "
-                          "VALUES (%(_stockID)s, "
+                          "(CoId, "
+                          "ForeignInvestorBuy, "
+                          "ForeignInvestorSell, "
+                          "InvestmentTrustBuy, "
+                          "InvestmentTrustSell, "
+                          "DealerBuy, DealerSell, "
+                          "TotalVolume, date) "
+                          "VALUES (%(_coid)s, "
                           "%(_ForeignInvestorBuy)s, "
                           "%(_ForeignInvestorSell)s, "
                           "%(_InvestmentTrustBuy)s, "
@@ -374,7 +422,7 @@ def InsertFoundationExchange(stockID, ForeignInvestorBuy, ForeignInvestorSell, \
                           "%(_date)s)")
 
 		data_fs = {
-                        '_stockID'             : int(stockID),
+                        '_coid'                : int(row[0][0]),
 			'_ForeignInvestorBuy'  : int(ForeignInvestorBuy),
 			'_ForeignInvestorSell' : int(ForeignInvestorSell),
 			'_InvestmentTrustBuy'  : int(InvestmentTrustBuy),
@@ -414,8 +462,19 @@ def InsertMonthlyRevenue(stockID, MonthlyRevenue, LastMonthlyRevenue, LastYearMo
 			dbgPrint("InsertMonthlyRevenue: Error: Record already exist, please make sure no duplicates")
 			return(-1)
 
+		# Get CoId
+                cursor.execute("SELECT CoId FROM Company WHERE StockID=%s", (stockID,))
+                row = cursor.fetchall()
+
+                print(row)
+
+                if(cursor.rowcount <= 0):
+                        dbgPrint("InsertMonthlyRevenue: Error: Cannot locate Company ID" + str(cursor.rowcount))
+                        return(-1)
+                
+
 		add_fs = ("INSERT INTO MonthlyRevenue "
-                          "(StockID, "
+                          "(CoId, "
                           "MonthlyRevenue, "
                           "LastMonthlyRevenue, "
                           "LastYearMonthlyRevenue, "
@@ -425,7 +484,7 @@ def InsertMonthlyRevenue(stockID, MonthlyRevenue, LastMonthlyRevenue, LastYearMo
                           "LastYearCumulativeRevenue, "
                           "CompareCumulativeRevenue, "
                           "date) "
-                          "VALUES (%(_stockID)s, "
+                          "VALUES (%(_coid)s, "
                           "%(_MonthlyRevenue)s, "
                           "%(_LastMonthlyRevenue)s, "
                           "%(_LastYearMonthlyRevenue)s, "
@@ -436,7 +495,7 @@ def InsertMonthlyRevenue(stockID, MonthlyRevenue, LastMonthlyRevenue, LastYearMo
                           "%(_CompareCumulativeRevenue)s, %(_date)s)")
 
 		data_fs = {
-                        '_stockID'             : int(stockID),
+                        '_coid'                : int(row[0][0]),
 			'_MonthlyRevenue'      : int(MonthlyRevenue),
 			'_LastMonthlyRevenue'  : int(LastMonthlyRevenue),
 			'_LastYearMonthlyRevenue'  : int(LastYearMonthlyRevenue),
@@ -471,30 +530,46 @@ def InsertMarginTrade(stockID, MarginBuy, \
 
 	try:
 		valid_date(date)
-		if(check_record(StockID, date, "MarginTrading") != 0):
+		if(check_record(stockID, date, "MarginTrading") != 0):
 			dbgPrint("InsertMarginTrade: Error: Record already exist, please make sure no duplicates")
 			return(-1)
 
+		# Get CoId
+                cursor.execute("SELECT CoId FROM Company WHERE StockID=%s", (stockID))
+                row = cursor.fetchall()
+
+                print(row)
+
+                if(cursor.rowcount <= 0):
+                        dbgPrint("InsertMarginTrade: Error: Cannot locate Company ID" + str(cursor.rowcount))
+                        return(-1)
+                
+
 		add_fs = ("INSERT INTO MarginTrading "
-                          "(StockID, MarginBuy, MarginSell "
-                          "MarginRemine, ShortSellBuy, "
-                          "ShortSellSell, ShortSellRemine, date) "
-                          "VALUES (%(_stockID)s, "
+                          "(CoId, "
+                          "MarginBuy, "
+                          "MarginSell, "
+                          "MarginRemine, "
+                          "ShortSellBuy, "
+                          "ShortSellSell, "
+                          "ShortSellRemine, "
+                          "date) "
+                          "VALUES (%(_coid)s, "
                           "%(_MarginBuy)s, "
                           "%(_MarginSell)s, "
                           "%(_MarginRemine)s, "
                           "%(_ShortSellBuy)s, "
-                          "%(_ShortSellSells, "
+                          "%(_ShortSellSell)s, "
                           "%(_ShortSellRemine)s, "
                           "%(_date)s)")
 
 		data_fs = {
-                        '_stockID'    : int(stockID),
+                        '_coid'       : int(row[0][0]),
 			'_MarginBuy'  : int(MarginBuy),
 			'_MarginSell' : int(MarginSell),
 			'_MarginRemine'  : int(MarginRemine),
                         '_ShortSellBuy'  : int(ShortSellBuy),
-                        '_ShortSellSells'  : int(ShortSellSell),
+                        '_ShortSellSell'  : int(ShortSellSell),
 			'_ShortSellRemine' : int(ShortSellRemine),
 			'_date': date,}
 

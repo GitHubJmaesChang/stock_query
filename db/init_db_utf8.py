@@ -77,7 +77,7 @@ def CreatFinancialTable(db):
 		# colums are created in the order as listed above.
 		cursor.execute("create table IF NOT EXISTS FinancialStatement( \
 			FinId INT AUTO_INCREMENT PRIMARY KEY, \
-			CoId INT, \
+			CoId INT NOT NULL, \
 			TotalAsset BIGINT, \
 			TotalEquity BIGINT, \
 			Date varchar(20), \
@@ -91,8 +91,7 @@ def CreatFinancialTable(db):
 		# 營業收入,營業利益(損失), 本期淨利(淨損), 營業外收入及支出, 稅前淨利(淨損)
 		cursor.execute("create table IF NOT EXISTS IncomeStatement( \
 			InId INT AUTO_INCREMENT PRIMARY KEY, \
-			CoId INT, \
-			StockID INT NOT NULL, \
+			CoId INT NOT NULL, \
 			OpRevenue BIGINT, \
 			OpProfit BIGINT, \
 			NetIncome BIGINT, \
@@ -108,8 +107,7 @@ def CreatFinancialTable(db):
 		# 基本每股盈餘, 每股參考淨值, ROE, ROA
 		cursor.execute("create table IF NOT EXISTS CalStatement( \
 			CalId INT AUTO_INCREMENT PRIMARY KEY, \
-			CoId INT, \
-			StockID INT NOT NULL, \
+			CoId INT NOT NULL, \
 			EarningPerShare DOUBLE, \
 			NetAssetPerShare DOUBLE, \
 			ROE DOUBLE, \
@@ -125,8 +123,7 @@ def CreatFinancialTable(db):
 		# 成交量, 開盤價格, 盤中最高價, 盤中最低價, 收盤價, 日期
 		cursor.execute("create table IF NOT EXISTS StockExchange( \
 			ExcId INT AUTO_INCREMENT PRIMARY KEY, \
-			CoId INT, \
-			StockID INT NOT NULL, \
+			CoId INT NOT NULL, \
 			ExchangeVolume BIGINT, \
 			StartPrice DOUBLE, \
 			HighPrice DOUBLE, \
@@ -142,8 +139,7 @@ def CreatFinancialTable(db):
 		# 外資買入, 外資賣出, 投信商買入, 投信商賣出, 自營商買入, 自營商賣出, 當日總量, 日期    
 		cursor.execute("create table IF NOT EXISTS FoundationExchange( \
 			FexId INT AUTO_INCREMENT PRIMARY KEY, \
-			CoId INT, \
-			StockID INT NOT NULL, \
+			CoId INT NOT NULL, \
 			ForeignInvestorBuy BIGINT, \
 			ForeignInvestorSell BIGINT, \
 			InvestmentTrustBuy BIGINT, \
@@ -161,9 +157,8 @@ def CreatFinancialTable(db):
 		#當月營收,上月營收,去年當月營收,上月比較增減(%),去年同月增減(%),當月累計營收,去年累計營收,前期比較增減(%)
 
 		cursor.execute("create table IF NOT EXISTS MonthlyRevenue( \
-                        MrevId INT AUTO_INCREMENT PRIMARY KEY, \
-			CoId INT, \
-			StockID INT NOT NULL, \
+                        MReId INT AUTO_INCREMENT PRIMARY KEY, \
+			CoId INT NOT NULL, \
 			MonthlyRevenue BIGINT, \
 			LastMonthlyRevenue BIGINT, \
 			LastYearMonthlyRevenue BIGINT, \
@@ -181,8 +176,7 @@ def CreatFinancialTable(db):
                 #融資買入, 融資賣出, 融資餘額, 融卷買入, 融卷賣出, 融卷餘額,
 		cursor.execute("create table IF NOT EXISTS MarginTrading( \
                         MrevId INT AUTO_INCREMENT PRIMARY KEY, \
-			CoId INT, \
-			StockID INT NOT NULL, \
+			CoId INT NOT NULL, \
 			MarginBuy BIGINT, \
 			MarginSell BIGINT, \
 			MarginRemine BIGINT, \

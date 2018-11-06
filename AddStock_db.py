@@ -24,7 +24,7 @@ def check_file_exist(filename):
 # crate database : 
 def intial_db():
     init_db_utf8.InitDB()
-    add_db_record.ConnectDB("10.34.0.100", "stock")
+    add_db_record.ConnectDB("localhost", "stock")
 
 
 
