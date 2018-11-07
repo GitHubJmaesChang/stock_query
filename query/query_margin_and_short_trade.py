@@ -37,7 +37,7 @@ def margin_transaction(date, mode):
 def daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             pd_data):
+                             totalvolune, chargeoff, pd_data):
     print pd_data
     for idx in range(0, pd_data.shape[0]):
         stock_num.append(pd_data.iloc[idx, 0])
@@ -48,6 +48,8 @@ def daily_margin_transaction(stock_num, stock_name,
         short_sale_buy.append(pd_data.iloc[idx, 8])
         short_sale_sell.append(pd_data.iloc[idx, 9])
         short_sale_remain.append(pd_data.iloc[idx, 12])
+        totalvolune.append(pd_data.iloc[idx, 13])
+        chargeoff.append(pd_data.iloc[idx, 14])
 
     time.sleep(10)
 
@@ -61,166 +63,170 @@ def daily_information(FilePath, date):
     short_sale_buy=[]
     short_sale_sell=[]
     short_sale_remain=[]
+    totalvolume=[]
+    chargeoff=[]
     
     #水泥
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "01"))
+                             totalvolume, chargeoff, margin_transaction(date, "01"))
     #食品
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "02"))
+                             totalvolume, chargeoff, margin_transaction(date, "02"))
     #塑膠
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "03"))
+                             totalvolume, chargeoff, margin_transaction(date, "03"))
     #纖維
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "04"))
+                             totalvolume, chargeoff, margin_transaction(date, "04"))
     #電機
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "05"))
+                             totalvolume, chargeoff, margin_transaction(date, "05"))
     #電器電纜
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "06"))
+                             totalvolume, chargeoff, margin_transaction(date, "06"))
     #化學生技醫療
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "07"))
+                             totalvolume, chargeoff, margin_transaction(date, "07"))
     #化學工業
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "21"))
+                             totalvolume, chargeoff, margin_transaction(date, "21"))
     #生技醫療
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "22"))
+                             totalvolume, chargeoff, margin_transaction(date, "22"))
     #玻璃陶瓷
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "08"))
+                             totalvolume, chargeoff, margin_transaction(date, "08"))
     #造紙工業
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "09"))
+                             totalvolume, chargeoff, margin_transaction(date, "09"))
     #鋼鐵工業
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "10"))
+                             totalvolume, chargeoff, margin_transaction(date, "10"))
     #橡膠
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "11"))
+                             totalvolume, chargeoff, margin_transaction(date, "11"))
     #汽車
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "12"))
+                             totalvolume, chargeoff, margin_transaction(date, "12"))
     #電子工業
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "13"))
+                             totalvolume, chargeoff, margin_transaction(date, "13"))
     #半導體
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "24"))
+                             totalvolume, chargeoff, margin_transaction(date, "24"))
     #電腦周邊設備
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "25"))
+                             totalvolume, chargeoff, margin_transaction(date, "25"))
     #光電
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "26"))
+                             totalvolume, chargeoff, margin_transaction(date, "26"))
     #通信網路
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "27"))
+                             totalvolume, chargeoff, margin_transaction(date, "27"))
     #電子零組件
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "28"))
+                             totalvolume, chargeoff, margin_transaction(date, "28"))
     #電子通路
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "29"))
+                             totalvolume, chargeoff, margin_transaction(date, "29"))
     #資訊服務
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "30"))
+                             totalvolume, chargeoff, margin_transaction(date, "30"))
     #其他電子
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "31"))
+                             totalvolume, chargeoff, margin_transaction(date, "31"))
     #建材
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "14"))
+                             totalvolume, chargeoff, margin_transaction(date, "14"))
     #航運
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "15"))
+                             totalvolume, chargeoff, margin_transaction(date, "15"))
     #觀光
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "16"))
+                             totalvolume, chargeoff, margin_transaction(date, "16"))
     #金融
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "17"))
+                             totalvolume, chargeoff, margin_transaction(date, "17"))
     #貿易百貨
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "18"))
+                             totalvolume, chargeoff, margin_transaction(date, "18"))
     #油電燃氣
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "23"))
+                             totalvolume, chargeoff, margin_transaction(date, "23"))
     #其他
     daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             margin_transaction(date, "20"))
+                             totalvolume, chargeoff, margin_transaction(date, "20"))
     
-    row_form1 = pd.DataFrame({ u'ID'     : stock_num})
-    row_form2 = pd.DataFrame({ u'Name'   : stock_name})
-    row_form3 = pd.DataFrame({ u'MarginTradeBuy'    : margin_buy})
-    row_form4 = pd.DataFrame({ u'MarginTradeSell'   : margin_sell})
-    row_form5 = pd.DataFrame({ u'MarginTradeRemain' : margin_remain})
-    row_form6 = pd.DataFrame({ u'ShortSellBuy'      : short_sale_buy})
-    row_form7 = pd.DataFrame({ u'ShortSellSell'     : short_sale_sell})
-    row_form8 = pd.DataFrame({ u'ShortSellRemain'   : short_sale_remain})
+    row_form1  = pd.DataFrame({ u'ID'     : stock_num})
+    row_form2  = pd.DataFrame({ u'Name'   : stock_name})
+    row_form3  = pd.DataFrame({ u'MarginTradeBuy'    : margin_buy})
+    row_form4  = pd.DataFrame({ u'MarginTradeSell'   : margin_sell})
+    row_form5  = pd.DataFrame({ u'MarginTradeRemain' : margin_remain})
+    row_form6  = pd.DataFrame({ u'ShortSellBuy'      : short_sale_buy})
+    row_form7  = pd.DataFrame({ u'ShortSellSell'     : short_sale_sell})
+    row_form8  = pd.DataFrame({ u'ShortSellRemain'   : short_sale_remain})
+    row_form9  = pd.DataFrame({ u'TotalVolume'       : totalvolume})
+    row_form10 = pd.DataFrame({ u'ChargeOff'         : chargeoff})
     
     form1 = pd.concat([row_form1[u'ID'],
                        row_form2[u'Name'],
@@ -229,9 +235,11 @@ def daily_information(FilePath, date):
                        row_form5[u'MarginTradeRemain'],
                        row_form6[u'ShortSellBuy'],
                        row_form7[u'ShortSellSell'],
-                       row_form8[u'ShortSellRemain']],
+                       row_form8[u'ShortSellRemain'],
+                       row_form9[u'TotalVolume'],
+                       row_form10[u'ChargeOff'],],
                        axis =1)
-
+    
     #micolumns  = pd.MultiIndex.from_tuples([(date,'ID'), (date,'Name'),
     #                                        (date,'margin_buy'),(date,'margin_sell'),(date,'margin_remain'),
     #                                        (date,'short_sale_buy'),(date,'short_sale_sell'),(date,'short_sale_remain')],
