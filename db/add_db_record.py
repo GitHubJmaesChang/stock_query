@@ -519,12 +519,14 @@ def InsertMonthlyRevenue(stockID, MonthlyRevenue, LastMonthlyRevenue, LastYearMo
 def InsertMarginTrade(stockID, MarginBuy, \
                       MarginSell, MarginRemine, \
                       ShortSellBuy, ShortSellSell, \
-                      ShortSellRemine, date):
+                      ShortSellRemine, TotalVolume, \
+                      ChargeOff, date):
         
 	if (stockID.strip()=="" or \
             MarginBuy.strip()=="" or MarginSell.strip()=="" or \
             MarginRemine.strip()=="" or ShortSellBuy.strip()=="" or \
-            ShortSellSell.strip()=="" or ShortSellRemine.strip()=="" or date.strip()==""):
+            ShortSellSell.strip()=="" or ShortSellRemine.strip()=="" or
+            TotalVolume.strip()="" or ChargeOff.strip()="" or date.strip()==""):
 		dbgPrint("InsertMarginTrade: Parameters cannot be empty")
 		return(-1)
 
@@ -553,6 +555,8 @@ def InsertMarginTrade(stockID, MarginBuy, \
                           "ShortSellBuy, "
                           "ShortSellSell, "
                           "ShortSellRemine, "
+                          "TotalVolume, "
+                          "ChargeOff, "
                           "date) "
                           "VALUES (%(_coid)s, "
                           "%(_MarginBuy)s, "
@@ -561,6 +565,8 @@ def InsertMarginTrade(stockID, MarginBuy, \
                           "%(_ShortSellBuy)s, "
                           "%(_ShortSellSell)s, "
                           "%(_ShortSellRemine)s, "
+                          "%(_TotalVolume)s, "
+                          "%(_ChargeOff)s, "
                           "%(_date)s)")
 
 		data_fs = {
@@ -571,6 +577,8 @@ def InsertMarginTrade(stockID, MarginBuy, \
                         '_ShortSellBuy'  : int(ShortSellBuy),
                         '_ShortSellSell'  : int(ShortSellSell),
 			'_ShortSellRemine' : int(ShortSellRemine),
+                        '_TotalVolume' : int(TotalVolume),
+                        '_ChargeOff' : int(ChargeOff),
 			'_date': date,}
 
 		cursor.execute(add_fs, data_fs)
