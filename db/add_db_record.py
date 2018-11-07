@@ -63,7 +63,6 @@ def valid_date(strDate):
 
 def check_record(sID, date, table):
         print sID
-        
 	try:
 		if(date.strip() == ""):
 			cursor.execute( \
@@ -94,7 +93,17 @@ def InsertCompany(stockID, name):
 	if not (stockID.isdigit()):
 		dbgPrint("InsertCompany: stockID must be numbers")
 		return(-1)
+                
 
+# Get CoId
+        target = "SELECT CoId FROM Company WHERE StockID =" + str(stockID)
+        cursor.execute(target)
+        row = cursor.fetchall()
+        print(row)
+        if(cursor.rowcount <= 0):
+                dbgPrint("InsertMarginTrade: Error: Cannot locate Company ID" + str(cursor.rowcount))
+                return(-1)
+                
 	try:
 		if(check_record(stockID, "", "Company") != 0):
 			dbgPrint("InsertCompany: Error: Record already exist, please make sure no duplicates")
@@ -522,30 +531,30 @@ def InsertMarginTrade(stockID, MarginBuy, \
                       ShortSellRemine, TotalVolume, \
                       ChargeOff, date):
         
-	if (stockID.strip()=="" or \
-            MarginBuy.strip()=="" or MarginSell.strip()=="" or \
-            MarginRemine.strip()=="" or ShortSellBuy.strip()=="" or \
-            ShortSellSell.strip()=="" or ShortSellRemine.strip()=="" or
-            TotalVolume.strip()="" or ChargeOff.strip()="" or date.strip()==""):
+	if (stockID.strip()==""   or \
+            MarginBuy.strip()=="" or MarginSell.strip()==""       or \
+            MarginRemine.strip()==""  or ShortSellBuy.strip()=="" or \
+            ShortSellSell.strip()=="" or ShortSellRemine.strip()=="" or \
+            TotalVolume.strip()==""   or ChargeOff.strip()==""    or date.strip()==""):
 		dbgPrint("InsertMarginTrade: Parameters cannot be empty")
 		return(-1)
 
 	try:
 		valid_date(date)
-		if(check_record(stockID, date, "MarginTrading") != 0):
-			dbgPrint("InsertMarginTrade: Error: Record already exist, please make sure no duplicates")
-			return(-1)
+		#if(check_record(stockID, "", "Company") != 0):
+                #        dbgPrint("InsertMarginTrade: Error: Record already exist, please make sure no duplicates")
+			#return(-1)
 
 		# Get CoId
                 cursor.execute("SELECT CoId FROM Company WHERE StockID=%s", (stockID))
                 row = cursor.fetchall()
-
                 print(row)
 
                 if(cursor.rowcount <= 0):
                         dbgPrint("InsertMarginTrade: Error: Cannot locate Company ID" + str(cursor.rowcount))
                         return(-1)
-                
+
+                #print "process insert db"
 
 		add_fs = ("INSERT INTO MarginTrading "
                           "(CoId, "

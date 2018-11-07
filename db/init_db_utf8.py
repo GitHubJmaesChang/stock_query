@@ -185,7 +185,7 @@ def CreatFinancialTable(db):
 			ShortSellRemine BIGINT, \
 			TotalVolume DOUBLE, \
 			ChargeOff BIGINT, \
-			Date (20), \
+			Date varchar(20), \
 			FOREIGN KEY (CoId) REFERENCES Company(CoId) \
 			) DEFAULT CHARSET=utf8 ENGINE=INNODB \
 			")
