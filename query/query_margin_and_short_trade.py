@@ -25,7 +25,7 @@ headers = {
 def margin_purchase_and_short_sale_query(date , mode):
     target_url = url + str(date) + stock_type + str(mode)
     print target_url
-    html_report = requests.get(target_url, headers=headers)
+    html_report = requests.get(target_url, headers=headers, timeout=5)
     DataFrame_form = pd.read_html(html_report.text.encode('utf8'))
     return pd.concat(DataFrame_form)
 

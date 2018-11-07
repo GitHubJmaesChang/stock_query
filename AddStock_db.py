@@ -162,11 +162,13 @@ def insertInsertMarginTradeDB(file_name, date):
     
     table = pd.read_csv(file_name)
     #,ID,Name,MarginTradebuy,MarginTradeSell,MarginTradeRemine,ShortSellBuy,ShortSellSell,ShortSellRemine
-    for idx in range(0, table.shape[0]):
+    #for idx in range(0, table.shape[0]):
+    for idx in range(0, 1):
         database_InsertCompany(str(table.iloc[idx]['ID']), str(table.iloc[idx]['Name']))
         add_db_record.InsertMarginTrade(str(table.iloc[idx]['ID']), str(int(table.iloc[idx]['MarginTradeBuy'])), \
                                                str(int(table.iloc[idx]['MarginTradeSell'])), str(int(table.iloc[idx]['MarginTradeRemain'])), \
-                                               str(table.iloc[idx]['ShortSellBuy']), str(table.iloc[idx]['ShortSellSell']) ,str(table.iloc[idx]['ShortSellRemain']),date)
+                                               str(table.iloc[idx]['ShortSellBuy']), str(table.iloc[idx]['ShortSellSell']) ,
+                                               str(table.iloc[idx]['TotalVolume']), str(table.iloc[idx]['ChargeOff']), str(table.iloc[idx]['ShortSellRemain']),date)
         
 if __name__ == '__main__':
     #insertMonthlyRevenueDB("D:/Stock/finacial/2018_9_MonthlyRevenue.csv", "2018-09-01")
