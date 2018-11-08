@@ -64,9 +64,9 @@ def data_query_stock_info_by_ID(path, Stock_id):
 
 
 if __name__ == '__main__':
-    #data_query_institutional_investors_info("D:/Stock/finacial/", "20181105")
+    data_query_institutional_investors_info("D:/Stock/finacial/", "20181105")
     #time.sleep(60)
-    data_query_margin_and_short_trade("D:/Stock/finacial/", "20181105")
+    #data_query_margin_and_short_trade("D:/Stock/finacial/", "20181105")
     #time.sleep(70)
     #data_query_stock_dailydata("D:/Stock/finacial/", "20181105")
     #time.sleep(80)

@@ -23,14 +23,15 @@ def check_file_exist(filename):
 
 # crate database : 
 def intial_db():
-    init_db_utf8.InitDB()
-    add_db_record.ConnectDB("localhost", "stock")
+    init_db_utf8.InitDB("localhost", "root", "1234")
+    add_db_record.ConnectDB("localhost", "stock", "1234")
 
 
 
 # insert base_financail report into data base :
 
 def database_InsertCompany(name_id, name):
+    print("company ID = " + name_id + "name = " + name)
     add_db_record.InsertCompany((name_id), (name) )
 
 def database_InsertFinancialStatement(stockID, asset, equity, date):
@@ -163,7 +164,6 @@ def insertInsertMarginTradeDB(file_name, date):
     table = pd.read_csv(file_name)
     #,ID,Name,MarginTradebuy,MarginTradeSell,MarginTradeRemine,ShortSellBuy,ShortSellSell,ShortSellRemine
     for idx in range(0, table.shape[0]):
-    #for idx in range(0, 1):
         database_InsertCompany(str(table.iloc[idx]['ID']), str(table.iloc[idx]['Name']))
         add_db_record.InsertMarginTrade(str(table.iloc[idx]['ID']), str(int(table.iloc[idx]['MarginTradeBuy'])), \
                                                str(int(table.iloc[idx]['MarginTradeSell'])), str(int(table.iloc[idx]['MarginTradeRemain'])), \
@@ -171,8 +171,12 @@ def insertInsertMarginTradeDB(file_name, date):
                                                str(table.iloc[idx]['TotalVolume']), str(table.iloc[idx]['ChargeOff']), str(table.iloc[idx]['ShortSellRemain']),date)
         
 if __name__ == '__main__':
-    #insertMonthlyRevenueDB("D:/Stock/finacial/2018_9_MonthlyRevenue.csv", "2018-09-01")
-    #inserFoundationExchangeDB("D:/Stock/finacial/20181105_FoundationExchange.csv", "2018-11-05")
-    #insertInsertStockExchangeDB("D:/Stock/finacial/20181105_stockExchange.csv", "2018-11-05")
-    insertInsertMarginTradeDB("./20181105_MarginTrade.csv", "2018-11-05")
+    insertMonthlyRevenueDB("D:/Stock/finacial/2018_9_MonthlyRevenue.csv", "2018-09-01")
+    print("**********2018_9_MonthlyRevenue insert done***************")
+    inserFoundationExchangeDB("D:/Stock/finacial/20181105_FoundationExchange.csv", "2018-11-05")
+    print("**********20181105_FoundationExchange insert done***************")
+    insertInsertStockExchangeDB("D:/Stock/finacial/20181105_stockExchange.csv", "2018-11-05")
+    print("**********20181105_stockExchange insert done***************")
+    insertInsertMarginTradeDB("D:/Stock/finacial/20181105_MarginTrade.csv", "2018-11-05")
+    print("**********20181105_MarginTrade insert done***************")
 
