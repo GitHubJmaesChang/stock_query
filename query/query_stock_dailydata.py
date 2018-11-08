@@ -18,10 +18,15 @@ Savefiledir = 'D:/Stock/finacial/'
 url="http://www.tse.com.tw/exchangeReport/MI_INDEX?response=html&date="
 stock_type = "&type="
 
+headers = {
+		'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36'	
+}
+
+
 def stock_query_html_table_by_type(date , mode):
     target_url = url + str(date) + stock_type + str(mode)
     print target_url
-    html_report = requests.get(target_url)
+    html_report = requests.get(target_url, headers=headers, timeout =5)
     DataFrame_form = pd.read_html(html_report.text.encode('utf8'))
     return pd.concat(DataFrame_form)
 
