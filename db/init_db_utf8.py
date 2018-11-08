@@ -13,7 +13,7 @@ def dbgPrint(s):
 def InitDB():
 	db = MS.connect(host="localhost",  # the host
 		user="root",       # username
-		passwd="1234",
+		passwd="ftdi1234",
 		charset='utf8',
 		use_unicode=True)
 
@@ -180,8 +180,8 @@ def CreatFinancialTable(db):
 			MarginBuy BIGINT, \
 			MarginSell BIGINT, \
 			MarginRemine BIGINT, \
-			ShortSellBuy DOUBLE, \
-			ShortSellSell DOUBLE, \
+			ShortSellBuy BIGINT, \
+			ShortSellSell BIGINT, \
 			ShortSellRemine BIGINT, \
 			TotalVolume DOUBLE, \
 			ChargeOff BIGINT, \

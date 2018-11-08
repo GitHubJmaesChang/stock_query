@@ -73,27 +73,27 @@ def insertFinancailSeate_to_database(file_name, date):
 
 def test_verify_financaStatement():
     target_file = File_Path + "basic_report106_s1.csv"
-    print target_file
+    print (target_file)
     insertFinancailSeate_to_database(target_file, "2017-05-15")
     
     target_file = File_Path + "basic_report106_s2.csv"
-    print target_file
+    print (target_file)
     insertFinancailSeate_to_database(target_file, "2017-08-14")
 
     target_file = File_Path + "basic_report106_s3.csv"
-    print target_file
+    print (target_file)
     insertFinancailSeate_to_database(target_file, "2017-10-31")
 
     target_file = File_Path + "basic_report106_s4.csv"
-    print target_file
+    print (target_file)
     insertFinancailSeate_to_database(target_file, "2018-03-31")
 
     target_file = File_Path + "basic_report107_s1.csv"
-    print target_file
+    print (target_file)
     insertFinancailSeate_to_database(target_file, "2018-05-15")
 
     target_file = File_Path + "basic_report107_s2.csv"
-    print target_file
+    print (target_file)
     insertFinancailSeate_to_database(target_file, "2018-08-14")
     print "process done"
 
@@ -162,8 +162,8 @@ def insertInsertMarginTradeDB(file_name, date):
     
     table = pd.read_csv(file_name)
     #,ID,Name,MarginTradebuy,MarginTradeSell,MarginTradeRemine,ShortSellBuy,ShortSellSell,ShortSellRemine
-    #for idx in range(0, table.shape[0]):
-    for idx in range(0, 1):
+    for idx in range(0, table.shape[0]):
+    #for idx in range(0, 1):
         database_InsertCompany(str(table.iloc[idx]['ID']), str(table.iloc[idx]['Name']))
         add_db_record.InsertMarginTrade(str(table.iloc[idx]['ID']), str(int(table.iloc[idx]['MarginTradeBuy'])), \
                                                str(int(table.iloc[idx]['MarginTradeSell'])), str(int(table.iloc[idx]['MarginTradeRemain'])), \
@@ -174,5 +174,5 @@ if __name__ == '__main__':
     #insertMonthlyRevenueDB("D:/Stock/finacial/2018_9_MonthlyRevenue.csv", "2018-09-01")
     #inserFoundationExchangeDB("D:/Stock/finacial/20181105_FoundationExchange.csv", "2018-11-05")
     #insertInsertStockExchangeDB("D:/Stock/finacial/20181105_stockExchange.csv", "2018-11-05")
-    insertInsertMarginTradeDB("D:/Stock/finacial/20181105_MarginTrade.csv", "2018-11-05")
+    insertInsertMarginTradeDB("./20181105_MarginTrade.csv", "2018-11-05")
 

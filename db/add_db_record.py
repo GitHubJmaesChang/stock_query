@@ -7,7 +7,9 @@ import datetime
 from datetime import date, timedelta
 import socket
 import warnings
+#from enum import Enum
 
+#ERR = Enum(Empty = -1, Network = -2, Dup = -3)
 
 
 def dbgPrint(s):
@@ -40,7 +42,7 @@ def ConnectDB(host_addr, dbname):
 	try:
 		db = mcon.connect(host=host_addr,		# the host
 			user="root",	# username
-			passwd="1234",
+			passwd="ftdi1234",
 			database=dbname,
 			charset='utf8',
 			use_unicode=True)
@@ -95,7 +97,7 @@ def InsertCompany(stockID, name):
 		return(-1)
                 
 
-# Get CoId
+	# Get CoId
         target = "SELECT CoId FROM Company WHERE StockID =" + str(stockID)
         cursor.execute(target)
         row = cursor.fetchall()
@@ -347,29 +349,17 @@ def InsertStockExchange(stockID, ExchangeVolume, StartPrice, HighPrice, LowPrice
                         return(-1)
                 
 
-		add_fs = ("INSERT INTO StockExchange "
-                          "(CoId, "
-                          "ExchangeVolume, "
-                          "StartPrice, "
-                          "HighPrice, "
-                          "LowPrice, "
-                          "EndPrice, "
-                          "Date) "
-			  "VALUES (%(_coid)s, "
-                          "%(_ExchangeVolume)s, "
-                          "%(_StartPrice)s, "
-                          "%(_HighPrice)s, "
-                          "%(_LowPrice)s, "
-                          "%(_EndPrice)s, "
-                          "%(_date)s)")
+		add_fs = ("INSERT INTO StockExchange " \
+                          "(CoId, ExchangeVolume, StartPrice, HighPrice, LowPrice, EndPrice, Date) " \
+			  "VALUES (%(_coid)s, %(_exchangevolume)s, %(_startprice)s, %(_highprice)s, %(_lowprice)s, %(_endprice)s, %(_date)s)")
 
 		data_fs = {
                         '_coid': int(row[0][0]),
-			'_ExchangeVolume': int(ExchangeVolume),
-			'_StartPrice': float(StartPrice),
-			'_HighPrice': float(HighPrice),
-                        '_LowPrice': float(LowPrice),
-			'_EndPrice': float(EndPrice),
+			'_exchangevolume': int(ExchangeVolume),
+			'_startprice': float(StartPrice),
+			'_highprice': float(HighPrice),
+                        '_lowprice': float(LowPrice),
+			'_endprice': float(EndPrice),
 			'_date': date,}
 
 		cursor.execute(add_fs, data_fs)
@@ -384,9 +374,8 @@ def InsertStockExchange(stockID, ExchangeVolume, StartPrice, HighPrice, LowPrice
 
 def InsertFoundationExchange(stockID, ForeignInvestorBuy, ForeignInvestorSell, \
                              InvestmentTrustBuy, InvestmentTrustSell, \
-                             DealerBuy, DealerSell, \
-                             TotalVolume, date):
-        
+                             DealerBuy, DealerSell, TotalVolume, date):
+
 	if (stockID.strip()=="" or \
             ForeignInvestorBuy.strip()=="" or ForeignInvestorSell.strip()=="" or \
             InvestmentTrustBuy.strip()=="" or InvestmentTrustSell.strip()=="" or \
@@ -412,33 +401,20 @@ def InsertFoundationExchange(stockID, ForeignInvestorBuy, ForeignInvestorSell, \
                         return(-1)
                 
 
-		add_fs = ("INSERT INTO FoundationExchange "
-                          "(CoId, "
-                          "ForeignInvestorBuy, "
-                          "ForeignInvestorSell, "
-                          "InvestmentTrustBuy, "
-                          "InvestmentTrustSell, "
-                          "DealerBuy, DealerSell, "
-                          "TotalVolume, date) "
-                          "VALUES (%(_coid)s, "
-                          "%(_ForeignInvestorBuy)s, "
-                          "%(_ForeignInvestorSell)s, "
-                          "%(_InvestmentTrustBuy)s, "
-                          "%(_InvestmentTrustSell)s, "
-                          "%(_DealerBuy)s, "
-                          "%(_DealerSell)s, "
-                          "%(_TotalVolume)s, "
-                          "%(_date)s)")
+		add_fs = ("INSERT INTO FoundationExchange (CoId, ForeignInvestorBuy, ForeignInvestorSell, " \
+				"InvestmentTrustBuy, InvestmentTrustSell, DealerBuy, DealerSell, TotalVolume, date) "
+			"VALUES (%(_coid)s, %(_foreigninvestorBuy)s, %(_foreigninvestorsell)s, %(_investmenttrustbuy)s, %(_investmenttrustsell)s, " \
+				"%(_DealerBuy)s, %(_DealerSell)s, %(_TotalVolume)s, %(_date)s)")
 
 		data_fs = {
                         '_coid'                : int(row[0][0]),
-			'_ForeignInvestorBuy'  : int(ForeignInvestorBuy),
-			'_ForeignInvestorSell' : int(ForeignInvestorSell),
-			'_InvestmentTrustBuy'  : int(InvestmentTrustBuy),
-                        '_InvestmentTrustSell' : int(InvestmentTrustSell),
-                        '_DealerBuy'           : int(DealerBuy),
-			'_DealerSell'          : int(DealerSell),
-                        '_TotalVolume'         : int(TotalVolume),
+			'_foreigninvestorbuy'  : int(ForeignInvestorBuy),
+			'_foreigninvestorsell' : int(ForeignInvestorSell),
+			'_investmenttrustbuy'  : int(InvestmentTrustBuy),
+                        '_investmenttrustsell' : int(InvestmentTrustSell),
+                        '_dealerbuy'           : int(DealerBuy),
+			'_dealersell'          : int(DealerSell),
+                        '_totalvolume'         : int(TotalVolume),
 			'_date': date,}
 
 		cursor.execute(add_fs, data_fs)
@@ -482,37 +458,21 @@ def InsertMonthlyRevenue(stockID, MonthlyRevenue, LastMonthlyRevenue, LastYearMo
                         return(-1)
                 
 
-		add_fs = ("INSERT INTO MonthlyRevenue "
-                          "(CoId, "
-                          "MonthlyRevenue, "
-                          "LastMonthlyRevenue, "
-                          "LastYearMonthlyRevenue, "
-                          "MonthlyIncreaseRevenue, "
-                          "LastYearMonthlyIncreaseRevenue, "
-                          "CumulativeRevenue, "
-                          "LastYearCumulativeRevenue, "
-                          "CompareCumulativeRevenue, "
-                          "date) "
-                          "VALUES (%(_coid)s, "
-                          "%(_MonthlyRevenue)s, "
-                          "%(_LastMonthlyRevenue)s, "
-                          "%(_LastYearMonthlyRevenue)s, "
-                          "%(_MonthlyIncreaseRevenue)s, "
-                          "%(_LastYearMonthlyIncreaseRevenue)s, "
-                          "%(_CumulativeRevenue)s, "
-                          "%(_LastYearCumulativeRevenue)s, "
-                          "%(_CompareCumulativeRevenue)s, %(_date)s)")
+		add_fs = ("INSERT INTO MonthlyRevenue (CoId, MonthlyRevenue, LastMonthlyRevenue, LastYearMonthlyRevenue, MonthlyIncreaseRevenue, " \
+				"LastYearMonthlyIncreaseRevenue, CumulativeRevenue, LastYearCumulativeRevenue, CompareCumulativeRevenue, date) " \
+			"VALUES (%(_coid)s, %(_monthlyrevenue)s, %(_lastmonthlyrevenue)s, %(_lastyearmonthlyrevenue)s, %(_monthlyincreaserevenue)s, " \
+				"%(_lastyearmonthlyincreaserevenue)s, %(_cumulativerevenue)s, %(_lastyearcumulativerevenue)s, %(_comparecumulativerevenue)s, %(_date)s)" )
 
 		data_fs = {
                         '_coid'                : int(row[0][0]),
-			'_MonthlyRevenue'      : int(MonthlyRevenue),
-			'_LastMonthlyRevenue'  : int(LastMonthlyRevenue),
-			'_LastYearMonthlyRevenue'  : int(LastYearMonthlyRevenue),
-                        '_MonthlyIncreaseRevenue'  : float(MonthlyIncreaseRevenue),
-                        '_LastYearMonthlyIncreaseRevenue': float(LastYearMonthlyIncreaseRevenue),
-			'_CumulativeRevenue'          : int(CumulativeRevenue),
-                        '_LastYearCumulativeRevenue'  : int(LastYearCumulativeRevenue),
-                        '_CompareCumulativeRevenue'   : float(CompareCumulativeRevenue),
+			'_monthlyrevenue'      : int(MonthlyRevenue),
+			'_lastmonthlyrevenue'  : int(LastMonthlyRevenue),
+			'_lastyearmonthlyrevenue'  : int(LastYearMonthlyRevenue),
+                        '_monthlyincreaserevenue'  : float(MonthlyIncreaseRevenue),
+                        '_lastyearmonthlyincreaserevenue': float(LastYearMonthlyIncreaseRevenue),
+			'_cumulativerevenue'          : int(CumulativeRevenue),
+                        '_lastYearcumulativerevenue'  : int(LastYearCumulativeRevenue),
+                        '_comparecumulativerevenue'   : float(CompareCumulativeRevenue),
 			'_date': date,}
 
 		cursor.execute(add_fs, data_fs)
@@ -525,11 +485,8 @@ def InsertMonthlyRevenue(stockID, MonthlyRevenue, LastMonthlyRevenue, LastYearMo
 	dbgPrint("InsertMonthlyRevenue: Insert Completed: " + str(data_fs))
 	return(0)
 
-def InsertMarginTrade(stockID, MarginBuy, \
-                      MarginSell, MarginRemine, \
-                      ShortSellBuy, ShortSellSell, \
-                      ShortSellRemine, TotalVolume, \
-                      ChargeOff, date):
+def InsertMarginTrade(stockID, MarginBuy, MarginSell, MarginRemine, ShortSellBuy, \
+		ShortSellSell, ShortSellRemine, TotalVolume, ChargeOff, date):
         
 	if (stockID.strip()==""   or \
             MarginBuy.strip()=="" or MarginSell.strip()==""       or \
@@ -546,7 +503,7 @@ def InsertMarginTrade(stockID, MarginBuy, \
 			#return(-1)
 
 		# Get CoId
-                cursor.execute("SELECT CoId FROM Company WHERE StockID=%s", (stockID))
+                cursor.execute("SELECT CoId FROM Company WHERE StockID=%s", (stockID,))
                 row = cursor.fetchall()
                 print(row)
 
@@ -556,48 +513,31 @@ def InsertMarginTrade(stockID, MarginBuy, \
 
                 #print "process insert db"
 
-		add_fs = ("INSERT INTO MarginTrading "
-                          "(CoId, "
-                          "MarginBuy, "
-                          "MarginSell, "
-                          "MarginRemine, "
-                          "ShortSellBuy, "
-                          "ShortSellSell, "
-                          "ShortSellRemine, "
-                          "TotalVolume, "
-                          "ChargeOff, "
-                          "date) "
-                          "VALUES (%(_coid)s, "
-                          "%(_MarginBuy)s, "
-                          "%(_MarginSell)s, "
-                          "%(_MarginRemine)s, "
-                          "%(_ShortSellBuy)s, "
-                          "%(_ShortSellSell)s, "
-                          "%(_ShortSellRemine)s, "
-                          "%(_TotalVolume)s, "
-                          "%(_ChargeOff)s, "
-                          "%(_date)s)")
+		add_fs = ("INSERT INTO MarginTrading (CoId, MarginBuy, MarginSell, MarginRemine, ShortSellBuy, " \
+				"ShortSellSell, ShortSellRemine, TotalVolume, ChargeOff, date) " \
+			"VALUES (%(_coid)s, %(_marginbuy)s, %(_marginsell)s, %(_marginremine)s, %(_shortsellbuy)s, " \
+				"%(_shortsellsell)s, %(_shortsellremine)s, %(_totalvolume)s, %(_chargeoff)s, %(_date)s)")
 
 		data_fs = {
                         '_coid'       : int(row[0][0]),
-			'_MarginBuy'  : int(MarginBuy),
-			'_MarginSell' : int(MarginSell),
-			'_MarginRemine'  : int(MarginRemine),
-                        '_ShortSellBuy'  : int(ShortSellBuy),
-                        '_ShortSellSell'  : int(ShortSellSell),
-			'_ShortSellRemine' : int(ShortSellRemine),
-                        '_TotalVolume' : int(TotalVolume),
-                        '_ChargeOff' : int(ChargeOff),
+			'_marginbuy'  : int(MarginBuy),
+			'_marginsell' : int(MarginSell),
+			'_marginremine'  : int(MarginRemine),
+                        '_shortsellbuy'  : int(ShortSellBuy),
+                        '_shortsellsell'  : int(ShortSellSell),
+			'_shortsellremine' : int(ShortSellRemine),
+                        '_totalvolume' : int(TotalVolume),
+                        '_chargeoff' : int(ChargeOff),
 			'_date': date,}
 
 		cursor.execute(add_fs, data_fs)
 		db.commit()
 
 	except mcon.Error as err:
-		dbgPrint("MarginTrading: Connect to DB Error [" + str(err) + "] ")
+		dbgPrint("InsertMarginTrade: Insert Error [" + str(err) + "] ")
 		return(-1)
 
-	dbgPrint("MarginTrading: Insert Completed: " + str(data_fs))
+	dbgPrint("InsertMarginTrade: Insert Completed: " + str(data_fs))
 	return(0)
 
 
