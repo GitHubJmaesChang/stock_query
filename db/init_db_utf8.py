@@ -10,10 +10,10 @@ def dbgPrint(s):
 	ts = str(datetime.datetime.now())
 	print("[" + ts + "]:" + str(s))
 
-def InitDB():
-	db = MS.connect(host="localhost",  # the host
-		user="root",       # username
-		passwd="ftdi1234",
+def InitDB( dbhost, dbuser,dbpassword):
+	db = MS.connect(host=dbhost,  # the host
+		user=dbuser,       # username
+		passwd=dbpassword,
 		charset='utf8',
 		use_unicode=True)
 
@@ -183,7 +183,7 @@ def CreatFinancialTable(db):
 			ShortSellBuy BIGINT, \
 			ShortSellSell BIGINT, \
 			ShortSellRemine BIGINT, \
-			TotalVolume DOUBLE, \
+			TotalVolume BIGINT, \
 			ChargeOff BIGINT, \
 			Date varchar(20), \
 			FOREIGN KEY (CoId) REFERENCES Company(CoId) \
