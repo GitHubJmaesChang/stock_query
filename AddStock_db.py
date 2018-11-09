@@ -23,8 +23,8 @@ def check_file_exist(filename):
 
 # crate database : 
 def intial_db():
-    init_db_utf8.InitDB("localhost", "root", "1234")
-    add_db_record.ConnectDB("localhost", "stock", "1234")
+    init_db_utf8.InitDB("localhost", "root", "ftdi1234")
+    add_db_record.ConnectDB("localhost", "stock", "ftdi1234")
 
 
 
@@ -171,12 +171,12 @@ def insertInsertMarginTradeDB(file_name, date):
                                                str(table.iloc[idx]['TotalVolume']), str(table.iloc[idx]['ChargeOff']), str(table.iloc[idx]['ShortSellRemain']),date)
         
 if __name__ == '__main__':
-    insertMonthlyRevenueDB("D:/Stock/finacial/2018_9_MonthlyRevenue.csv", "2018-09-01")
-    print("**********2018_9_MonthlyRevenue insert done***************")
-    inserFoundationExchangeDB("D:/Stock/finacial/20181105_FoundationExchange.csv", "2018-11-05")
+    #insertMonthlyRevenueDB("./2018_9_MonthRevenue.csv", "2018-09-01")
+    #print("**********2018_9_MonthRevenue insert done***************")
+    inserFoundationExchangeDB("./20181105_FoundationExchange.csv", "2018-11-05")
     print("**********20181105_FoundationExchange insert done***************")
-    insertInsertStockExchangeDB("D:/Stock/finacial/20181105_stockExchange.csv", "2018-11-05")
+    insertInsertStockExchangeDB("./20181105_stockExchange.csv", "2018-11-05")
     print("**********20181105_stockExchange insert done***************")
-    insertInsertMarginTradeDB("D:/Stock/finacial/20181105_MarginTrade.csv", "2018-11-05")
+    insertInsertMarginTradeDB("./20181105_MarginTrade.csv", "2018-11-05")
     print("**********20181105_MarginTrade insert done***************")
 

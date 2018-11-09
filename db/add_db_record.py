@@ -63,15 +63,14 @@ def valid_date(strDate):
 		raise ValueError("valid_date: Incorrect DATE format, should be YYYY-MM-DD")
 
 
-def check_record(sID, date, dbidx, table):
+def check_record(sID, date, table):
 	try:
 		if(date.strip() == ""):
 			cursor.execute( \
-				"SELECT COUNT(1) FROM " + table + " WHERE " + dbidx + " = %s limit 1", (sID,))
+			"SELECT COUNT(1) FROM " + table + " WHERE StockID = %s limit 1", (sID,))
 		else:
 			cursor.execute( \
-				"SELECT COUNT(1) FROM " + table + " WHERE " + dbidx + " = %s and Date = %s limit 1", \
-				(sID, date))
+			"SELECT COUNT(1) FROM " + table + " WHERE CoId = %s and Date = %s limit 1", (sID, date))
 
 		res = cursor.fetchone()
 		if res[0] > 0:
@@ -79,10 +78,10 @@ def check_record(sID, date, dbidx, table):
 			return(-1)
 
 	except mcon.Error as err:
-		 dbgPrint("cehck_record: DB Error [" + str(err) + "] ")
+		 dbgPrint("cehck_record: DB Error, table[" + table + "] err [" + str(err) + "] ")
 		 return(-1)
 
-	dbgPrint("check_record Completed: table [" + table + "] " + dbidx + "[" + str(sID) + "]")
+	dbgPrint("check_record Completed: table [" + table + "] [" + str(sID) + "]")
 	return(0)
 
 
@@ -96,17 +95,19 @@ def InsertCompany(stockID, name):
 		return(-1)
         
 	# Get CoId
-        target = "SELECT CoId FROM Company WHERE StockID =" + str(stockID)
-        cursor.execute(target)
+        #target = "SELECT CoId FROM Company WHERE StockID =" + str(stockID)
+        #cursor.execute(target)
+	cursor.execute("SELECT CoId FROM Company WHERE StockID = %s", (stockID,))
         row = cursor.fetchall()
         print(row)
         
-        if(cursor.rowcount < 0):
-                dbgPrint("InsertMarginTrade: Error: Cannot locate Company ID" + str(cursor.rowcount))
+	# only insert if the company does not exists
+        if(cursor.rowcount > 0):
+                dbgPrint("InsertCompany: Error: Company already exists" + str(cursor.rowcount))
                 return(-1)
                 
 	try:
-		if(check_record(stockID, "", "StockID", "Company") != 0):
+		if(check_record(stockID, "", "Company") != 0):
 			dbgPrint("InsertCompany: Error: Record already exist, please make sure no duplicates")
 			return(-1)
 		print("########check_record########")
@@ -156,19 +157,18 @@ def InsertCalStatement(stockID, eps, netaps, roe, roa, date):
 
         try:
                 valid_date(date)
-                if(check_record(stockID, date, "StockID", "CalStatement") != 0):
-                        dbgPrint("InsertCalStatement: Error: Record already exist, please make sure no duplicates")
-                        return(-1)
 
 		# Get CoId
                 cursor.execute("SELECT CoId FROM Company WHERE StockID=%s", (stockID,))
                 row = cursor.fetchall()
-
-                print(row)
-
                 if(cursor.rowcount <= 0):
                         dbgPrint("CalStatement: Error: Cannot locate Company ID" + str(cursor.rowcount))
                         return(-1)
+		
+		if(check_record(str(row[0][0]), date, "CalStatement") != 0):
+			dbgPrint("InsertCalStatement: Error: Record already exist, please make sure no duplicates")
+			return(-1)
+
 
                 add_is = ("INSERT INTO CalStatement " \
                         "(CoId, EarningPerShare, NetAssetPerShare, ROE, ROA, Date) " \
@@ -229,19 +229,16 @@ def InsertIncomeStatement(stockID, oprevenu, opprofit, netincome, \
 
 	try:
 		valid_date(date)
-		if(check_record(stockID, date, "StockID", "IncomeStatement") != 0):
-			 dbgPrint("InsertIncomeStatement: Error: Record already exist, please make sure no duplicates")
-			 return(-1)
 
 		# Get CoId
 		cursor.execute("SELECT CoId FROM Company WHERE StockID = %s", (stockID,))
 		row = cursor.fetchall()
-		#if(cursor.rowcount > 1): # this is to be enabled later
-		#dbgPrint("IncomeStatement: Error: Too many FinID" + str(cursor.rowcount))
-		#return(-1)
-
 		if(cursor.rowcount <= 0):
-			dbgPrint("IncomeStatement: Error: Cannot locate Company ID" + str(cursor.rowcount))
+                         dbgPrint("IncomeStatement Error: Cannot locate Company ID" + str(cursor.rowcount))
+                         return(-1)
+		
+		if(check_record(str(row[0][0]), date, "IncomeStatement") != 0):
+			dbgPrint("InsertIncomeStatement: Error: Record already exist, please make sure no duplicates")
 			return(-1)
 
 		add_is = ("INSERT INTO IncomeStatement " \
@@ -287,20 +284,17 @@ def InsertFinancialStatement(stockID, asset, equity, date):
 
 	try:
 		valid_date(date)
-		if(check_record(stockID, date, "StockID", "FinancialStatement") != 0):
-			dbgPrint("InsertFinancialStatement: Error: Record already exist, please make sure no duplicates")
-			return(-1)
 
 		# Get CoId
                 cursor.execute("SELECT CoId FROM Company WHERE StockID=%s", (stockID,))
                 row = cursor.fetchall()
-
-                print(row)
-
                 if(cursor.rowcount <= 0):
                         dbgPrint("InsertFinancialStatement: Error: Cannot locate Company ID" + str(cursor.rowcount))
                         return(-1)
-                
+               
+	       	if(check_record(str(row[0][0]), date, "FinancialStatement") != 0):
+	       		dbgPrint("InsertFinancialStatement: Error: Record already exist, please make sure no duplicates")
+			return(-1)
 
 		add_fs = ("INSERT INTO FinancialStatement " \
 			"(CoId, TotalAsset, TotalEquity, Date) " \
@@ -334,25 +328,17 @@ def InsertStockExchange(stockID, ExchangeVolume, StartPrice, HighPrice, LowPrice
 
 	try:
 		valid_date(date)
-		#if(check_record("", date, "StockExchange") != 0):
-		#	dbgPrint("InsertFoundationExchange: Error: Record already exist, please make sure no duplicates")
-		#	return(-1)
 		
 		# Get CoId
                 cursor.execute("SELECT CoId FROM Company WHERE StockID=%s", (stockID,))
                 row = cursor.fetchall()
-
-                print(row)
-
                 if(cursor.rowcount <= 0):
                         dbgPrint("InsertStockExchange: Error: Cannot locate Company ID"  +str(stockID) +":"+ str(cursor.rowcount))
                         return(-1)
 
-                #check this Coid be inserted or not at the same day
-                if(check_record(int(row[0][0]), date, "CoId", "StockExchange") != 0):
-                        dbgPrint("InsertStockExchange: Error: Record already exist, please make sure no duplicates")
-                        return(-1)
-                
+		if(check_record(str(row[0][0]), date, "StockExchange") != 0):
+			dbgPrint("InsertStockExchange: Error: Record already exist, please make sure no duplicates")
+			return(-1)
 
 		add_fs = ("INSERT INTO StockExchange " \
                           "(CoId, ExchangeVolume, StartPrice, HighPrice, LowPrice, EndPrice, Date) " \
@@ -391,31 +377,23 @@ def InsertFoundationExchange(stockID, ForeignInvestorBuy, ForeignInvestorSell, \
 
 	try:
 		valid_date(date)
-		#if(check_record("", date, "FoundationExchange") != 0):
-		#	dbgPrint("InsertFoundationExchange: Error: Record already exist, please make sure no duplicates")
-		#	return(-1)
 
 		# Get CoId
                 cursor.execute("SELECT CoId FROM Company WHERE StockID=%s", (stockID,))
                 row = cursor.fetchall()
-
-                print(row)
-
                 if(cursor.rowcount <= 0):
                         dbgPrint("InsertFoundationExchange: Error: Cannot locate Company ID"  +str(stockID) +":"+ str(cursor.rowcount))
                         return(-1)
 
-
-                #check this Coid be inserted or not at the same day
-                if(check_record(int(row[0][0]), date, "CoId", "FoundationExchange") != 0):
-                        dbgPrint("InsertFoundationExchange: Error: Record already exist, please make sure no duplicates")
-                        return(-1)
-                
+		# check for duplicate, i.e. same date
+		if(check_record(str(row[0][0]), date, "FoundationExchange") != 0):
+			dbgPrint("InsertFoundationExchange: Error: Record already exist, please make sure no duplicates")
+			return(-1)
 
 		add_fs = ("INSERT INTO FoundationExchange (CoId, ForeignInvestorBuy, ForeignInvestorSell, " \
 				"InvestmentTrustBuy, InvestmentTrustSell, DealerBuy, DealerSell, TotalVolume, date) "
-			"VALUES (%(_coid)s, %(_foreigninvestorBuy)s, %(_foreigninvestorsell)s, %(_investmenttrustbuy)s, %(_investmenttrustsell)s, " \
-				"%(_DealerBuy)s, %(_DealerSell)s, %(_TotalVolume)s, %(_date)s)")
+			"VALUES (%(_coid)s, %(_foreigninvestorbuy)s, %(_foreigninvestorsell)s, %(_investmenttrustbuy)s, %(_investmenttrustsell)s, " \
+				"%(_dealerbuy)s, %(_dealersell)s, %(_totalvolume)s, %(_date)s)")
 
 		data_fs = {
                         '_coid'                : int(row[0][0]),
@@ -454,25 +432,18 @@ def InsertMonthlyRevenue(stockID, MonthlyRevenue, LastMonthlyRevenue, LastYearMo
 
 	try:
 		valid_date(date)
-		#if(check_record("", date, "MonthlyRevenue") != 0):
-		#	dbgPrint("InsertMonthlyRevenue: Error: Record already exist, please make sure no duplicates")
-		#	return(-1)
 
 		# Get CoId
                 cursor.execute("SELECT CoId FROM Company WHERE StockID=%s", (stockID,))
                 row = cursor.fetchall()
-
-                print(row)
-
                 if(cursor.rowcount <= 0):
                         dbgPrint("InsertMonthlyRevenue: Error: Cannot locate Company ID"  +str(stockID) +":"+ str(cursor.rowcount))
                         return(-1)
                 
-                #check this Coid be inserted or not at the same day
-                if(check_record(int(row[0][0]), date, "CoId", "MonthlyRevenue") != 0):
-                        dbgPrint("InsertMonthlyRevenue: Error: Record already exist, please make sure no duplicates")
-                        return(-1)
-                
+               	if(check_record(str(row[0][0]), date, "MonthlyRevenue") != 0):
+	       		dbgPrint("InsertMonthlyRevenue: Error: Record already exist, please make sure no duplicates")
+			return(-1)
+
                 print("insert db")
 		add_fs = ("INSERT INTO MonthlyRevenue (CoId, MonthlyRevenue, LastMonthlyRevenue, LastYearMonthlyRevenue, MonthlyIncreaseRevenue, " \
 				"LastYearMonthlyIncreaseRevenue, CumulativeRevenue, LastYearCumulativeRevenue, CompareCumulativeRevenue, date) " \
@@ -487,7 +458,7 @@ def InsertMonthlyRevenue(stockID, MonthlyRevenue, LastMonthlyRevenue, LastYearMo
                         '_monthlyincreaserevenue'  : float(MonthlyIncreaseRevenue),
                         '_lastyearmonthlyincreaserevenue': float(LastYearMonthlyIncreaseRevenue),
 			'_cumulativerevenue'          : int(CumulativeRevenue),
-                        '_lastYearcumulativerevenue'  : int(LastYearCumulativeRevenue),
+                        '_lastyearcumulativerevenue'  : int(LastYearCumulativeRevenue),
                         '_comparecumulativerevenue'   : float(CompareCumulativeRevenue),
 			'_date': date,}
 
@@ -514,25 +485,17 @@ def InsertMarginTrade(stockID, MarginBuy, MarginSell, MarginRemine, ShortSellBuy
 
 	try:
 		valid_date(date)
-		#if(check_record("", date, "MarginTrading") != 0):
-                #        dbgPrint("InsertMarginTrade: Error: Record already exist, please make sure no duplicates")
-		#	return(-1)
 
 		# Get CoId
                 cursor.execute("SELECT CoId FROM Company WHERE StockID=%s", (stockID,))
                 row = cursor.fetchall()
-                print(row)
-
                 if(cursor.rowcount <= 0):
                         dbgPrint("InsertMarginTrade: Error: Cannot locate Company ID" +str(stockID) +":"+ str(cursor.rowcount))
                         return(-1)
 
-                #check this Coid be inserted or not at the same day
-                if(check_record(int(row[0][0]), date, "CoId", "MarginTrading") != 0):
-                        dbgPrint("InsertMarginTrade: Error: Record already exist, please make sure no duplicates")
-                        return(-1)
-                
-                #print "process insert db"
+		if(check_record(str(row[0][0]), date, "MarginTrading") != 0):
+			dbgPrint("InsertMarginTrade: Error: Record already exist, please make sure no duplicates")
+			return(-1) 
 
 		add_fs = ("INSERT INTO MarginTrading (CoId, MarginBuy, MarginSell, MarginRemine, ShortSellBuy, " \
 				"ShortSellSell, ShortSellRemine, TotalVolume, ChargeOff, date) " \
@@ -568,4 +531,4 @@ if	__name__ == '__main__':
 	#InsertFinancialStatement("2075", "abc", "1234567890", "1234567890", "2018-09-27")
 	#InsertIncomeStatement("2075","3333333333","4444444444","5555555555","6666666666","7777777777","2018-09-27")
 	#InsertCalStatement("2075", "55555", "666666", "77777", "88888", "2018-09-27")
-	InsertCompany("7777", "Test Company Name")
+	#InsertCompany("7777", "Test Company Name")
