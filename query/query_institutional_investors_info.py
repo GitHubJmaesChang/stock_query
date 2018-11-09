@@ -25,7 +25,25 @@ headers = {
 def invest_table_by_type(date , mode):
     target_url = url + str(date) + stock_type + str(mode)
     print target_url
-    html_report = requests.get(target_url, headers=headers, timeout =5)
+    
+    while True :
+        try:
+            html_report = requests.get(target_url, headers=headers, timeout=5)
+        except requests.exceptions.Timeout:
+            print "request time out"
+            time.sleep(10)
+            continue
+        except requests.exceptions.TooManyRedirects:
+            print ("request url error ")
+            time.sleep(10)
+            continue
+        except requests.exceptions.RequestException as e:
+            print (e)
+            time.sleep(10)
+            continue
+        break
+
+    
     DataFrame_form = pd.read_html(html_report.text.encode('utf8'))
     return pd.concat(DataFrame_form)
 
@@ -278,25 +296,25 @@ def daily_institutional_info(FilePath, date):
                daily_invest_information(date, "20"))
     
 
-    row_form1 = pd.DataFrame({ u' ID '     : stock_num})
-    row_form2 = pd.DataFrame({ u' Name '   : stock_name})
-    row_form3 = pd.DataFrame({ u' Foreign_Investor_buy ' : Foreign_Investor_buy})
-    row_form4 = pd.DataFrame({ u' Foreign_Investor_sell '   : Foreign_Investor_sell})
-    row_form5 = pd.DataFrame({ u' Investment_Trust_buy '   : Investment_Trust_buy})
-    row_form6 = pd.DataFrame({ u' Investment_Trust_sell ' : Investment_Trust_sell})
-    row_form7 = pd.DataFrame({ u' Dealer_buy '   : Dealer_buy})
-    row_form8 = pd.DataFrame({ u' Dealer_sell '   : Dealer_sell})
-    row_form9 = pd.DataFrame({ u' Total '   : Total})
+    row_form1 = pd.DataFrame({ u'ID'     : stock_num})
+    row_form2 = pd.DataFrame({ u'Name'   : stock_name})
+    row_form3 = pd.DataFrame({ u'Foreign_Investor_buy' : Foreign_Investor_buy})
+    row_form4 = pd.DataFrame({ u'Foreign_Investor_sell'   : Foreign_Investor_sell})
+    row_form5 = pd.DataFrame({ u'Investment_Trust_buy'   : Investment_Trust_buy})
+    row_form6 = pd.DataFrame({ u'Investment_Trust_sell' : Investment_Trust_sell})
+    row_form7 = pd.DataFrame({ u'Dealer_buy'   : Dealer_buy})
+    row_form8 = pd.DataFrame({ u'Dealer_sell'   : Dealer_sell})
+    row_form9 = pd.DataFrame({ u'Total'   : Total})
     
-    form1 = pd.concat([row_form1[u' ID '],
-                       row_form2[u' Name '],
-                       row_form3[u' Foreign_Investor_buy '],
-                       row_form4[u' Foreign_Investor_sell '],
-                       row_form5[u' Investment_Trust_buy '],
-                       row_form6[u' Investment_Trust_sell '],
-                       row_form7[u' Dealer_buy '],
-                       row_form8[u' Dealer_sell '],
-                       row_form9[u' Total ']],
+    form1 = pd.concat([row_form1[u'ID'],
+                       row_form2[u'Name'],
+                       row_form3[u'Foreign_Investor_buy'],
+                       row_form4[u'Foreign_Investor_sell'],
+                       row_form5[u'Investment_Trust_buy'],
+                       row_form6[u'Investment_Trust_sell'],
+                       row_form7[u'Dealer_buy'],
+                       row_form8[u'Dealer_sell'],
+                       row_form9[u'Total']],
                        axis =1)
 
     #micolumns  = pd.MultiIndex.from_tuples([(date,'ID'), (date,'Name'),

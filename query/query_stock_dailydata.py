@@ -26,7 +26,24 @@ headers = {
 def stock_query_html_table_by_type(date , mode):
     target_url = url + str(date) + stock_type + str(mode)
     print target_url
-    html_report = requests.get(target_url, headers=headers, timeout =5)
+
+    while True :
+        try:
+            html_report = requests.get(target_url, headers=headers, timeout=5)
+        except requests.exceptions.Timeout:
+            print "request time out"
+            time.sleep(10)
+            continue
+        except requests.exceptions.TooManyRedirects:
+            print ("request url error ")
+            time.sleep(10)
+            continue
+        except requests.exceptions.RequestException as e:
+            print (e)
+            time.sleep(10)
+            continue
+        break
+    
     DataFrame_form = pd.read_html(html_report.text.encode('utf8'))
     return pd.concat(DataFrame_form)
 

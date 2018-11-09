@@ -25,14 +25,30 @@ headers = {
 def margin_purchase_and_short_sale_query(date , mode):
     target_url = url + str(date) + stock_type + str(mode)
     print target_url
-    html_report = requests.get(target_url, headers=headers, timeout=5)
+
+    while True :
+        try:
+            html_report = requests.get(target_url, headers=headers, timeout=5)
+        except requests.exceptions.Timeout:
+            print "request time out"
+            time.sleep(10)
+            continue
+        except requests.exceptions.TooManyRedirects:
+            print ("request url error ")
+            time.sleep(10)
+            continue
+        except requests.exceptions.RequestException as e:
+            print (e)
+            time.sleep(10)
+            continue
+        break
+       
     DataFrame_form = pd.read_html(html_report.text.encode('utf8'))
     return pd.concat(DataFrame_form)
 
 def margin_transaction(date, mode):
-    #水泥
-    type_1_DataFrame = margin_purchase_and_short_sale_query(date , mode)
-    return type_1_DataFrame
+    DataFrame = margin_purchase_and_short_sale_query(date , mode)
+    return DataFrame
 
 def daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
