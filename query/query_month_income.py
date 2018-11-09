@@ -12,8 +12,11 @@ Savefiledir = 'D:/Stock/finacial/'
 def monthly_report(path, year, month):
     
     # 假如是西元，轉成民國
-    if year > 1990:
-        china_year = year - 1911
+
+    int_year = int(year)
+    
+    if int_year > 1990:
+        china_year = int_year - 1911
     
     url = 'http://mops.twse.com.tw/nas/t21/sii/t21sc03_'+str(china_year)+'_'+str(month)+'_0.html'
     
