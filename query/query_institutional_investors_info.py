@@ -58,17 +58,21 @@ def merge_invest_data(stock_num, stock_name,
                Dealer_buy, Dealer_sell,
                Total,
                pd_data):
-    print pd_data
+
+    mutil_coumns = pd.IndexSlice
+    
+    print pd_data.loc[mutil_coumns[0], mutil_coumns[:, u'證券名稱']][0]
+    
     for idx in range(0, pd_data.shape[0]):
-        stock_num.append(pd_data.iloc[idx, 0])
-        stock_name.append(pd_data.iloc[idx, 1])
-        Foreign_Investor_buy.append(pd_data.iloc[idx, 2])
-        Foreign_Investor_sell.append(pd_data.iloc[idx, 3])
-        Investment_Trust_buy.append(pd_data.iloc[idx, 8])
-        Investment_Trust_sell.append(pd_data.iloc[idx, 9])
-        Dealer_buy.append(pd_data.iloc[idx, 12])
-        Dealer_sell.append(pd_data.iloc[idx, 13])
-        Total.append(pd_data.iloc[idx, 18])
+        stock_num.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, u'證券名稱']][0])
+        stock_name.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, u'證券代號']][0])
+        Foreign_Investor_buy.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, u'外陸資買進股數(不含外資自營商)']][0])
+        Foreign_Investor_sell.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, u'外陸資賣出股數(不含外資自營商)']][0])
+        Investment_Trust_buy.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, u'投信買進股數']][0])
+        Investment_Trust_sell.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, u'投信賣出股數']][0])
+        Dealer_buy.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, u'自營商買進股數(自行買賣)']][0])
+        Dealer_sell.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, u'自營商賣出股數(自行買賣)']][0])
+        Total.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, u'三大法人買賣超股數']][0])
 
     time.sleep(11)
 
@@ -91,6 +95,7 @@ def daily_institutional_info(FilePath, date):
                Dealer_buy, Dealer_sell,
                Total,
                daily_invest_information(date, "01"))
+
     #食品
     merge_invest_data(stock_num, stock_name,
                Foreign_Investor_buy, Foreign_Investor_sell,
@@ -330,5 +335,5 @@ def daily_institutional_info(FilePath, date):
 
 
 if  __name__ == '__main__':
-    daily_institutional_info(Savefiledir , "20181031")
+    daily_institutional_info(Savefiledir , "20181113")
     print "query all stock info sdone"
