@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os
+import os, errno
 import sys
 import pandas as pd
 import time
@@ -13,7 +13,8 @@ from query import query_margin_and_short_trade
 from query import query_month_income
 from query import query_stock_dailydata
 from query import query_stock_info_by_ID
-
+from publicholiday import validDate
+from publicholiday import isTradeDate
 
 def check_file_exist(filename):
     if(os.path.isfile(filename)):
@@ -63,11 +64,48 @@ def data_query_stock_info_by_ID(path, Stock_id):
     query_stock_info_by_ID.stock_query(Stock_id, path)
 
 
+def checkQueryCommandInput(argv):
+	directory = str(argv[1])
+	date = str(argv[2])
+
+	# not enough or too many argument(s)
+	if(len(sys.argv) <= 1) or (len(sys.argv) > 3):
+		return(False)
+	
+	return(checkQueryCommand(directory, date))
+
+def checkQueryCommand(directory, date):
+	if(date.isdigit == False):
+		return(-1)
+
+	if not os.path.exists(directory):
+		try:
+			os.makedirs(directory)
+		except OSError as err:
+			print("Create directory error: [" + str(err) + "] ")
+			return(-1)
+	
+	print("Path: [" + directory + "]  Date: [" + date + "]")
+
+	if(validDate(date) == False):
+		return(-1)
+
+	if(isTradeDate(date) == False):
+		print("QueryStock_infor: [" + str(date)  + "] not a trade date")
+		return(0)
+
+	return(1)
+
+
 if __name__ == '__main__':
-    data_query_institutional_investors_info("D:/Stock/finacial/", "20181105")
+	if(checkQueryCommandInput(sys.argv) == True):
+		data_query_institutional_investors_info(argv[1], argv[2])
+    #data_query_institutional_investors_info("D:/Stock/finacial/", "20181105")
     #time.sleep(60)
     #data_query_margin_and_short_trade("D:/Stock/finacial/", "20181105")
     #time.sleep(70)
     #data_query_stock_dailydata("D:/Stock/finacial/", "20181105")
     #time.sleep(80)
     #data_query_month_income("D:/Stock/finacial/", "2018", "09")
+
+
