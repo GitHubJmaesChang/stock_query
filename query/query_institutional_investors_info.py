@@ -58,10 +58,9 @@ def merge_invest_data(stock_num, stock_name,
                Dealer_buy, Dealer_sell,
                Total,
                pd_data):
-
+    print pd_data.columns
     mutil_coumns = pd.IndexSlice
-    
-    print pd_data.loc[mutil_coumns[0], mutil_coumns[:, u'證券名稱']][0]
+    #print pd_data.loc[mutil_coumns[0], mutil_coumns[:, u'證券名稱']][0]
     
     for idx in range(0, pd_data.shape[0]):
         stock_num.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, u'證券名稱']][0])

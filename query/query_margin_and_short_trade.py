@@ -54,7 +54,9 @@ def daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
                              totalvolune, chargeoff, pd_data):
-    print pd_data
+    print pd_data.columns
+    mutil_coumns = pd.IndexSlice
+    
     for idx in range(0, pd_data.shape[0]):
         stock_num.append(pd_data.iloc[idx, 0])
         stock_name.append(pd_data.iloc[idx, 1])
