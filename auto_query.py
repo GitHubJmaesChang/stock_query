@@ -34,7 +34,7 @@ def auto_query():
 		res = checkStoreYear(sdate)
 		if(res == 1):
 		#if(checkQueryCommand(directory, sdate) == 1)
-			sdate = sdate.replace("-", "")
+			#sdate = sdate.replace("-", "")
 			print(sdate)
 			data_query_institutional_investors_info(directory, sdate)
 		else:

@@ -95,7 +95,9 @@ def daily_margin_transaction(stock_num, stock_name,
     time.sleep(10)
 
 
-def daily_information(FilePath, date):
+def daily_information(FilePath, sdate):
+    date = sdate.replace("-", "")
+    
     stock_num=[]
     stock_name=[]
     margin_buy=[]
@@ -294,5 +296,5 @@ def daily_information(FilePath, date):
 
 
 if  __name__ == '__main__':
-    daily_information(Savefiledir , "20181105")
+    daily_information(Savefiledir , "2018-11-05")
     print "query all stock info sdone"

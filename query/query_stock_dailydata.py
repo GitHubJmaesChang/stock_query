@@ -72,7 +72,8 @@ def merge_data(stock_num, stock_name, excahnge_volume, s_price, high_price, low_
     time.sleep(5)
 
 
-def daily_information(FilePath, date):
+def daily_information(FilePath, sdate):
+    date = sdate.replace("-", "")
     stock_num=[]
     stock_name=[]
     exchange_volume=[]
