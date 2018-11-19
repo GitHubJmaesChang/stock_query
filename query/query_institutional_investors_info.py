@@ -14,10 +14,6 @@ import calendar
 from collections import OrderedDict
 import cell_items_name
 
-global query_year
-
-query_year ="2018"
-
 Savefiledir = 'D:/Stock/finacial/'
 url="http://www.twse.com.tw/fund/T86?response=html&date="
 stock_type = "&selectType="
@@ -63,7 +59,8 @@ def merge_invest_data(stock_num, name,
                Dealer_buy, Dealer_sell,
                Total,
                pd_data):
-    
+
+    print query_year
     mutil_coumns = pd.IndexSlice
     stock_id = cell_items_name.fundation_table_request[query_year][0]
     stock_name = cell_items_name.fundation_table_request[query_year][1] 
@@ -72,7 +69,6 @@ def merge_invest_data(stock_num, name,
     stock_infom3 = cell_items_name.fundation_table_request[query_year][4] 
     stock_infom4 = cell_items_name.fundation_table_request[query_year][5] 
     stock_infom5 = cell_items_name.fundation_table_request[query_year][6]
-    print stock_infom5
     stock_infom6 = cell_items_name.fundation_table_request[query_year][7] 
     stock_infom7 = cell_items_name.fundation_table_request[query_year][8] 
     
@@ -94,6 +90,7 @@ def merge_invest_data(stock_num, name,
 
 def daily_institutional_info(FilePath, sdate):
     date = sdate.replace("-", "")
+    global query_year
     query_year = str(sdate.split("-")[0])
     print query_year
     #print cell_items_name.fundation_table_request[query_year][0]
@@ -355,5 +352,5 @@ def daily_institutional_info(FilePath, sdate):
 
 
 if  __name__ == '__main__':
-    daily_institutional_info(Savefiledir , "2018-11-13")
+    daily_institutional_info(Savefiledir , "2017-11-16")
     print "query all stock info sdone"
