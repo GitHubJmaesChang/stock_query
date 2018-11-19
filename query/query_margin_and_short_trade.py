@@ -54,8 +54,33 @@ def daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
                              totalvolune, chargeoff, pd_data):
-    print pd_data
+
+    mutil_coumns = pd.IndexSlice
+    
+    #print pd_data.columns
+    #print pd_data.loc[mutil_coumns[0], mutil_coumns[:, :, u'股票代號']][0]
+    #print pd_data.loc[mutil_coumns[0], mutil_coumns[:, :, u'賣出']][0]
+    #print pd_data.loc[mutil_coumns[0], mutil_coumns[:, :, u'賣出']][1]
+    #print pd_data.loc[mutil_coumns[0], mutil_coumns[:, :, u'今日餘額']][0]
+    #print pd_data.loc[mutil_coumns[0], mutil_coumns[:, :, u'今日餘額']][1]
+    #print pd_data.loc[mutil_coumns[0], mutil_coumns[:, :, u'買進']][0]
+    #print pd_data.loc[mutil_coumns[0], mutil_coumns[:, :, u'買進']][1]
+    #return
+
     for idx in range(0, pd_data.shape[0]):
+        stock_num.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, :, u'股票代號']][0])
+        stock_name.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, :, u'股票名稱']][0])
+        margin_buy.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, :, u'買進']][0])
+        margin_sell.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, :, u'賣出']][0])
+        margin_remain.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, :, u'今日餘額']][0])
+        short_sale_buy.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, :, u'買進']][1])
+        short_sale_sell.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, :, u'賣出']][1])
+        short_sale_remain.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, :, u'今日餘額']][1])
+        totalvolune.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, :, u'限額']][1])
+        chargeoff.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, :, u'資券互抵']][0])
+        
+    
+    """for idx in range(0, pd_data.shape[0]):
         stock_num.append(pd_data.iloc[idx, 0])
         stock_name.append(pd_data.iloc[idx, 1])
         margin_buy.append(pd_data.iloc[idx, 2])
@@ -65,12 +90,14 @@ def daily_margin_transaction(stock_num, stock_name,
         short_sale_sell.append(pd_data.iloc[idx, 9])
         short_sale_remain.append(pd_data.iloc[idx, 12])
         totalvolune.append(pd_data.iloc[idx, 13])
-        chargeoff.append(pd_data.iloc[idx, 14])
+        chargeoff.append(pd_data.iloc[idx, 14])"""
 
     time.sleep(10)
 
 
-def daily_information(FilePath, date):
+def daily_information(FilePath, sdate):
+    date = sdate.replace("-", "")
+    
     stock_num=[]
     stock_name=[]
     margin_buy=[]
@@ -269,5 +296,5 @@ def daily_information(FilePath, date):
 
 
 if  __name__ == '__main__':
-    daily_information(Savefiledir , "20181105")
+    daily_information(Savefiledir , "2018-11-05")
     print "query all stock info sdone"

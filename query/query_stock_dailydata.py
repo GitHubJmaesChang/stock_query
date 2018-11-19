@@ -54,20 +54,26 @@ def daily_query_stock_exchange_information(date, mode):
     return type_1_DataFrame
 
 def merge_data(stock_num, stock_name, excahnge_volume, s_price, high_price, low_price, e_price, pd_data):
-    print pd_data
+    #print pd_data
+
+    # initail columns index
+    mutil_coumns = pd.IndexSlice
+    
     for idx in range(0, pd_data.shape[0]):
-        stock_num.append(pd_data.iloc[idx, 0])
-        stock_name.append(pd_data.iloc[idx, 1])
-        excahnge_volume.append(pd_data.iloc[idx, 3])
-        s_price.append(pd_data.iloc[idx, 5])
-        high_price.append(pd_data.iloc[idx, 6])
-        low_price.append(pd_data.iloc[idx, 7])
-        e_price.append(pd_data.iloc[idx, 8])
+        stock_num.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, :, u'證券代號']][0])
+        stock_name.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, :, u'證券名稱']][0])
+        excahnge_volume.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, :, u'成交股數']][0])
+        s_price.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, :, u'開盤價']][0])
+        high_price.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, :, u'最高價']][0])
+        low_price.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, :, u'最低價']][0])
+        e_price.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, :, u'收盤價']][0])
+
 
     time.sleep(5)
 
 
-def daily_information(FilePath, date):
+def daily_information(FilePath, sdate):
+    date = sdate.replace("-", "")
     stock_num=[]
     stock_name=[]
     exchange_volume=[]
