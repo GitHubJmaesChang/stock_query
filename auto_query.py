@@ -26,8 +26,6 @@ def auto_query():
 
 	print("complete building years")
 
-	checkStoreYear("2018-1-1")
-
 	for single_date in daterange(start_date, end_date):
 		sdate = single_date.strftime("%Y-%m-%d")
 		print(sdate)
