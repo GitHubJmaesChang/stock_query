@@ -47,14 +47,22 @@ def database_InsertCalStatement(stockid, eps, netaps, roe, roa, date):
     add_db_record.InsertCalStatement((stockid), eps, netaps, roe, roa, date)
     
 
-def insertFinancailSeate_to_database(file_name, date):
+def insertFinancailSeate_to_database(path, date, quarterly):
+
+    sdate = date.split("-")
+    year = sdate[0]
+    month = sdate[1]
+    day = sdate[2]
+	
+    file_name = str(year) + "_"+ str(quarterly) + "_financialStatement.csv"
+    
     intial_db()
     
-    if((0) == check_file_exist(file_name)):
+    if((0) == check_file_exist(path + file_name)):
         print(("insertFinancailSeate_to_database : No such file name : "), file_name)
         return (0)
     
-    table = pd.read_csv(file_name)
+    table = pd.read_csv(path + file_name)
 
 
     for idx in range(0, table.shape[0]):
@@ -67,46 +75,28 @@ def insertFinancailSeate_to_database(file_name, date):
                                        str(table.iloc[idx]['營業利益(損失)']), str(table.iloc[idx]['本期淨利(淨損)']), \
                                        str(table.iloc[idx]['營業外收入及支出']), str(table.iloc[idx]['稅前淨利(淨損)']), \
                                        date)
+        
         database_InsertCalStatement(str(table.iloc[idx]['公司代號']),str(table.iloc[idx]['基本每股盈餘(元)']), \
                                     str(table.iloc[idx]['每股參考淨值']),str(table.iloc[idx]['ROE']), \
                                     str(table.iloc[idx]['ROA']), date)
 
 
-def test_verify_financaStatement():
-    target_file = File_Path + "basic_report106_s1.csv"
-    print (target_file)
-    insertFinancailSeate_to_database(target_file, "2017-05-15")
-    
-    target_file = File_Path + "basic_report106_s2.csv"
-    print (target_file)
-    insertFinancailSeate_to_database(target_file, "2017-08-14")
+def insertMonthlyRevenueDB(path, date):
 
-    target_file = File_Path + "basic_report106_s3.csv"
-    print (target_file)
-    insertFinancailSeate_to_database(target_file, "2017-10-31")
+    sdate = date.split("-")
+    year = sdate[0]
+    month = sdate[1]
+    day = sdate[2]
 
-    target_file = File_Path + "basic_report106_s4.csv"
-    print (target_file)
-    insertFinancailSeate_to_database(target_file, "2018-03-31")
-
-    target_file = File_Path + "basic_report107_s1.csv"
-    print (target_file)
-    insertFinancailSeate_to_database(target_file, "2018-05-15")
-
-    target_file = File_Path + "basic_report107_s2.csv"
-    print (target_file)
-    insertFinancailSeate_to_database(target_file, "2018-08-14")
-    print "process done"
-
-def insertMonthlyRevenueDB(file_name, date):
+    file_name = str(year) + "_" + str(month) + "_MonthlyRevenue.csv"
 
     intial_db()
     
-    if((0) == check_file_exist(file_name)):
+    if((0) == check_file_exist(path + file_name)):
         print(("insertMonthlyRevenueDB : No such file name : "), file_name)
         return (0)
     
-    table = pd.read_csv(file_name)
+    table = pd.read_csv(path + file_name)
 
     for idx in range(0, table.shape[0]):
         database_InsertCompany(str(table.iloc[idx]['公司代號']), str(table.iloc[idx]['公司名稱']))
@@ -117,14 +107,17 @@ def insertMonthlyRevenueDB(file_name, date):
                                            str(table.iloc[idx]['前期比較增減(%)']),date)
 
 
-def inserFoundationExchangeDB(file_name, date):
+def inserFoundationExchangeDB(path, date):
 
+    current_date = date.replace("-", "")
+    file_name = current_date + "_FoundationExchange.csv"
+    
     intial_db()    
-    if((0) == check_file_exist(file_name)):
+    if((0) == check_file_exist(path + file_name)):
         print(("inserFoundationExchangeDB : No such file name : "), file_name)
         return (0)
     
-    table = pd.read_csv(file_name)
+    table = pd.read_csv(path + file_name)
 
     #Foreign_Investor_buy,Foreign_Investor_sell,Investment_Trust_buy,Investment_Trust_sell,Dealer_buy,Dealer_sell,Total
     for idx in range(0, table.shape[0]):
@@ -135,15 +128,18 @@ def inserFoundationExchangeDB(file_name, date):
                                                str(table.iloc[idx]['Dealer_sell']), str(table.iloc[idx]['Total']),date)
 
 
-def insertInsertStockExchangeDB(file_name, date):
+def insertInsertStockExchangeDB(path, date):
 
+    current_date = date.replace("-", "")
+    file_name = current_date + "_stockExchange.csv"
+    
     intial_db()
     
-    if((0) == check_file_exist(file_name)):
+    if((0) == check_file_exist(path + file_name)):
         print(("insertInsertStockExchangeDB : No such file name : "), file_name)
         return (0)
     
-    table = pd.read_csv(file_name)
+    table = pd.read_csv(path + file_name)
 
     #ID,Name,Volume,StrPrice,highPrice,lowPrice,EndPrice
     for idx in range(0, table.shape[0]):
@@ -153,15 +149,18 @@ def insertInsertStockExchangeDB(file_name, date):
                                           str(table.iloc[idx]['lowPrice']), str(table.iloc[idx]['EndPrice']) ,date)
         
 
-def insertInsertMarginTradeDB(file_name, date):
+def insertInsertMarginTradeDB(path, date):
 
+    current_date = date.replace("-", "")
+    file_name = current_date + "_MarginTrade.csv"
+    
     intial_db()
     
-    if((0) == check_file_exist(file_name)):
+    if((0) == check_file_exist(path + file_name)):
         print(("insertInsertMarginTradeDB : No such file name : "), file_name)
         return (0)
     
-    table = pd.read_csv(file_name)
+    table = pd.read_csv(path + file_name)
     #,ID,Name,MarginTradebuy,MarginTradeSell,MarginTradeRemine,ShortSellBuy,ShortSellSell,ShortSellRemine
     for idx in range(0, table.shape[0]):
         database_InsertCompany(str(table.iloc[idx]['ID']), str(table.iloc[idx]['Name']))
@@ -169,14 +168,20 @@ def insertInsertMarginTradeDB(file_name, date):
                                                str(int(table.iloc[idx]['MarginTradeSell'])), str(int(table.iloc[idx]['MarginTradeRemain'])), \
                                                str(table.iloc[idx]['ShortSellBuy']), str(table.iloc[idx]['ShortSellSell']) ,
                                                str(table.iloc[idx]['TotalVolume']), str(table.iloc[idx]['ChargeOff']), str(table.iloc[idx]['ShortSellRemain']),date)
+
+
+def test_verify_financaStatement():
+    insertFinancailSeate_to_database("./", "1","2017-05-15")
+    print "process done"
+
         
 if __name__ == '__main__':
-    #insertMonthlyRevenueDB("./2018_9_MonthRevenue.csv", "2018-09-01")
+    #insertMonthlyRevenueDB("./", "2018-09-01")
     #print("**********2018_9_MonthRevenue insert done***************")
-    inserFoundationExchangeDB("./20181105_FoundationExchange.csv", "2018-11-05")
+    inserFoundationExchangeDB("./", "2018-11-05")
     print("**********20181105_FoundationExchange insert done***************")
-    insertInsertStockExchangeDB("./20181105_stockExchange.csv", "2018-11-05")
+    insertInsertStockExchangeDB("./", "2018-11-05")
     print("**********20181105_stockExchange insert done***************")
-    insertInsertMarginTradeDB("./20181105_MarginTrade.csv", "2018-11-05")
+    insertInsertMarginTradeDB("./", "2018-11-05")
     print("**********20181105_MarginTrade insert done***************")
 

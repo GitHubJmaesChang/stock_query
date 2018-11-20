@@ -18,7 +18,7 @@ Savefiledir   = 'D://Stock/finacial/'
 income_sheet  = "income_0"
 blance_sheet  = "blance_0"
 benefit_sheet = "benefit"
-target_sheet  = "basic_report"
+target_sheet  = "financialStatement"
 company_id_list =[]
 headers = {
 		'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36'	
@@ -157,6 +157,7 @@ def query_stock_sheet(year, season, path):
 def Stock_roe_roa_eps_prepare(year, season, path):
     if year>=1000:
        year -= 1911
+
     inclome_file = path + income_sheet + str(year) +"_s"+ str(season)+".csv"
     income_data = pd.read_csv(inclome_file)
     balance_file = path + blance_sheet + str(year) +"_s"+ str(season)+".csv"
@@ -205,7 +206,7 @@ def Stock_roe_roa_eps_prepare(year, season, path):
                        u'稅前淨利(淨損)', u'本期淨利(淨損)', u'基本每股盈餘(元)',\
                        u'每股參考淨值', u'ROE', u'ROA']
     
-    save_merge_file = path + target_sheet + str(year) +"_s"+str(season)+".csv"
+    save_merge_file = path + str(year+1911) +"_"+str(season) + target_sheet +".csv"
     new_form.to_csv (save_merge_file, index = False, encoding = "utf-8")
     return new_form
                          
