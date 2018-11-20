@@ -28,8 +28,8 @@ stock_dict = {
 
 def invest_table_by_type(date , mode):
     tout = 10
-    htmltout = 2 
-
+    htmltout = 2
+    
     headers = {
 		'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36'    }
     
@@ -38,31 +38,33 @@ def invest_table_by_type(date , mode):
     
     while True :
         try:
-	    htmltout = (htmltout + 3)%30
+            htmltout = (htmltout + 3)%30
             html_report = requests.get(target_url, headers=headers, timeout=htmltout)
         except requests.exceptions.Timeout:
             print "invest_table_by_type: (Error) HTML request time out"
             time.sleep(tout)
-	    tout = tout + 3
-	    if(tout > 40):
-	    	print("invest_table_by_type: (Error) quit trying time out")
-		raise
+            tout = tout + 3
+            if(tout > 40):
+                print("invest_table_by_type: (Error) quit trying time out")
+                raise
             continue
+
         except requests.exceptions.TooManyRedirects:
             print ("invest_table_by_type: (Error) HTML request URL error ")
             time.sleep(tout)
-	    tout = tout + 3
-	    if(tout > 50):
-	    	print("invest_table_by_type: (Error) quit trying URL error")
-		raise
+            tout = tout + 3
+            if(tout > 50):
+                print("invest_table_by_type: (Error) quit trying URL error")
+                raise
             continue
+
         except requests.exceptions.RequestException as e:
             print (e)
             time.sleep(tout)
-	    tout = tout + 3
-	    if(tout > 50):
-	        print("invest_table_by_type: (Error) quit trying exception")
-		raise
+            tout = tout + 3
+            if(tout > 50):
+                print("invest_table_by_type: (Error) quit trying exception")
+                raise
             continue
         break
 
@@ -134,15 +136,17 @@ def daily_institutional_info(FilePath, sdate):
     print("daily_institutional_info: " + str(sdate))
     for k in stock_dict:
         try:
-	    merge_invest_data(stock_num, stock_name,
-               Foreign_Investor_buy, Foreign_Investor_sell,
-               Investment_Trust_buy,Investment_Trust_sell,
-               Dealer_buy, Dealer_sell,
-               Total,
-               daily_invest_information(date, str(k).zfill(2)))
+            merge_invest_data(stock_num, stock_name,
+                              Foreign_Investor_buy, Foreign_Investor_sell,
+                              Investment_Trust_buy,Investment_Trust_sell,
+                              Dealer_buy, Dealer_sell,
+                              Total,
+                              daily_invest_information(date, str(k).zfill(2)))
+
         except Exception as e:
             print(e)
-	    print(str(k).zfill(2) + ": (Error) Continue to next category")
+            print(str(k).zfill(2) + ": (Error) Continue to next category")
+            time.sleep(10)
 
 
 
