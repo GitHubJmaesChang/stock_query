@@ -18,34 +18,66 @@ Savefiledir = 'D:/Stock/finacial/'
 url="http://www.tse.com.tw/exchangeReport/MI_INDEX?response=html&date="
 stock_type = "&type="
 
-headers = {
-		'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36'	
+stock_dict = {
+	1:'水泥', 2:'食品', 3:'塑膠', 4:'纖維', 5:'電機',
+	6:'電器電纜', 7:'化學生技醫療', 8:'玻璃陶瓷', 9:'造紙工業', 10:'鋼鐵工業',
+	11:'橡膠', 12:'汽車', 13:'電子工業', 14:'建材', 15:'航運',
+	16:'觀光', 17:'金融', 18:'貿易百貨', 20:'其他', 21:'化學工業',
+	22:'生技醫療', 23:'油電燃氣', 24:'半導體', 25:'電腦周邊設備', 26:'光電',
+	27:'通信網路', 28:'電子零組件', 29:'電子通路', 30:'資訊服務', 31:'其他電子',
 }
 
 
 def stock_query_html_table_by_type(date , mode):
+    tout = 10
+    htmltout = 2
+    
+    headers = {
+		'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36'    }
+    
     target_url = url + str(date) + stock_type + str(mode)
     print target_url
-
+    
     while True :
         try:
-            html_report = requests.get(target_url, headers=headers, timeout=5)
+            htmltout = (htmltout + 3)%30
+            html_report = requests.get(target_url, headers=headers, timeout=htmltout)
         except requests.exceptions.Timeout:
-            print "request time out"
-            time.sleep(10)
+            print "invest_table_by_type: (Error) HTML request time out"
+            time.sleep(tout)
+            tout = tout + 3
+            if(tout > 40):
+                print("invest_table_by_type: (Error) quit trying time out")
+                raise
             continue
+
         except requests.exceptions.TooManyRedirects:
-            print ("request url error ")
-            time.sleep(10)
+            print ("invest_table_by_type: (Error) HTML request URL error ")
+            time.sleep(tout)
+            tout = tout + 3
+            if(tout > 50):
+                print("invest_table_by_type: (Error) quit trying URL error")
+                raise
             continue
+
         except requests.exceptions.RequestException as e:
             print (e)
-            time.sleep(10)
+            time.sleep(tout)
+            tout = tout + 3
+            if(tout > 50):
+                print("invest_table_by_type: (Error) quit trying exception")
+                raise
             continue
         break
-    
-    DataFrame_form = pd.read_html(html_report.text.encode('utf8'))
+
+    try: 
+        DataFrame_form = pd.read_html(html_report.text.encode('utf8'))
+    except Exception as e:
+    	print(e)
+    	raise
+
     return pd.concat(DataFrame_form)
+
 
 def daily_query_stock_exchange_information(date, mode):
     #水泥
@@ -81,98 +113,18 @@ def daily_information(FilePath, sdate):
     high_price=[]
     low_price=[]
     end_price=[]
-    
-    #水泥
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "01"))
-    
-    #食品
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "02"))
-    #塑膠
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "03"))
-    #纖維
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "04"))
-    #電機
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "05"))
-    #電器電纜
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "06"))
-    #化學生技醫療
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "07"))
-    #化學工業
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "21"))
-    #生技醫療
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "22"))
-    #玻璃陶瓷
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "08"))
-    #造紙工業
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "09"))
-    #鋼鐵工業
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "10"))
-    #橡膠
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "11"))
-    #汽車
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "12"))
-    #電子工業
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "13"))
-    #半導體
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "24"))
-    #電腦周邊設備
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "25"))
-    #光電
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "26"))
-    #通信網路
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "27"))
-    #電子零組件
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "28"))
-    #電子通路
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "29"))
-    #資訊服務
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "30"))
-    #其他電子
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "31"))
-    #建材
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "14"))
-    #航運
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "15"))
-    #觀光
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "16"))
-    #金融
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "17"))
-    #貿易百貨
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "18"))
-    #油電燃氣
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "23"))
-    #其他
-    merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, "20"))
+
+    print("daily_Stock_exchange_info: " + str(sdate))
+    for k in stock_dict:
+        try:
+            merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
+               daily_query_stock_exchange_information(date, str(k).zfill(2)))
+
+        except Exception as e:
+            print(e)
+            print(str(k).zfill(2) + ": (Error) Continue to next category")
+            time.sleep(10)
+
 
     row_form1 = pd.DataFrame({ u'ID'     : stock_num})
     row_form2 = pd.DataFrame({ u'Name'   : stock_name})
@@ -211,5 +163,5 @@ def daily_information(FilePath, sdate):
 
 
 if  __name__ == '__main__':
-    daily_information(Savefiledir , "20181105")
-    print "query 1101 data done"
+    daily_information(Savefiledir , "2013-01-05")
+    print "query stock data done"

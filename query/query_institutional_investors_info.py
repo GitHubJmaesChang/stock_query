@@ -102,15 +102,17 @@ def daily_institutional_info(FilePath, sdate):
     print("daily_institutional_info: " + str(sdate))
     for k in stock_dict:
         try:
-	    merge_invest_data(stock_num, stock_name,
-               Foreign_Investor_buy, Foreign_Investor_sell,
-               Investment_Trust_buy,Investment_Trust_sell,
-               Dealer_buy, Dealer_sell,
-               Total,
-               daily_invest_information(date, str(k).zfill(2)))
+            merge_invest_data(stock_num, stock_name,
+                              Foreign_Investor_buy, Foreign_Investor_sell,
+                              Investment_Trust_buy,Investment_Trust_sell,
+                              Dealer_buy, Dealer_sell,
+                              Total,
+                              daily_invest_information(date, str(k).zfill(2)))
+
         except Exception as e:
             print(e)
-	    print(str(k).zfill(2) + ": (Error) Continue to next category")
+            print(str(k).zfill(2) + ": (Error) Continue to next category")
+            time.sleep(10)
 
 
 
