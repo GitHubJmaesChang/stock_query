@@ -13,6 +13,7 @@ import codecs
 import calendar
 from collections import OrderedDict
 import cell_items_name
+from rand_proxy import htmlRequest
 
 Savefiledir = 'D:/Stock/finacial/'
 url="http://www.twse.com.tw/fund/T86?response=html&date="
@@ -27,46 +28,13 @@ stock_dict = {
 }
 
 def invest_table_by_type(date , mode):
-    tout = 10
-    htmltout = 2 
-
-    headers = {
-		'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36'    }
     
     target_url = url + str(date) + stock_type + str(mode)
-    print target_url
+    print(target_url)
     
-    while True :
-        try:
-	    htmltout = (htmltout + 3)%30
-            html_report = requests.get(target_url, headers=headers, timeout=htmltout)
-        except requests.exceptions.Timeout:
-            print "invest_table_by_type: (Error) HTML request time out"
-            time.sleep(tout)
-	    tout = tout + 3
-	    if(tout > 40):
-	    	print("invest_table_by_type: (Error) quit trying time out")
-		raise
-            continue
-        except requests.exceptions.TooManyRedirects:
-            print ("invest_table_by_type: (Error) HTML request URL error ")
-            time.sleep(tout)
-	    tout = tout + 3
-	    if(tout > 50):
-	    	print("invest_table_by_type: (Error) quit trying URL error")
-		raise
-            continue
-        except requests.exceptions.RequestException as e:
-            print (e)
-            time.sleep(tout)
-	    tout = tout + 3
-	    if(tout > 50):
-	        print("invest_table_by_type: (Error) quit trying exception")
-		raise
-            continue
-        break
-
-    try: 
+    try:
+    	# htmlRequest parameters: url, restful, payload
+        html_report = htmlRequest(target_url, "get", "")
         DataFrame_form = pd.read_html(html_report.text.encode('utf8'))
     except Exception as e:
     	print(e)

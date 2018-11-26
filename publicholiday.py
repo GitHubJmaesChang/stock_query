@@ -8,6 +8,7 @@ import sys
 import requests
 import pandas as pd
 from collections import defaultdict
+from query import rand_proxy
 
 
 AllYear = defaultdict(list)
@@ -103,8 +104,9 @@ def isTradeDate(date, fullcheck):
 
 	header={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gekko) Chrom/67.0.3396.87 Safari/537.36'}
 	payload = {'queryYear': tw_year, 'submitBtn': '%E6%9F%A5%E8%A9%A2'}
-
-	resp = requests.post('http://www.twse.com.tw/zh/holidaySchedule/holidaySchedule', headers=header, data=payload)
+	url = "http://www.twse.com.tw/zh/holidaySchedule/holidaySchedule"
+	#resp = requests.post('http://www.twse.com.tw/zh/holidaySchedule/holidaySchedule', headers=header, data=payload)
+	resp = rand_proxy.htmlRequest(url, "post", payload)
 	table = pd.read_html(resp.text, header=0)[0]
 	offDate = []
 	for i in xrange(len(table)):
