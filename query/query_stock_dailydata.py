@@ -12,9 +12,10 @@ import pdb
 import codecs
 import calendar
 from collections import OrderedDict
+from rand_proxy import htmlRequest
 
 
-Savefiledir = 'D:/Stock/finacial/'
+Savefiledir = './'
 url="http://www.tse.com.tw/exchangeReport/MI_INDEX?response=html&date="
 stock_type = "&type="
 
@@ -29,61 +30,28 @@ stock_dict = {
 
 
 def stock_query_html_table_by_type(date , mode):
-    tout = 10
-    htmltout = 2
-    
-    headers = {
-		'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36'    }
-    
     target_url = url + str(date) + stock_type + str(mode)
     print target_url
     
-    while True :
-        try:
-            htmltout = (htmltout + 3)%30
-            html_report = requests.get(target_url, headers=headers, timeout=htmltout)
-        except requests.exceptions.Timeout:
-            print "invest_table_by_type: (Error) HTML request time out"
-            time.sleep(tout)
-            tout = tout + 3
-            if(tout > 40):
-                print("invest_table_by_type: (Error) quit trying time out")
-                raise
-            continue
-
-        except requests.exceptions.TooManyRedirects:
-            print ("invest_table_by_type: (Error) HTML request URL error ")
-            time.sleep(tout)
-            tout = tout + 3
-            if(tout > 50):
-                print("invest_table_by_type: (Error) quit trying URL error")
-                raise
-            continue
-
-        except requests.exceptions.RequestException as e:
-            print (e)
-            time.sleep(tout)
-            tout = tout + 3
-            if(tout > 50):
-                print("invest_table_by_type: (Error) quit trying exception")
-                raise
-            continue
-        break
-
-    try: 
+    try:
+        #html_report = requests.get(target_url, headers=headers, timeout=htmltout)
+        html_report = htmlRequest(target_url, "get", "")
         DataFrame_form = pd.read_html(html_report.text.encode('utf8'))
     except Exception as e:
     	print(e)
-    	raise
+    	raise Exception
 
     return pd.concat(DataFrame_form)
 
 
 def daily_query_stock_exchange_information(date, mode):
-    #水泥
-    type_1_DataFrame = stock_query_html_table_by_type(date , mode)
-    print type_1_DataFrame.loc[0][0:]
-    return type_1_DataFrame
+    try:
+        type_1_DataFrame = stock_query_html_table_by_type(date , mode)
+    except Exception as e:
+    	print(e)
+	raise Exception
+
+    return(type_1_DataFrame)
 
 def merge_data(stock_num, stock_name, excahnge_volume, s_price, high_price, low_price, e_price, pd_data):
     #print pd_data
@@ -163,5 +131,7 @@ def daily_information(FilePath, sdate):
 
 
 if  __name__ == '__main__':
-    daily_information(Savefiledir , "2013-01-05")
+    daily_information(Savefiledir , "2013-02-05")
     print "query stock data done"
+
+

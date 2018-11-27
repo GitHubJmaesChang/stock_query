@@ -15,7 +15,7 @@ from collections import OrderedDict
 import cell_items_name
 from rand_proxy import htmlRequest
 
-Savefiledir = 'D:/Stock/finacial/'
+Savefiledir = './'
 url="http://www.twse.com.tw/fund/T86?response=html&date="
 stock_type = "&selectType="
 stock_dict = {
@@ -38,7 +38,7 @@ def invest_table_by_type(date , mode):
         DataFrame_form = pd.read_html(html_report.text.encode('utf8'))
     except Exception as e:
     	print(e)
-    	raise
+    	raise Exception
 
     return pd.concat(DataFrame_form)
 
@@ -46,18 +46,18 @@ def daily_invest_information(date, mode):
     try:
         type_1_DataFrame = invest_table_by_type(date , mode)
     except Exception as e:
-    	raise
+    	raise Exception
 
     return type_1_DataFrame
+
 
 def merge_invest_data(stock_num, name,
                Foreign_Investor_buy, Foreign_Investor_sell,
                Investment_Trust_buy,Investment_Trust_sell,
                Dealer_buy, Dealer_sell,
-               Total,
+               Total, Category, currentCat,
                pd_data):
 
-    print query_year
     mutil_coumns = pd.IndexSlice
     stock_id = cell_items_name.fundation_table_request[query_year][0]
     stock_name = cell_items_name.fundation_table_request[query_year][1] 
@@ -81,6 +81,7 @@ def merge_invest_data(stock_num, name,
         Dealer_buy.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, stock_infom5 ]][0])
         Dealer_sell.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, stock_infom6 ]][0])
         Total.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, stock_infom7 ]][0])
+	Category.append(currentCat)
 
     time.sleep(11)
 
@@ -98,8 +99,11 @@ def daily_institutional_info(FilePath, sdate):
     Dealer_buy=[]
     Dealer_sell=[]
     Total=[]
-  
+    Category=[]
+
+
     print("daily_institutional_info: " + str(sdate))
+
     for k in stock_dict:
         try:
             merge_invest_data(stock_num, stock_name,
@@ -107,12 +111,24 @@ def daily_institutional_info(FilePath, sdate):
                               Investment_Trust_buy,Investment_Trust_sell,
                               Dealer_buy, Dealer_sell,
                               Total,
+	   		      Category,
+	   		      str(k).zfill(2),
                               daily_invest_information(date, str(k).zfill(2)))
-
         except Exception as e:
             print(e)
-            print(str(k).zfill(2) + ": (Error) Continue to next category")
+            print("daily_institutional_info [" + str(k).zfill(2) + "]: (Error) Continue to next category")
             time.sleep(10)
+	    # Append empty record
+            stock_num.append('NA')
+            stock_name.append('NA')
+            Foreign_Investor_buy.append(-1)
+            Foreign_Investor_sell.append(-1)
+            Investment_Trust_buy.append(-1)
+            Investment_Trust_sell.append(-1)
+            Dealer_buy.append(-1)
+            Dealer_sell.append(-1)
+            Total.append(-1)
+            Category.append(str(k).zfill(2))
 
 
 
@@ -125,7 +141,8 @@ def daily_institutional_info(FilePath, sdate):
     row_form7 = pd.DataFrame({ u'Dealer_buy'   : Dealer_buy})
     row_form8 = pd.DataFrame({ u'Dealer_sell'   : Dealer_sell})
     row_form9 = pd.DataFrame({ u'Total'   : Total})
-    
+    row_form10 = pd.DataFrame({ u'Category'   : Category})
+
     form1 = pd.concat([row_form1[u'ID'],
                        row_form2[u'Name'],
                        row_form3[u'Foreign_Investor_buy'],
@@ -134,9 +151,9 @@ def daily_institutional_info(FilePath, sdate):
                        row_form6[u'Investment_Trust_sell'],
                        row_form7[u'Dealer_buy'],
                        row_form8[u'Dealer_sell'],
-                       row_form9[u'Total']],
+                       row_form9[u'Total'],
+		       row_form10[u'Category']],
                        axis =1)
-
     #micolumns  = pd.MultiIndex.from_tuples([(date,'ID'), (date,'Name'),
     #                                        (date,'Foreign_Investor_buy'),(date,'Foreign_Investor_sell'),
     #                                        (date,'Investment_Trust_buy'),(date,'Investment_Trust_sell'),
