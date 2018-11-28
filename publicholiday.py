@@ -59,10 +59,10 @@ def removeBracket(text):
 
 def checkTradeDate(text, date, ischeck):
 	dlist = []
-	res = text.split(u'\u65e5')
+	res = text.split(u'\u65e5')    # split by the char '日'
 	res = filter(None, res)
 	for x in res:
-		tmp = x.replace(u'\u6708', "")
+		tmp = x.replace(u'\u6708', "")    # remove the char '月'
 		tmp = tmp.replace(" ", "")
 		tmp = str(tmp)
 		dlist.append(tmp)
@@ -71,6 +71,9 @@ def checkTradeDate(text, date, ischeck):
 
 	return(dlist, True)
 
+# Function to check a given date against the website's public holidays.
+# If it is a match, then it is not a trading day. The flag fullcheck
+# includes additional checks on the date's format and weekend validation
 def isTradeDate(date, fullcheck):
 
 	print("verify date: " + date)
@@ -129,7 +132,8 @@ def isTradeDate(date, fullcheck):
 	print(offDate)
 	return(1)
 
-
+# Function to obtain all public holidays from the website:
+# http://www.twse.com.tw/zh/holidaySchedule/holidaySchedule
 def buildTradeDate():
 	today = datetime.datetime.today().strftime('%Y-%m-%d')
 	sdate = today.split("-")
@@ -144,6 +148,9 @@ def buildTradeDate():
 
 	print(AllYear)
 
+
+# Functino to check if the given date is a holiday from 
+# the data obtained in function "buildTradeDate"
 def checkStoreYear(date):
 	sdate = date.split("-")
 	year = sdate[0]
@@ -158,7 +165,7 @@ def checkStoreYear(date):
 	else:
 		return(-1)
 
-
+# Function to check if the given date is a weekend
 def isWeekend(date):
 	sdate = date.split("-")
 	year = sdate[0]
@@ -172,6 +179,7 @@ def isWeekend(date):
 	else:
 		return(False)
 
+# Function to validate the given date string is in the format of YYYY-MM-DD
 def validDate(strDate):
          try:
                  datetime.datetime.strptime(strDate, '%Y-%m-%d')

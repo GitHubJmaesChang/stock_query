@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup
 ua = UserAgent() # generate a random user agent
 proxyList = [] 	 # current proxy list: [ip, port]
 proxy = []	 # the proxy for html request
+proxy_index = 0  # random index to access proxyList
 refreshProxyList = 0 # counts to rebuild the proxy list
 refreshReqProxy = 0  # counts to rebuild current proxy
 
@@ -34,6 +35,7 @@ def buildProxyList():
     })
 
 
+
 def doPost(url, header, tout, payload, proxy):
     print("html POST")
     return requests.post(url, proxies=proxy, headers=header, timeout=tout, data=payload)
@@ -49,12 +51,19 @@ restful_dict = {
 
 
 
+# Retrieve a random index proxy (we need the index to delete it if not working)
+def random_proxy():
+    return random.randint(0, len(proxyList) - 1)
+
+
+
 def htmlRequest(url, restful, payload):
     global refreshProxyList
     global refreshReqProxy
     global proxy
     global proxyList
     global restful_dict
+    global proxy_index
 
     htmltimeout = 5
     retrytimeout = 10
@@ -92,6 +101,7 @@ def htmlRequest(url, restful, payload):
         htmltimeout = (htmltimeout + 3)%30
 
         try:
+	    print("htmlRequest (DEBUG): proxy_index [" + str(proxy_index) + "]" + "(" + proxy['ip'] + ":" + proxy['port']  + ")")
     	    #req = requests.get(url, proxies=proxies, headers=headers, timeout=htmltimeout)
 	    # Parameters: url, header, tout, payload, proxy
 	    req = restful_dict[restful](url, headers, htmltimeout, payload, proxies)
@@ -116,10 +126,6 @@ def htmlRequest(url, restful, payload):
 
  
 	
-
-# Retrieve a random index proxy (we need the index to delete it if not working)
-def random_proxy():
-    return random.randint(0, len(proxyList) - 1)
 
 
 if __name__ == '__main__':

@@ -107,68 +107,106 @@ def insertMonthlyRevenueDB(path, date):
                                            str(table.iloc[idx]['前期比較增減(%)']),date)
 
 
-def inserFoundationExchangeDB(path, date):
+# Function to be called by the directory monitoring daemon.
+# When a file with the name format of "YYYYMMDD_FoundationExchange.csv", 
+# it is picked up and inserts its content into the DB
+def inserFoundationExchangeDB(pathname):
+    file_name = os.path.basename(pathname)
 
-    current_date = date.replace("-", "")
-    file_name = current_date + "_FoundationExchange.csv"
+    print("Function: inserFoundationExchangeDB")
+
+    # split the file name and file extension
+    fname, fext = os.path.splitext(fullfname)
+    fdate = fname.split("_")[0]
+
+    # create a date with format YYYY-MM-DD
+    sdate = fdate[:4] + "-" + fdate[4:6] + "-" + fdate[6:8] 
     
     intial_db()    
-    if((0) == check_file_exist(path + file_name)):
-        print(("inserFoundationExchangeDB : No such file name : "), file_name)
-        return (0)
+    if((0) == check_file_exist(pathname)):
+        print(("inserFoundationExchangeDB : No such file : "), pathname)
+        return (-1)
     
-    table = pd.read_csv(path + file_name)
+    try:
+        table = pd.read_csv(pathname)
 
-    #Foreign_Investor_buy,Foreign_Investor_sell,Investment_Trust_buy,Investment_Trust_sell,Dealer_buy,Dealer_sell,Total
-    for idx in range(0, table.shape[0]):
-        database_InsertCompany(str(table.iloc[idx]['ID']), str(table.iloc[idx]['Name']))
-        add_db_record.InsertFoundationExchange(str(table.iloc[idx]['ID']), str(int(table.iloc[idx]['Foreign_Investor_buy'])), \
-                                               str(int(table.iloc[idx]['Foreign_Investor_sell'])), str(int(table.iloc[idx]['Investment_Trust_buy'])), \
-                                               str(table.iloc[idx]['Investment_Trust_sell']), str(table.iloc[idx]['Dealer_buy']), \
-                                               str(table.iloc[idx]['Dealer_sell']), str(table.iloc[idx]['Total']),date)
+        # DB Columns are: 
+	# Foreign_Investor_buy,Foreign_Investor_sell,Investment_Trust_buy,
+	# Investment_Trust_sell,Dealer_buy,Dealer_sell,Total, Category, Date
+        for idx in range(0, table.shape[0]):
+            database_InsertCompany(str(table.iloc[idx]['ID']), str(table.iloc[idx]['Name']))
+            add_db_record.InsertFoundationExchange(str(table.iloc[idx]['ID']), str(int(table.iloc[idx]['Foreign_Investor_buy'])), \
+                str(int(table.iloc[idx]['Foreign_Investor_sell'])), str(int(table.iloc[idx]['Investment_Trust_buy'])), \
+                str(table.iloc[idx]['Investment_Trust_sell']), str(table.iloc[idx]['Dealer_buy']), \
+                str(table.iloc[idx]['Dealer_sell']), str(table.iloc[idx]['Total']), \
+	        str(table.iloc[idx]['Category']) ,sdate)
+    except Exception as e:
+    	print(e)
+	raise Exception
 
 
-def insertInsertStockExchangeDB(path, date):
+def insertInsertStockExchangeDB(pathname):
+    file_name = os.path.basename(pathname)
 
-    current_date = date.replace("-", "")
-    file_name = current_date + "_stockExchange.csv"
+    print("Function: insertInsertStockExchangeDB")
+
+    # Split the file name and file extension
+    fname, fext = os.path.splitext(fullfname)
+    fdate = fname.split("_")[0]
+
+    # Create a date with format YYYY-MM-DD
+    sdate = fdate[:4] + "-" + fdate[4:6] + "-" + fdate[6:8]
+
+    intial_db()
+    if((0) == check_file_exist(pathname)):
+        print(("insertInsertStockExchangeDB : No such file name : "), pathname)
+        return (-1)
+    
+    try:
+        table = pd.read_csv(pathname)
+
+        # DB Columns are: ID, Name, Volume, StrPrice, highPrice, lowPrice, EndPrice, Category, Date
+        for idx in range(0, table.shape[0]):
+            database_InsertCompany(str(table.iloc[idx]['ID']), str(table.iloc[idx]['Name']))
+            add_db_record.InsertStockExchange(str(table.iloc[idx]['ID']), str(int(table.iloc[idx]['Volume'])), \
+                str((table.iloc[idx]['StrPrice'])), str((table.iloc[idx]['highPrice'])), \
+                str(table.iloc[idx]['lowPrice']), str(table.iloc[idx]['EndPrice']), str(table.iloc[idx]['Category']), sdate)
+    except Exception as e:
+        print(e)
+	raise Exception    
+
+def insertInsertMarginTradeDB(pathname):
+    file_name = os.path.basename(pathname)
+
+    print("Function: insertInsertMarginTradeDB")
+
+    # Split the file name and file extension
+    fname, fext = os.path.splitext(fullfname)
+    fdate = fname.split("_")[0]
+
+    # Create a date with format YYYY-MM-DD
+    sdate = fdate[:4] + "-" + fdate[4:6] + "-" + fdate[6:8]
     
     intial_db()
-    
-    if((0) == check_file_exist(path + file_name)):
-        print(("insertInsertStockExchangeDB : No such file name : "), file_name)
+    if((0) == check_file_exist(pathname)):
+        print(("insertInsertMarginTradeDB : No such file name : "), pathname)
         return (0)
     
-    table = pd.read_csv(path + file_name)
-
-    #ID,Name,Volume,StrPrice,highPrice,lowPrice,EndPrice
-    for idx in range(0, table.shape[0]):
-        database_InsertCompany(str(table.iloc[idx]['ID']), str(table.iloc[idx]['Name']))
-        add_db_record.InsertStockExchange(str(table.iloc[idx]['ID']), str(int(table.iloc[idx]['Volume'])), \
-                                          str((table.iloc[idx]['StrPrice'])), str((table.iloc[idx]['highPrice'])), \
-                                          str(table.iloc[idx]['lowPrice']), str(table.iloc[idx]['EndPrice']) ,date)
+    try:
+        table = pd.read_csv(pathname)
         
-
-def insertInsertMarginTradeDB(path, date):
-
-    current_date = date.replace("-", "")
-    file_name = current_date + "_MarginTrade.csv"
-    
-    intial_db()
-    
-    if((0) == check_file_exist(path + file_name)):
-        print(("insertInsertMarginTradeDB : No such file name : "), file_name)
-        return (0)
-    
-    table = pd.read_csv(path + file_name)
-    #,ID,Name,MarginTradebuy,MarginTradeSell,MarginTradeRemine,ShortSellBuy,ShortSellSell,ShortSellRemine
-    for idx in range(0, table.shape[0]):
-        database_InsertCompany(str(table.iloc[idx]['ID']), str(table.iloc[idx]['Name']))
-        add_db_record.InsertMarginTrade(str(table.iloc[idx]['ID']), str(int(table.iloc[idx]['MarginTradeBuy'])), \
-                                               str(int(table.iloc[idx]['MarginTradeSell'])), str(int(table.iloc[idx]['MarginTradeRemain'])), \
-                                               str(table.iloc[idx]['ShortSellBuy']), str(table.iloc[idx]['ShortSellSell']) ,
-                                               str(table.iloc[idx]['TotalVolume']), str(table.iloc[idx]['ChargeOff']), str(table.iloc[idx]['ShortSellRemain']),date)
-
+	# DB Columns are: ID, Name, MarginTradebuy, MarginTradeSell, MarginTradeRemine, 
+	# ShortSellBuy, ShortSellSell, ShortSellRemine, Category, Date
+        for idx in range(0, table.shape[0]):
+            database_InsertCompany(str(table.iloc[idx]['ID']), str(table.iloc[idx]['Name']))
+            add_db_record.InsertMarginTrade(str(table.iloc[idx]['ID']), str(int(table.iloc[idx]['MarginTradeBuy'])), \
+                str(int(table.iloc[idx]['MarginTradeSell'])), str(int(table.iloc[idx]['MarginTradeRemain'])), \
+                str(table.iloc[idx]['ShortSellBuy']), str(table.iloc[idx]['ShortSellSell']), \
+                str(table.iloc[idx]['TotalVolume']), str(table.iloc[idx]['ChargeOff']), \
+		str(table.iloc[idx]['ShortSellRemain']), str(table.iloc[idx]['Category']), sdate)
+    except Exception as e:
+    	print(e)
+	raise Exception
 
 def test_verify_financaStatement():
     insertFinancailSeate_to_database("./", "1","2017-05-15")

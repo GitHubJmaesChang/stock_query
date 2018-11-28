@@ -53,7 +53,7 @@ def daily_query_stock_exchange_information(date, mode):
 
     return(type_1_DataFrame)
 
-def merge_data(stock_num, stock_name, excahnge_volume, s_price, high_price, low_price, e_price, pd_data):
+def merge_data(stock_num, stock_name, excahnge_volume, s_price, high_price, low_price, e_price, category, currentCat, pd_data):
     #print pd_data
 
     # initail columns index
@@ -67,6 +67,7 @@ def merge_data(stock_num, stock_name, excahnge_volume, s_price, high_price, low_
         high_price.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, :, u'最高價']][0])
         low_price.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, :, u'最低價']][0])
         e_price.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, :, u'收盤價']][0])
+	Category.append(currentCat)
 
 
     time.sleep(5)
@@ -81,17 +82,28 @@ def daily_information(FilePath, sdate):
     high_price=[]
     low_price=[]
     end_price=[]
+    category=[]
 
     print("daily_Stock_exchange_info: " + str(sdate))
     for k in stock_dict:
         try:
             merge_data(stock_num, stock_name, exchange_volume, start_price, high_price, low_price, end_price,
-               daily_query_stock_exchange_information(date, str(k).zfill(2)))
+               category, str(k).zfill(2), daily_query_stock_exchange_information(date, str(k).zfill(2)))
 
         except Exception as e:
             print(e)
             print(str(k).zfill(2) + ": (Error) Continue to next category")
             time.sleep(10)
+	    # Append empty record
+	    stock_num.append(-1)
+	    stock_name.append('NA')
+	    exchange_volume.append(-1)
+	    start_price.append(-1)
+	    high_price.append(-1)
+	    low_price.append(-1)
+	    end_price.append(-1)
+	    category.append(str(k).zfill(2))
+
 
 
     row_form1 = pd.DataFrame({ u'ID'     : stock_num})
@@ -101,6 +113,7 @@ def daily_information(FilePath, sdate):
     row_form5 = pd.DataFrame({ u'highPrice'   : high_price})
     row_form6 = pd.DataFrame({ u'lowPrice'   : low_price})
     row_form7 = pd.DataFrame({ u'EndPrice'   : end_price})
+    row_form8 = pd.DataFrame({ u'Category'   : category})
 
 
     form1 = pd.concat([row_form1[u'ID'],
@@ -109,7 +122,8 @@ def daily_information(FilePath, sdate):
                        row_form4[u'StrPrice'],
                        row_form5[u'highPrice'],
                        row_form6[u'lowPrice'],
-                       row_form7[u'EndPrice']], axis =1)
+                       row_form7[u'EndPrice'],
+		       row_form8[u'Category']], axis =1)
 
     #replace the "--" to "0"
     form1[u'Volume'].replace('--', '0', inplace=True)

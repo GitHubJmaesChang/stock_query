@@ -54,7 +54,7 @@ def margin_transaction(date, mode):
 def daily_margin_transaction(stock_num, stock_name,
                              margin_buy, margin_sell, margin_remain,
                              short_sale_buy, short_sale_sell, short_sale_remain,
-                             totalvolune, chargeoff, pd_data):
+                             totalvolune, chargeoff, category, currentCat, pd_data):
 
     mutil_coumns = pd.IndexSlice
     
@@ -79,6 +79,7 @@ def daily_margin_transaction(stock_num, stock_name,
         short_sale_remain.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, :, u'今日餘額']][1])
         totalvolune.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, :, u'限額']][1])
         chargeoff.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, :, u'資券互抵']][0])
+	Category.append(currentCat)
 
     time.sleep(10)
 
@@ -96,6 +97,7 @@ def daily_information(FilePath, sdate):
     short_sale_remain=[]
     totalvolume=[]
     chargeoff=[]
+    category=[] # added this, so that DB can have empty records 
 
     print("daily_Margin_trade_info: " + str(sdate))
     for k in stock_dict:
@@ -103,11 +105,24 @@ def daily_information(FilePath, sdate):
             daily_margin_transaction(stock_num, stock_name,
                                      margin_buy, margin_sell, margin_remain,
                                      short_sale_buy, short_sale_sell, short_sale_remain,
-                                     totalvolume, chargeoff, margin_transaction(date, str(k).zfill(2)))
+                                     totalvolume, chargeoff, category, str(k).zfill(2),
+				     margin_transaction(date, str(k).zfill(2)))
         except Exception as e:
             print(e)
-            print(str(k).zfill(2) + ": (Error) Continue to next category")
+            print("daily_Margin_trade_info [" + str(k).zfill(2) + "]: (Error) Continue to next category")
             time.sleep(10)
+	    # Append empty record
+	    stock_num.append(-1)
+	    stock_name.append('NA')
+	    margin_buy.append(-1)
+	    margin_sell.append(-1)
+	    margin_remain.append(-1)
+	    short_sale_buy.append(-1)
+	    short_sale_sell.append(-1)
+	    short_sale_remain.append(-1)
+	    totalvolume.append(-1)
+	    chargeoff.append(-1)
+	    category.append(str(k).zfill(2))
 
     
     row_form1  = pd.DataFrame({ u'ID'     : stock_num})
@@ -120,6 +135,7 @@ def daily_information(FilePath, sdate):
     row_form8  = pd.DataFrame({ u'ShortSellRemain'   : short_sale_remain})
     row_form9  = pd.DataFrame({ u'TotalVolume'       : totalvolume})
     row_form10 = pd.DataFrame({ u'ChargeOff'         : chargeoff})
+    row_form11 = pd.DataFrame({ u'Category'         : category})
     
     form1 = pd.concat([row_form1[u'ID'],
                        row_form2[u'Name'],
@@ -130,7 +146,8 @@ def daily_information(FilePath, sdate):
                        row_form7[u'ShortSellSell'],
                        row_form8[u'ShortSellRemain'],
                        row_form9[u'TotalVolume'],
-                       row_form10[u'ChargeOff'],],
+                       row_form10[u'ChargeOff'],
+		       row_form11[u'Category'],],
                        axis =1)
     
     #micolumns  = pd.MultiIndex.from_tuples([(date,'ID'), (date,'Name'),

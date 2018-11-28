@@ -317,7 +317,7 @@ def InsertFinancialStatement(stockID, asset, equity, date):
 	return(0)
 
 
-def InsertStockExchange(stockID, ExchangeVolume, StartPrice, HighPrice, LowPrice, EndPrice, date):
+def InsertStockExchange(stockID, ExchangeVolume, StartPrice, HighPrice, LowPrice, EndPrice, Category,  date):
         
 	if (stockID.strip()=="" or \
             ExchangeVolume.strip()=="" or StartPrice.strip()=="" or \
@@ -341,8 +341,9 @@ def InsertStockExchange(stockID, ExchangeVolume, StartPrice, HighPrice, LowPrice
 			return(-1)
 
 		add_fs = ("INSERT INTO StockExchange " \
-                          "(CoId, ExchangeVolume, StartPrice, HighPrice, LowPrice, EndPrice, Date) " \
-			  "VALUES (%(_coid)s, %(_exchangevolume)s, %(_startprice)s, %(_highprice)s, %(_lowprice)s, %(_endprice)s, %(_date)s)")
+                              "(CoId, ExchangeVolume, StartPrice, HighPrice, LowPrice, EndPrice, Date) " \
+			  "VALUES (%(_coid)s, %(_exchangevolume)s, %(_startprice)s, %(_highprice)s, \
+			      %(_lowprice)s, %(_endprice)s, %(_category)s, %(_date)s)")
 
 		data_fs = {
                         '_coid': int(row[0][0]),
@@ -351,6 +352,7 @@ def InsertStockExchange(stockID, ExchangeVolume, StartPrice, HighPrice, LowPrice
 			'_highprice': float(HighPrice),
                         '_lowprice': float(LowPrice),
 			'_endprice': float(EndPrice),
+			'_category': int(Category),
 			'_date': date,}
 
 		cursor.execute(add_fs, data_fs)
@@ -365,13 +367,13 @@ def InsertStockExchange(stockID, ExchangeVolume, StartPrice, HighPrice, LowPrice
 
 def InsertFoundationExchange(stockID, ForeignInvestorBuy, ForeignInvestorSell, \
                              InvestmentTrustBuy, InvestmentTrustSell, \
-                             DealerBuy, DealerSell, TotalVolume, date):
+                             DealerBuy, DealerSell, TotalVolume, Category, date):
 
 	if (stockID.strip()=="" or \
             ForeignInvestorBuy.strip()=="" or ForeignInvestorSell.strip()=="" or \
             InvestmentTrustBuy.strip()=="" or InvestmentTrustSell.strip()=="" or \
             DealerBuy.strip()=="" or DealerSell.strip()=="" or \
-            TotalVolume.strip()=="" or date.strip()==""):
+            TotalVolume.strip()=="" or Category.strip()=="" or date.strip()==""):
 		dbgPrint("InsertFoundationExchange: Parameters cannot be empty")
 		return(-1)
 
@@ -391,9 +393,9 @@ def InsertFoundationExchange(stockID, ForeignInvestorBuy, ForeignInvestorSell, \
 			return(-1)
 
 		add_fs = ("INSERT INTO FoundationExchange (CoId, ForeignInvestorBuy, ForeignInvestorSell, " \
-				"InvestmentTrustBuy, InvestmentTrustSell, DealerBuy, DealerSell, TotalVolume, date) "
+				"InvestmentTrustBuy, InvestmentTrustSell, DealerBuy, DealerSell, TotalVolume, date) " \
 			"VALUES (%(_coid)s, %(_foreigninvestorbuy)s, %(_foreigninvestorsell)s, %(_investmenttrustbuy)s, %(_investmenttrustsell)s, " \
-				"%(_dealerbuy)s, %(_dealersell)s, %(_totalvolume)s, %(_date)s)")
+				"%(_dealerbuy)s, %(_dealersell)s, %(_totalvolume)s, %(_category)s, %(_date)s)")
 
 		data_fs = {
                         '_coid'                : int(row[0][0]),
@@ -404,6 +406,7 @@ def InsertFoundationExchange(stockID, ForeignInvestorBuy, ForeignInvestorSell, \
                         '_dealerbuy'           : int(DealerBuy),
 			'_dealersell'          : int(DealerSell),
                         '_totalvolume'         : int(TotalVolume),
+			'_category'	       : int(Category),
 			'_date': date,}
 
 		cursor.execute(add_fs, data_fs)
@@ -473,7 +476,7 @@ def InsertMonthlyRevenue(stockID, MonthlyRevenue, LastMonthlyRevenue, LastYearMo
 	return(0)
 
 def InsertMarginTrade(stockID, MarginBuy, MarginSell, MarginRemine, ShortSellBuy, \
-		ShortSellSell, ShortSellRemine, TotalVolume, ChargeOff, date):
+		ShortSellSell, ShortSellRemine, TotalVolume, ChargeOff, Category, date):
         
 	if (stockID.strip()==""   or \
             MarginBuy.strip()=="" or MarginSell.strip()==""       or \
@@ -500,7 +503,7 @@ def InsertMarginTrade(stockID, MarginBuy, MarginSell, MarginRemine, ShortSellBuy
 		add_fs = ("INSERT INTO MarginTrading (CoId, MarginBuy, MarginSell, MarginRemine, ShortSellBuy, " \
 				"ShortSellSell, ShortSellRemine, TotalVolume, ChargeOff, date) " \
 			"VALUES (%(_coid)s, %(_marginbuy)s, %(_marginsell)s, %(_marginremine)s, %(_shortsellbuy)s, " \
-				"%(_shortsellsell)s, %(_shortsellremine)s, %(_totalvolume)s, %(_chargeoff)s, %(_date)s)")
+				"%(_shortsellsell)s, %(_shortsellremine)s, %(_totalvolume)s, %(_chargeoff)s, %(_category)s, %(_date)s)")
 
 		data_fs = {
                         '_coid'       : int(row[0][0]),
@@ -512,6 +515,7 @@ def InsertMarginTrade(stockID, MarginBuy, MarginSell, MarginRemine, ShortSellBuy
 			'_shortsellremine' : int(ShortSellRemine),
                         '_totalvolume' : int(TotalVolume),
                         '_chargeoff' : int(ChargeOff),
+			'_category' : int(Category),
 			'_date': date,}
 
 		cursor.execute(add_fs, data_fs)

@@ -90,7 +90,7 @@ def checkQueryCommand(directory, date):
 	if(validDate(date) == False):
 		return(-1)
 
-	if(isTradeDate(date) == False):
+	if(isTradeDate(date, True) == False):
 		print("QueryStock_infor: [" + str(date)  + "] not a trade date")
 		return(0)
 

@@ -20,7 +20,7 @@ def auto_query():
 	start_date = date(datetime.datetime.today().year - 5, 1, 1)
 	#end_date = date(2014, 1, 1)
 	end_date = datetime.datetime.today().date()
-	directory = "./CrawlerData/"
+	directory = "/home/thomaschen/tmp/stock_query/CrawlerData/FoundationExchange/"
 
 	buildTradeDate()
 

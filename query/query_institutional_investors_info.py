@@ -119,7 +119,7 @@ def daily_institutional_info(FilePath, sdate):
             print("daily_institutional_info [" + str(k).zfill(2) + "]: (Error) Continue to next category")
             time.sleep(10)
 	    # Append empty record
-            stock_num.append('NA')
+            stock_num.append(-1)
             stock_name.append('NA')
             Foreign_Investor_buy.append(-1)
             Foreign_Investor_sell.append(-1)
@@ -162,7 +162,8 @@ def daily_institutional_info(FilePath, sdate):
     #form1.columns = micolumns
     #print form1
     #print pd_form
-    form1.to_csv(FilePath + date +"_FoundationExchange.csv",  index = False, encoding = "utf-8")
+    #form1.to_csv(FilePath + date +"_FoundationExchange.csv",  index = False, encoding = "utf-8")
+    form1.to_csv(os.path.join(FilePath, date + "_FoundationExchange.csv"),  index = False, encoding = "utf-8")
     return 
 
 
