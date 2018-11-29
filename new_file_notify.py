@@ -4,6 +4,7 @@ import pyinotify
 from AddStock_db import inserFoundationExchangeDB
 from AddStock_db import insertInsertStockExchangeDB
 from AddStock_db import insertInsertMarginTradeDB
+from auto_query import hasFunction
 
 class FileEventHandler(pyinotify.ProcessEvent):
     insert_db_dict = {
@@ -15,31 +16,34 @@ class FileEventHandler(pyinotify.ProcessEvent):
     def process_IN_CLOSE_NOWRITE(self, event):
         print "CLOSE_NOWRITE event:", event.pathname
 
+    # The event used to trigger actual DB insert
     def process_IN_CLOSE_WRITE(self, event):
         print "CLOSE_WRITE event:", event.pathname
         
 	try:
 	    FileEventHandler.process_event(self, event.pathname)
+	    print("Processed Event: FileEventHandler.process_event")
         except Exception as e:
 	    print(e)
 
     def process_IN_CREATE(self, event):
         print "CREATE event:", event.pathname
 
+    # Function to run corresponding DB insert fucntion and move processed
+	# file to another folder.
     def process_event(self, evtPath):
-        fn = evtPath.split("/")[-2]
-        print(fn)
-        if fn in FileEventHandler.insert_db_dict:
-            try:
-                #FileEventHandler.insert_db_dict[fn](event.pathname)
+	    fn = hasFunction(evtPath)
+        if(fn != -1):
+        	print("Process with function: " + str(fn))
+	        try:
+                FileEventHandler.insert_db_dict[fn](event.pathname)
 
-                # if inserted, move process file to another folder
+                # After insert, move processed file to another folder
                 dstpath = evtPath.replace("CrawlerData", "CrawlerData_Inserted")
                 shutil.move(evtPath, dstpath)
-		print("File moved from: [" + evtPath + "] to (" + dstpath + ")")
+				print("File moved from: [" + evtPath + "] to (" + dstpath + ")")
             except Exception as e:
                 print(e)
-		raise Exception
         else:
             print("Error: function key not found")
 
@@ -48,11 +52,18 @@ def absoluteFilePaths(directory):
        for f in filenames:
            yield os.path.abspath(os.path.join(dirpath, f))
 
+# This function sets up python to monitor the directory "./CrawlerData"
+# and its subdirectories for any .csv files created.
+# It would pick up any existing files to insert to the DB first
 def main():
-    # Process existing files first
+    # Process existing files first.
+    # The following loop will go through all subdirectories
     for f in absoluteFilePaths("./CrawlerData"):
-    	print("Process: [" + f + "]")
-	FileEventHandler.process_event(FileEventHandler(), f)
+        if(f.endswith('.csv')):
+            print("Process: [" + f + "]")
+	    FileEventHandler.process_event(FileEventHandler(), f)
+        else:
+	    print("NOT handling: [" + f + "]")
 
     # Setup watch manager
     watchmanager = pyinotify.WatchManager()

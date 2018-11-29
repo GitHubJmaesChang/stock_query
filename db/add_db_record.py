@@ -55,13 +55,32 @@ def ConnectDB(host_addr, dbname, dbpasswrod):
 
 
 
-# functino to validate a date in the formate of yyyy-mm-dd
+# Function to validate a date in the formate of yyyy-mm-dd
 def valid_date(strDate):
 	try:
 		datetime.datetime.strptime(strDate, '%Y-%m-%d')
 	except ValueError:
 		raise ValueError("valid_date: Incorrect DATE format, should be YYYY-MM-DD")
 
+
+# Function to get the latest date of a given table
+def getLatestDate(table):
+    if(table.strip() == ""):
+    	return(-1)
+
+    try:
+	cursor.execute("SELECT max(Date) FROM " + table)
+        row = cursor.fetchall()
+	if(cursor.rowcount <= 0):
+	    dbgPrint("getLatestDate (ERROR): Cannot get last record")
+	    return(-1)
+
+	return(row[0][0])
+
+    except Exception as e:
+        dbgPrint("getLatestDate (ERROR): Exception"
+    	print(e)
+	raise Exception
 
 def check_record(sID, date, table):
 	try:
@@ -99,7 +118,6 @@ def InsertCompany(stockID, name):
         #cursor.execute(target)
 	cursor.execute("SELECT CoId FROM Company WHERE StockID = %s", (stockID,))
         row = cursor.fetchall()
-        print(row)
         
 	# only insert if the company does not exists
         if(cursor.rowcount > 0):
@@ -110,7 +128,6 @@ def InsertCompany(stockID, name):
 		if(check_record(stockID, "", "Company") != 0):
 			dbgPrint("InsertCompany: Error: Record already exist, please make sure no duplicates")
 			return(-1)
-		print("########check_record########")
 
 		add_fs = ("INSERT INTO Company (StockID, CompanyName) " \
 			  "VALUES (%(_stockid)s, %(_name)s)")
@@ -122,7 +139,6 @@ def InsertCompany(stockID, name):
 
 		cursor.execute(add_fs, data_fs)
 		db.commit()
-		print("insert company ID3")
         
 	except mcon.Error as err:
 		dbgPrint("InsertCompany: Insert Error  [" + str(err) + "] ")

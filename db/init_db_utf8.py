@@ -129,6 +129,7 @@ def CreatFinancialTable(db):
 			HighPrice DOUBLE, \
 			LowPrice DOUBLE, \
 			EndPrice DOUBLE, \
+			Category INT, \
 			Date varchar(20), \
 			FOREIGN KEY (CoId) REFERENCES Company(CoId) \
 			) DEFAULT CHARSET=utf8 ENGINE=INNODB \
@@ -147,6 +148,7 @@ def CreatFinancialTable(db):
 			DealerBuy BIGINT, \
 			DealerSell BIGINT, \
 			TotalVolume BIGINT, \
+			Category INT, \
 			Date varchar(20), \
 			FOREIGN KEY (CoId) REFERENCES Company(CoId) \
 			) DEFAULT CHARSET=utf8 ENGINE=INNODB \
@@ -185,6 +187,7 @@ def CreatFinancialTable(db):
 			ShortSellRemine BIGINT, \
 			TotalVolume BIGINT, \
 			ChargeOff BIGINT, \
+			Category INT, \
 			Date varchar(20), \
 			FOREIGN KEY (CoId) REFERENCES Company(CoId) \
 			) DEFAULT CHARSET=utf8 ENGINE=INNODB \

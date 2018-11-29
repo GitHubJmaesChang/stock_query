@@ -105,7 +105,7 @@ def isTradeDate(date, fullcheck):
 	print(tw_year)
 	print(tw_date)
 
-	header={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gekko) Chrom/67.0.3396.87 Safari/537.36'}
+	#header={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gekko) Chrom/67.0.3396.87 Safari/537.36'}
 	payload = {'queryYear': tw_year, 'submitBtn': '%E6%9F%A5%E8%A9%A2'}
 	url = "http://www.twse.com.tw/zh/holidaySchedule/holidaySchedule"
 	#resp = requests.post('http://www.twse.com.tw/zh/holidaySchedule/holidaySchedule', headers=header, data=payload)
