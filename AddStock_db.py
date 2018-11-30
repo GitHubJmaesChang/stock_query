@@ -151,7 +151,7 @@ def insertInsertStockExchangeDB(pathname):
     print("Function: insertInsertStockExchangeDB")
 
     # Split the file name and file extension
-    fname, fext = os.path.splitext(fullfname)
+    fname, fext = os.path.splitext(file_name)
     fdate = fname.split("_")[0]
 
     # Create a date with format YYYY-MM-DD
@@ -181,7 +181,7 @@ def insertInsertMarginTradeDB(pathname):
     print("Function: insertInsertMarginTradeDB")
 
     # Split the file name and file extension
-    fname, fext = os.path.splitext(fullfname)
+    fname, fext = os.path.splitext(file_name)
     fdate = fname.split("_")[0]
 
     # Create a date with format YYYY-MM-DD
