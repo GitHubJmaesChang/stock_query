@@ -36,11 +36,11 @@ class FileEventHandler(pyinotify.ProcessEvent):
 		if(fn != -1):
 			print("Process with function: " + str(fn))
 			try:
-				#FileEventHandler.insert_db_dict[fn](event.pathname)
+				FileEventHandler.insert_db_dict[fn](evtPath)
 
 				# After insert, move processed file to another folder
 				dstpath = evtPath.replace("CrawlerData", "CrawlerData_Inserted")
-				#shutil.move(evtPath, dstpath)
+				shutil.move(evtPath, dstpath)
 				print("File moved from: [" + evtPath + "] to (" + dstpath + ")")
 			except Exception as e:
 				print(e)
