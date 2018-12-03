@@ -57,6 +57,7 @@ def query_public_trade_company_ID():
                        row_form2[u' Name '],], axis =1)
     
     form1.to_csv(File_Path + comp_id, index = False, encoding = "utf-8")
+    return com_id
     
 if __name__ == '__main__':
     query_public_trade_company_ID()
