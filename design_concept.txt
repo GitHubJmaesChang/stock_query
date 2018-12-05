@@ -90,113 +90,52 @@
 //
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
+1.	Average line : 
+	5 days average
+	10 days average
+	30 days average 
+	60 days average
+2.	K-D index: 
+Functions define:
+	K(n) = (2/3)*K(n-1) +(1/3)RSV
+	D(n) = (2/3)*D(n-1)+(1/3)K(n-1)
+	Note : N = day
+	RSV = (max –price during the 9 day) – (min – price during the 9 day)
+Judge Rules: 
+	(A). K throughout D very fast (K>D) , means the stock value is good
+	(B). K <D, means the stock value is bad on market
+	(C). K>80 & D>80, the market price is very good, must be carefully.
+	(D). K<20 & D<20, the market price is very bad, it’s good time to join the market
+	(E) Special case 1: K>80 more than 3 days, the market price is over the standard, it’s very high possibility to falling down.
+	(F) Special case 2: K<20 more than 3 days, the market price is very lower than standard, it’s high possibility to raise the prices.
+3.	RSI value : 
+Functions define: 
+	5 days RSI : sum(the rise price of day ) / (sum(the rise of day) + sum(the fall price of day) , during 5days
+	10 days RSI : sum(the rise price of day ) / (sum(the rise of day) + sum(the fall price of day) , during 5days
+	30 days RSI : sum(the rise price of day ) / (sum(the rise of day) + sum(the fall price of day) , during 5days
+Judge rules:
+	5RSI>10RSI>30RSI : market share is good
+	5RSI<10RSI<30RSI : market share is bad
+	RSI >80, means the market share risk
+	RSI<20, means the market share price potential is good
+4.	MACD index 
+Function define:
+	MACD(12,26,9) : the EMAs value for AVG of 12 days, AVG of 26days
+	D(1day) = (max-price + min-price +2*End-Price) /4
+	EMA(12) = sum(D1 + …D12) / 12
+	EMA(26) = sum(D1 + ….D26) /26
+	EMA(today)-shift value = (EMA(12) *(12-1) + 2*D(day)) / 13
+	EMA(today)-compensate = (EMA(26) *(26-1) + 2 *D(day)) /27
+	Diff(today) = EMA(day)-compensate –EMA(day)-shift value
+	MACD(start day) = sum(Diff(day-9) + ……Diff(day)) / 9
+	MACD(today) = (MACD(today -1) *(9-1) + 2*Diff(today) ) / 10
+	OSC = Diff(today) – MACD(today)
+Judge Rules:
+	Diff > MACD : market share is good
+	Diff < MACD : market share is bad
 
 
-先行條件選擇 : 
-
-// 找出每個組別的平均
-// 組別 : 水泥 / 食品 / 塑膠 /纖維
-//        電機 / 電器電纜 / 化學生技醫療 / 化學工業
-//        生技醫療 / 玻璃陶瓷 / 造紙工業 / 鋼鐵工業
-//        橡膠 / 汽車 / 電子工業 / 半導體
-//        電腦周邊設備 / 光電 / 通信網路 / 電子零組件
-//        電子通路 / 資訊服務 / 其他電子 / 建材
-//        航運 / 觀光 / 金融 / 貿易百貨 / 
-//        油電燃氣 / 其他
-
-static arrary 季Q_組別_毛利率[水泥 : 其他]
-static arrary 季Q_組別_營業率[水泥 : 其他]
-static arrary 季Q_組別_roe[水泥 : 其他] 
-static arrary 季Q_組別_roa[水泥 : 其他]
-
-void Average_parameter_Q( void)
-{
-   總資料_1 = open_資料庫(資產表(balance.csv))
-   總資料_2 = open_資料庫(綜合表(basic_report.csv))
-
-   // 各組別算出平均
-   
-   for idx in range(水泥 : 其他) : 
-       for row_idx in range total_row :
-            季Q_組別_毛利率[idx] +=  總資料_1[組別]->毛利率
-       for row_idx in range total_row :
-            季Q_組別_營業率[idx] +=  總資料_1[組別]->營業率
-       for row_idx in range total_row :
-            季Q_組別_roe[idx] +=  總資料_2[組別]->roe
-       for row_idx in range total_row :
-            季Q_組別_roa[idx] +=  總資料_2[組別]->roa
-	   // 算平均
-	   季Q_組別_毛利率[idx] = 季Q_組別_毛利率[idx] / total_row
-	   季Q_組別_營業率[idx] = 季Q_組別_營業率[idx] / total_row
-	   季Q_組別_roe[idx] = 季Q_組別_roe[idx] / total_row
-	   季Q_組別_roa[idx] = 季Q_組別_roa[idx] / total_row
-	   
-   // reocrd them to csv 
-   
-   to_save_csv_file(基本條件判斷參數. csv)
-   
-}
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
-					分析資料
-
-判斷式一 :  利用平均數~找出前20%公司 , 剔除 80%(?????)
-: 目前上市不含金融業: 870家 -> 174 家好公司 / 696 家
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
-
-struct{
-   u8 毛利率;
-   u8 營業率;
-   u8 ROA;
-   u8 ROE;
-}公司條件;
-
-// 將每個群組的公司, 全部評分, 列出高到低
-// record 所有
-
-void 產業分數(組別)
-{
-    公司條件 scale_data;
-	
-	組別資料庫 = open_組別_資料庫()
-
-	calculate_公司分數 : 
-	
-	if (公司->毛利率 > 各組別平均毛利)
-	    scale_data->毛利率++;
-		scale_data->毛利率 += 數值調變(當公司毛利> 20 % 平均毛利, 分數++)
-    else 
-	    scale_data->毛利率 = 0;
-
-	if (公司->營業率 > 各組別平均營業率)
-	    scale_data->營業率++;
-		scale_data->毛利率 += 數值調變(當公司毛利> 20 % 平均毛利, 分數++)
-    else 
-	    scale_data->營業率 = 0;
-		
-	if (公司->ROA > 各組別平均ROA)
-	    scale_data->ROA++;
-		scale_data->毛利率 += 數值調變(當公司毛利> 20 % 平均毛利, 分數++)
-    else 
-	    scale_data->ROA = 0;
-		
-	if (公司->ROE > 各組別平均ROE)
-	    scale_data->ROE++;
-		scale_data->毛利率 += 數值調變(當公司毛利> 20 % 平均毛利, 分數++)
-    else 
-	    scale_data->ROE = 0;
-
-	存檔分數(....)
-	
-	
-}
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
-					分析資料
-判斷式二 :  前20%公司(找出有潛力的)
-
-
+5.	Boolean channel: 
+Functions define:
+	https://www.moneydj.com/KMDJ/Blog/BlogArticleViewer.aspx?a=09a03094-02b4-4eb1-8982-000000034638
+	
