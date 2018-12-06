@@ -46,19 +46,32 @@ def fetch_data(url, cmp_id, cmp_name):
                 cmp_id.append(idx[1])
                 cmp_name.append(idx[2])
 
-def query_public_trade_company_ID():
+def query_public_trade_TWSE_ID():
     url = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=2"
     name =[]
-    com_id=[]
-    fetch_data(url, com_id, name)
-    row_form1 = pd.DataFrame({ u' ID '     : com_id})
+    TWSE_id=[]
+    fetch_data(url, TWSE_id, name)
+    row_form1 = pd.DataFrame({ u' ID '     : TWSE_id})
     row_form2 = pd.DataFrame({ u' Name '   : name})
     form1 = pd.concat([row_form1[u' ID '],
                        row_form2[u' Name '],], axis =1)
     
-    form1.to_csv(File_Path + comp_id, index = False, encoding = "utf-8")
-    return com_id
+    form1.to_csv(File_Path + "TWSE_ID.csv", index = False, encoding = "utf-8")
+    return TWSE_id
+
+def query_public_trade_TPEX_ID():
+    url = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=4"
+    name =[]
+    TPEX_id=[]
+    fetch_data(url, TPEX_id, name)
+    row_form1 = pd.DataFrame({ u' ID '     : TPEX_id})
+    row_form2 = pd.DataFrame({ u' Name '   : name})
+    form1 = pd.concat([row_form1[u' ID '],
+                       row_form2[u' Name '],], axis =1)
+    
+    form1.to_csv(File_Path + "TPEX_ID.csv", index = False, encoding = "utf-8")
+    return TPEX_id
     
 if __name__ == '__main__':
-    query_public_trade_company_ID()
+    query_public_trade_TPEX_ID()
     print "process done"

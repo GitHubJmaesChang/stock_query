@@ -6,7 +6,8 @@ from io import StringIO
 import time
 import cell_items_name  
 from rand_proxy import htmlRequest
-from query_company_id import query_public_trade_company_ID
+from query_company_id import query_public_trade_TWSE_ID
+from query_company_id import query_public_trade_TPEX_ID
 
 
 # "http://mops.twse.com.tw/server-java/t164sb01?step=1&CO_ID=1101&SYEAR=2018&SSEASON=2&REPORT_ID=C"
@@ -14,7 +15,8 @@ web_url     = "http://mops.twse.com.tw/server-java/t164sb01?step=1&"
 company_url = "CO_ID="
 year_url = "&SYEAR="
 q_url = "&SSEASON="
-report_url = "&REPORT_ID=C"
+report_url_modeA = "&REPORT_ID=A"
+report_url_modeC = "&REPORT_ID=C"
 
 headers ={
 	    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36'	
@@ -26,20 +28,20 @@ def fill_table(idxID, balance_sheet_fetch, cash_flow_sheet_fetch, income_stateme
     search_start = 0
     for idx, members in cell_items_name.balance_sheet.iteritems():
         for cell in members :
-                balance_sheet_fetch.update({cell : 1})
+                balance_sheet_fetch.update({cell : 0})
 
 
     #cash_flow_sheet_fetch = {}
     search_start = 0
     for idx, members in cell_items_name.cash_flow_sheet.iteritems():
         for cell in members :
-            cash_flow_sheet_fetch.update({cell : 1})
+            cash_flow_sheet_fetch.update({cell : 0})
                 
     #income_statement_sheet_fetch = {}
     search_start = 0
     for idx, members in cell_items_name.income_statement_sheet.iteritems():
         for cell in members :
-            income_statement_sheet_fetch.update({cell : 1})
+            income_statement_sheet_fetch.update({cell : 0})
     
     pd0 =  pd.DataFrame({"ID" : str(idxID)}, index=[0])
     pd1 =  pd.DataFrame(data=balance_sheet_fetch, index=[0])
@@ -65,12 +67,16 @@ def fill_table(idxID, balance_sheet_fetch, cash_flow_sheet_fetch, income_stateme
     frame_table = pd.concat([pd0, pd1, pd2, pd3, pd4, pd5, pd6, pd7, pd8, pd9, pd10, pd11], axis=1, sort=False)
     return frame_table
 
-def fetch_entire_finacialStatement(year, section, company_id,
+def fetch_entire_finacialStatement(year,
+                                   section,
+                                   company_id,
+                                   report_url_mode, 
                                    balance_sheet_fetch,
                                    cash_flow_sheet_fetch,
                                    income_statement_sheet_fetch):
-    
-    target_url = web_url + company_url + str(company_id) + year_url+ str(year)+ q_url+str(section) + report_url
+
+    print report_url_mode
+    target_url = web_url + company_url + str(company_id) + year_url+ str(year)+ q_url+str(section) + report_url_mode
     print target_url
     try:
         html_report = htmlRequest(target_url, "get", "")
@@ -87,11 +93,9 @@ def fetch_entire_finacialStatement(year, section, company_id,
     #DataFrame_form = pd.read_html(StringIO(r.text))
 
     if(len(DataFrame_form) < 2):
-        print "hteml file error"
+        print "hteml file not exist"
         print DataFrame_form
-        return fill_table(company_id, balance_sheet_fetch,
-                          cash_flow_sheet_fetch,
-                          income_statement_sheet_fetch)
+        raise 
 
 
     print "fetch data start"
@@ -149,7 +153,6 @@ def fetch_entire_finacialStatement(year, section, company_id,
     data2 = float(cash_flow_sheet_fetch[u'母公司業主（淨利／損）'])
     if(data1 ==0):
         print "exception error happened"
-        print cash_flow_sheet_fetch
         temp = 0.0
     else :
         temp = float(data2 / data1)
@@ -163,7 +166,6 @@ def fetch_entire_finacialStatement(year, section, company_id,
 
     if(data1 ==0):
         print "exception error happened"
-        print cash_flow_sheet_fetch
         temp = 0.0
     else :
         temp = float(data2 / data1)
@@ -178,7 +180,6 @@ def fetch_entire_finacialStatement(year, section, company_id,
 
     if(data1 ==0):
         print "exception error happened"
-        print balance_sheet_fetch
         temp = 0.0
     else :
         temp = float(data2 / data1)
@@ -192,7 +193,6 @@ def fetch_entire_finacialStatement(year, section, company_id,
 
     if(data1 ==0):
         print "exception error happened"
-        print balance_sheet_fetch
         temp = 0.0
     else :
         temp = float(data2 / data1)
@@ -205,7 +205,6 @@ def fetch_entire_finacialStatement(year, section, company_id,
     data2 = float(cash_flow_sheet_fetch[u'營業利益（損失）'])
     if(data1 ==0):
         print "exception error happened"
-        print balance_sheet_fetch
         temp = 0.0
     else :
         temp = float(data2 / data1)
@@ -219,7 +218,6 @@ def fetch_entire_finacialStatement(year, section, company_id,
 
     if(data1 ==0):
         print "exception error happened"
-        print balance_sheet_fetch
         temp = 0.0
     else :
         temp = float(data2 / data1)
@@ -237,7 +235,6 @@ def fetch_entire_finacialStatement(year, section, company_id,
 
     if(data1 ==0):
         print "exception error happened"
-        print balance_sheet_fetch
         temp = 0.0
     else :
         temp = float(data2 / data1)
@@ -251,7 +248,6 @@ def fetch_entire_finacialStatement(year, section, company_id,
 
     if(data1 ==0):
         print "exception error happened"
-        print balance_sheet_fetch
         temp = 0.0
     else :
         temp = float(data2 / data1)
@@ -267,22 +263,33 @@ def fetch_entire_finacialStatement(year, section, company_id,
         for cell in members :
             print balance_sheet_table[cell]
 """
+
+def financialStatement_prepare(year, section, fetch_table_type):
+
+    id_table = []
+    if(fetch_table_type == "TWSE"):
+        id_table = query_public_trade_TWSE_ID()
+    else:
+        id_table = query_public_trade_TPEX_ID()
+
+    print id_table
+
+    if(len(id_table) ==0):
+        return
     
-
-if __name__ == '__main__':
-
-    id_table = query_public_trade_company_ID()
     balance_sheet_fetch = {}
     cash_flow_sheet_fetch = {}
     income_statement_sheet_fetch = {}
 
-    #fill_table("1101", balance_sheet_fetch, cash_flow_sheet_fetch, income_statement_sheet_fetch)
+    pd1 = fill_table("99999", balance_sheet_fetch, cash_flow_sheet_fetch, income_statement_sheet_fetch)
     #fetch_entire_finacialStatement("2018","3" ,"1108", balance_sheet_fetch, cash_flow_sheet_fetch, income_statement_sheet_fetch)
 
-    pd1 =  fetch_entire_finacialStatement("2018","3" ,str(id_table[0]), balance_sheet_fetch, cash_flow_sheet_fetch, income_statement_sheet_fetch)
-    idx = 1
+    url_type1 ="&REPORT_ID=C"
+    url_type2 ="&REPORT_ID=A"
+    url = url_type1
+    idx = 0
     retry_idx = 0
-
+    
     while True:
         print "start process"
         # fill the ID table to "0"
@@ -292,24 +299,37 @@ if __name__ == '__main__':
             idx = idx + 1
             retry_idx = 0
         try :
-            print "access data from proxy server"
-            pdx = fetch_entire_finacialStatement("2018","3" ,str(id_table[idx]),
-                                                 balance_sheet_fetch,
-                                                 cash_flow_sheet_fetch,
-                                                 income_statement_sheet_fetch)
+            print "access data from proxy server"                
+            pdx = fetch_entire_finacialStatement(year, section ,str(id_table[idx]),url,
+                                                 balance_sheet_fetch, cash_flow_sheet_fetch, income_statement_sheet_fetch)
         except Exception as e:
             print "retry"
+            if(url == url_type1):
+                url = url_type2
+            else:
+                url = url_type1
+
             retry_idx = retry_idx +1
             time.sleep(10)
             continue
         # update table
         pd1 = pd1.append(pdx)
+        #clean retry
+        retry_idx = 0
         print ("The ID : " + str(idx) + " done")
         idx = idx + 1
         if(idx >= len(id_table)):
             break
 
-    pd1.to_csv("D:/Stock/finacial/test.csv", index = False, encoding = "utf-8")
-
-
+    PATH_FILE = ""
+    if(fetch_table_type == "TWSE"):
+        PATH_FILE = "D:/Stock/finacial/TWSE_financialStatement.csv"
+    else:
+        PATH_FILE = "D:/Stock/finacial/TPEX_financialStatement.csv"
     
+    pd1.to_csv(PATH_FILE, index = False, encoding = "utf-8")
+    return pd1
+
+
+if __name__ == '__main__':
+    financialStatement_prepare("2018", "3", "TPEX")
