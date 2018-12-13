@@ -49,6 +49,7 @@ def daterange(start_date, end_date):
 def hasFunction(path):
 	for fn in query_dict:
 		if((str(fn) in path) == True):
+			print("hasFunction: found corresponding function [" + str(fn) + "]")
 			return(fn)
 
 	return(-1)
@@ -72,7 +73,7 @@ def do_Crawl(startDate, endDate, path):
 	
 	if(buildOffDateTable == False):
 		print("do_Crawl: buildOffDateTable")
-		#buildTradeDate()
+		buildTradeDate()
 		buildOffDateTable = True
 	
 	# Check function key
@@ -83,7 +84,6 @@ def do_Crawl(startDate, endDate, path):
 
 	print("do_Crawl: Start looping through the dates")
 
-'''
 	for single_date in daterange(startDate, endDate):
 		try:
 			sdate = single_date.strftime("%Y-%m-%d")
@@ -97,7 +97,7 @@ def do_Crawl(startDate, endDate, path):
 		except Exception as e:
 			# No return or raise, need to loop through all dates
 			print(e)
-'''
+
 
 
 # Function to continue crawling from where stopped.
@@ -143,7 +143,7 @@ def auto_query_cnt(path):
 				print("auto_query_cnt: found table dates are::")
 				print(table_date)
 				# Check if record exists
-				if(table_date == -1):
+				if(table_date is None):
 					print("auto_query result (ERROR): no records found")
 				else:
 					isDBChecked = True
@@ -179,7 +179,8 @@ def auto_query():
 	start_date = date(datetime.datetime.today().year - 5, 1, 1)
 	#end_date = date(2014, 1, 1)
 	end_date = datetime.datetime.today().date()
-	directory = "/home/thomaschen/tmp/stock_query/CrawlerData/FoundationExchange/"
+	#directory = "/home/thomaschen/tmp/stock_query/CrawlerData/FoundationExchange/"
+	directory = "/home/thomaschen/tmp/stock_query/CrawlerData/StockExchange/"
 
 	buildTradeDate()
 
