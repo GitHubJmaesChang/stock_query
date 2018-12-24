@@ -74,4 +74,4 @@ def query_public_trade_TPEX_ID():
     
 if __name__ == '__main__':
     query_public_trade_TPEX_ID()
-    print "process done"
+    print ("process done")
