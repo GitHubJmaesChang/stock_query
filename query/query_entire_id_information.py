@@ -57,14 +57,16 @@ def fill_table(idxID, balance_sheet_fetch, cash_flow_sheet_fetch, income_stateme
     #毛利率
     pd7 =  pd.DataFrame({"毛利率" : float(0.0)}, index=[0])
     #營業利益
-    pd8 =  pd.DataFrame({"營業利益" : float(0.0)}, index=[0])    
+    pd8 =  pd.DataFrame({"營業利益" : float(0.0)}, index=[0])
+    #營業利益
+    pd9 =  pd.DataFrame({"淨利率" : float(0.0)}, index=[0]) 
     #original Roe
-    pd9 =  pd.DataFrame({"ROE_Org" : float(0.0)}, index=[0])
+    pd10 =  pd.DataFrame({"ROE_Org" : float(0.0)}, index=[0])
     #total income Roe
-    pd10 =  pd.DataFrame({"ROE" : float(0.0)}, index=[0])
+    pd11 =  pd.DataFrame({"ROE" : float(0.0)}, index=[0])
     #total Roa
-    pd11 =  pd.DataFrame({"ROA" : float(0.0)},index=[0])
-    frame_table = pd.concat([pd0, pd1, pd2, pd3, pd4, pd5, pd6, pd7, pd8, pd9, pd10, pd11], axis=1, sort=False)
+    pd12 =  pd.DataFrame({"ROA" : float(0.0)},index=[0])
+    frame_table = pd.concat([pd0, pd1, pd2, pd3, pd4, pd5, pd6, pd7, pd8, pd9, pd10, pd11, pd12], axis=1, sort=False)
     return frame_table
 
 def fetch_entire_finacialStatement(year,
@@ -197,7 +199,7 @@ def fetch_entire_finacialStatement(year,
     else :
         temp = float(data2 / data1)
         
-    print ("存貨周轉率 : " + str(temp) )
+    print ("毛利率 : " + str(temp) )
     pd7 =  pd.DataFrame({"毛利率" : temp }, index=[0])
     
     #營業利益
@@ -211,7 +213,19 @@ def fetch_entire_finacialStatement(year,
         
     print ("營業利益 : " + str(temp) )
     pd8 =  pd.DataFrame({"營業利益" : temp }, index=[0])
-    
+
+    #淨利率
+    data2 = float(cash_flow_sheet_fetch[u'本期淨利（淨損）'])
+    data1 = float(cash_flow_sheet_fetch[u'營業收入合計'])
+    if(data1 ==0):
+        print ("exception error happened")
+        temp = 0.0
+    else :
+        temp = float(data2 / data1)
+        
+    print ("淨利率 : " + str(temp) )
+    pd9 =  pd.DataFrame({"淨利率" : temp }, index=[0])
+
     #original Roe
     data1 = float(balance_sheet_fetch[u'權益總額'])
     data2 = float(cash_flow_sheet_fetch[u'本期淨利（淨損）'] )- float(cash_flow_sheet_fetch[u'營業外收入及支出合計'])
@@ -227,7 +241,7 @@ def fetch_entire_finacialStatement(year,
     else:
         print ("ROE_Org : -" + str(abs(temp)) )
      
-    pd9 =  pd.DataFrame({"ROE_Org" : temp }, index=[0])
+    pd10 =  pd.DataFrame({"ROE_Org" : temp }, index=[0])
     
     #total income Roe
     data1 = float(balance_sheet_fetch[u'權益總額'])
@@ -240,7 +254,7 @@ def fetch_entire_finacialStatement(year,
         temp = float(data2 / data1)
 
     print ("ROE : " + str(temp) )
-    pd10 =  pd.DataFrame({"ROE" : temp }, index=[0])
+    pd11 =  pd.DataFrame({"ROE" : temp }, index=[0])
     
     #total Roa
     data1 = float(balance_sheet_fetch[u'負債及權益總計'])
@@ -253,9 +267,10 @@ def fetch_entire_finacialStatement(year,
         temp = float(data2 / data1)
 
     print ("ROA : " + str(temp) )
-    pd11 =  pd.DataFrame({"ROA" : temp }, index=[0])
+    pd12 =  pd.DataFrame({"ROA" : temp }, index=[0])
+
     
-    frame_table = pd.concat([pd0, pd1, pd2, pd3, pd4, pd5, pd6, pd7, pd8, pd9, pd10, pd11], axis=1, sort=False)
+    frame_table = pd.concat([pd0, pd1, pd2, pd3, pd4, pd5, pd6, pd7, pd8, pd9, pd10, pd11, pd12], axis=1, sort=False)
     return frame_table
                 
 """
