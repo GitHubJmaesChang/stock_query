@@ -49,6 +49,8 @@ def ConnectDB(host_addr, dbname, dbpasswrod):
 
 		cursor = db.cursor()
 
+		return(db)
+
 	except mysql.connector.Error as err:
 		dbgPrint("Connect to DB Error [" + str(err.errno) + "] " + str(err))
 		return(-1)
@@ -422,12 +424,12 @@ def InsertFoundationExchange(stockID, ForeignInvestorBuy, ForeignInvestorSell, \
 		cursor.execute("SELECT CoId FROM Company WHERE StockID=%s", (stockID,))
 		row = cursor.fetchall()
 		if(cursor.rowcount <= 0):
-			dbgPrint("InsertFoundationExchange: Error: Cannot locate Company ID"  +str(stockID) +":"+ str(cursor.rowcount))
+			dbgPrint("InsertFoundationExchange: Error: Cannot locate Company ID"  + str(stockID) +":"+ str(cursor.rowcount))
 			return(-1)
 
 		# check for duplicate, i.e. same coID, same date and same category
 		if(check_record(str(row[0][0]), date, Category, "FoundationExchange") != 0):
-			dbgPrint("InsertFoundationExchange: Error: Record already exist, please make sure no duplicates")
+			dbgPrint("InsertFoundationExchange (Error): Record already exist:: coID[" + str(row[0][0]) + "] date[" + str(date) + "] Category[" + str(Category) + "]")
 			return(-1)
 
 		add_fs = ("INSERT INTO FoundationExchange (CoId, ForeignInvestorBuy, ForeignInvestorSell, " \

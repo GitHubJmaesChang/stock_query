@@ -52,13 +52,19 @@ def database_InsertCalStatement(stockid, eps, netaps, roe, roa, date):
 # For empty data, -1 is used, and it is read as -1.0. This function
 # is to transform -1.0 to int -1 for inserting into the database.
 def fstr(x):
-	print(x)
-	if(x == -1.0):
-		print("convert float to int")
-		return(str(int(float(x))))
-	else:
-		print("convert to string")
-		return(str(x))
+	try:
+		if(x is None):
+			x = 0
+
+		i = (str(x)[-2:] == '.0' and str(x)[:-2] or str(x))
+	
+		print("fstr (DEBUG): Input[" + str(x) + "] Output[" + i + "]")
+		
+		return(i)
+	except Exception as e:
+		print("fstr (ERROR): Exception")
+		print(e)
+		return("0")
 
 
 def insertFinancailSeate_to_database(path, date, quarterly):
@@ -71,14 +77,14 @@ def insertFinancailSeate_to_database(path, date, quarterly):
 	file_name = str(year) + "_"+ str(quarterly) + "_financialStatement.csv"
 	
 	intial_db()
-	
+
+	print("Process file: [" + file_name + "]")
+
 	if((0) == check_file_exist(path + file_name)):
 		print(("insertFinancailSeate_to_database : No such file name : "), file_name)
 		return (0)
 
 	table = pd.read_csv(path + file_name)
-
-
 	for idx in range(0, table.shape[0]):
 		database_InsertCompany(str(table.iloc[idx]['公司代號']), str(table.iloc[idx]['公司名稱']))
 
@@ -111,14 +117,21 @@ def insertMonthlyRevenueDB(path, date):
 		return (0)
 	
 	table = pd.read_csv(path + file_name)
+	table.fillna(value=0, inplace=True)
 
 	for idx in range(0, table.shape[0]):
-		database_InsertCompany(str(table.iloc[idx]['公司代號']), str(table.iloc[idx]['公司名稱']))
-		add_db_record.InsertMonthlyRevenue(str(table.iloc[idx]['公司代號']), str(int(table.iloc[idx]['當月營收'])), \
-								str(int(table.iloc[idx]['上月營收'])), str(int(table.iloc[idx]['去年當月營收'])), \
-								str(table.iloc[idx]['上月比較增減(%)']), str(table.iloc[idx]['去年同月增減(%)']), \
-								str(table.iloc[idx]['當月累計營收']), str(table.iloc[idx]['去年累計營收']), \
-								str(table.iloc[idx]['前期比較增減(%)']),date)
+		database_InsertCompany(fstr(table.iloc[idx]['公司代號']), fstr(table.iloc[idx]['公司名稱']))
+		add_db_record.InsertMonthlyRevenue(fstr(table.iloc[idx]['公司代號']), fstr(table.iloc[idx]['當月營收']), \
+			fstr(table.iloc[idx]['上月營收']), fstr(table.iloc[idx]['去年當月營收']), \
+			fstr(table.iloc[idx]['上月比較增減(%)']), fstr(table.iloc[idx]['去年同月增減(%)']), \
+			fstr(table.iloc[idx]['當月累計營收']), fstr(table.iloc[idx]['去年累計營收']), \
+			fstr(table.iloc[idx]['前期比較增減(%)']), date)
+
+		#add_db_record.InsertMonthlyRevenue(str(table.iloc[idx]['公司代號']), str(int(table.iloc[idx]['當月營收'])), \
+		#						str(int(table.iloc[idx]['上月營收'])), str(int(table.iloc[idx]['去年當月營收'])), \
+		#						str(table.iloc[idx]['上月比較增減(%)']), str(table.iloc[idx]['去年同月增減(%)']), \
+		#						str(table.iloc[idx]['當月累計營收']), str(table.iloc[idx]['去年累計營收']), \
+		#						str(table.iloc[idx]['前期比較增減(%)']),date)
 
 
 # Function to be called by the directory monitoring daemon.
@@ -142,15 +155,20 @@ def inserFoundationExchangeDB(pathname):
 		return (-1)
 	
 	try:
+		print("inserFoundationExchangeDB: Process file[" + pathname + "]")
 		table = pd.read_csv(pathname)
-		print(table)
-		print(table.shape[0])
+		table.fillna(value=0, inplace=True)
 
 		# DB Columns are: 
 		# Foreign_Investor_buy,Foreign_Investor_sell,Investment_Trust_buy,
 		# Investment_Trust_sell,Dealer_buy,Dealer_sell,Total, Category, Date
 		for idx in range(0, table.shape[0]):
 			database_InsertCompany(fstr(table.iloc[idx]['ID']), fstr(table.iloc[idx]['Name']))
+			#add_db_record.InsertFoundationExchange(fstr(table.iloc[idx]['ID']), fstr(table.iloc[idx]['Foreign_Investor_buy']), \
+			#	 fstr(table.iloc[idx]['Foreign_Investor_sell']), fstr(table.iloc[idx]['Investment_Trust_buy']), \
+			#	 fstr(table.iloc[idx]['Investment_Trust_sell']), fstr(table.iloc[idx]['Dealer_buy']), \
+			#	 fstr(table.iloc[idx]['Dealer_sell']), fstr(table.iloc[idx]['Total']), \
+			#	 fstr(table.iloc[idx]['Category']), sdate)
 			add_db_record.InsertFoundationExchange(fstr(table.iloc[idx]['ID']), fstr(int(table.iloc[idx]['Foreign_Investor_buy'])), \
 				fstr(int(table.iloc[idx]['Foreign_Investor_sell'])), fstr(int(table.iloc[idx]['Investment_Trust_buy'])), \
 				fstr(table.iloc[idx]['Investment_Trust_sell']), fstr(table.iloc[idx]['Dealer_buy']), \
@@ -158,6 +176,7 @@ def inserFoundationExchangeDB(pathname):
 				fstr(int(table.iloc[idx]['Category'])), sdate)
 	except Exception as e:
 		print(e)
+		print(table.iloc[idx])
 		raise Exception
 
 
@@ -180,14 +199,20 @@ def insertInsertStockExchangeDB(pathname):
 		return (-1)
 
 	try:
+		print("insertInsertStockExchangeDB: Process file[" + pathname + "]")
 		table = pd.read_csv(pathname)
+		table.fillna(value=0, inplace=True)
 
 		# DB Columns are: ID, Name, Volume, StrPrice, highPrice, lowPrice, EndPrice, Category, Date
 		for idx in range(0, table.shape[0]):
 			database_InsertCompany(fstr(table.iloc[idx]['ID']), fstr(table.iloc[idx]['Name']))
-			add_db_record.InsertStockExchange(fstr(table.iloc[idx]['ID']), fstr(int(table.iloc[idx]['Volume'])), \
+			add_db_record.InsertStockExchange(fstr(table.iloc[idx]['ID']), fstr(table.iloc[idx]['Volume']), \
 				fstr((table.iloc[idx]['StrPrice'])), fstr((table.iloc[idx]['highPrice'])), \
-				fstr(table.iloc[idx]['lowPrice']), fstr(table.iloc[idx]['EndPrice']), fstr(int(table.iloc[idx]['Category'])), sdate)
+				fstr(table.iloc[idx]['lowPrice']), fstr(table.iloc[idx]['EndPrice']), fstr(table.iloc[idx]['Category']), sdate)
+
+			#add_db_record.InsertStockExchange(fstr(table.iloc[idx]['ID']), fstr(int(table.iloc[idx]['Volume'])), \
+			#	fstr((table.iloc[idx]['StrPrice'])), fstr((table.iloc[idx]['highPrice'])), \
+			#	fstr(table.iloc[idx]['lowPrice']), fstr(table.iloc[idx]['EndPrice']), fstr(int(table.iloc[idx]['Category'])), sdate)
 	except Exception as e:
 		print(e)
 	raise Exception
@@ -211,16 +236,23 @@ def insertInsertMarginTradeDB(pathname):
 
 	try:
 		table = pd.read_csv(pathname)
+		table.fillna(value=0, inplace=True)
 
 		# DB Columns are: ID, Name, MarginTradebuy, MarginTradeSell, MarginTradeRemine, 
 		# ShortSellBuy, ShortSellSell, ShortSellRemine, Category, Date
 		for idx in range(0, table.shape[0]):
 			database_InsertCompany(fstr(table.iloc[idx]['ID']), fstr(table.iloc[idx]['Name']))
 			add_db_record.InsertMarginTrade(str(table.iloc[idx]['ID']), fstr(int(table.iloc[idx]['MarginTradeBuy'])), \
-				fstr(int(table.iloc[idx]['MarginTradeSell'])), fstr(int(table.iloc[idx]['MarginTradeRemain'])), \
+				fstr(table.iloc[idx]['MarginTradeSell']), fstr(table.iloc[idx]['MarginTradeRemain']), \
 				fstr(table.iloc[idx]['ShortSellBuy']), fstr(table.iloc[idx]['ShortSellSell']), \
 				fstr(table.iloc[idx]['TotalVolume']), fstr(table.iloc[idx]['ChargeOff']), \
-				fstr(table.iloc[idx]['ShortSellRemain']), fstr(int(table.iloc[idx]['Category'])), sdate)
+				fstr(table.iloc[idx]['ShortSellRemain']), fstr(table.iloc[idx]['Category']), sdate)
+
+			#add_db_record.InsertMarginTrade(str(table.iloc[idx]['ID']), fstr(int(table.iloc[idx]['MarginTradeBuy'])), \
+			#	fstr(int(table.iloc[idx]['MarginTradeSell'])), fstr(int(table.iloc[idx]['MarginTradeRemain'])), \
+			#	fstr(table.iloc[idx]['ShortSellBuy']), fstr(table.iloc[idx]['ShortSellSell']), \
+			#	fstr(table.iloc[idx]['TotalVolume']), fstr(table.iloc[idx]['ChargeOff']), \
+			#	fstr(table.iloc[idx]['ShortSellRemain']), fstr(int(table.iloc[idx]['Category'])), sdate)
 	except Exception as e:
 		print(e)
 		raise Exception
