@@ -28,7 +28,7 @@ def make_row_tuple(typ, row):
     name = row[1].split()[1]
     return ROW(typ, code, name, *row[2: -1])
 
-def fetch_data(url, cmp_id, cmp_name):
+def fetch_data(url, cmp_id, cmp_name, group):
     r = requests.get(url)
     root = etree.HTML(r.text)
     trs = root.xpath('//tr')[1:]
@@ -45,16 +45,20 @@ def fetch_data(url, cmp_id, cmp_name):
             if(idx[7] ==u'ESVUFR'):
                 cmp_id.append(idx[1])
                 cmp_name.append(idx[2])
+                group.append(idx[6])
 
 def query_public_trade_TWSE_ID():
     url = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=2"
     name =[]
     TWSE_id=[]
-    fetch_data(url, TWSE_id, name)
+    group =[]
+    fetch_data(url, TWSE_id, name, group)
     row_form1 = pd.DataFrame({ u' ID '     : TWSE_id})
     row_form2 = pd.DataFrame({ u' Name '   : name})
+    row_form3 = pd.DataFrame({ u' group '  : group})
     form1 = pd.concat([row_form1[u' ID '],
-                       row_form2[u' Name '],], axis =1)
+                       row_form2[u' Name '],
+                       row_form3[u' group '],], axis =1)
     
     form1.to_csv(File_Path + "TWSE_ID.csv", index = False, encoding = "utf-8")
     return TWSE_id
@@ -63,15 +67,18 @@ def query_public_trade_TPEX_ID():
     url = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=4"
     name =[]
     TPEX_id=[]
-    fetch_data(url, TPEX_id, name)
+    group =[]
+    fetch_data(url, TPEX_id, name, group)
     row_form1 = pd.DataFrame({ u' ID '     : TPEX_id})
     row_form2 = pd.DataFrame({ u' Name '   : name})
+    row_form3 = pd.DataFrame({ u' group '  : group})
     form1 = pd.concat([row_form1[u' ID '],
-                       row_form2[u' Name '],], axis =1)
+                       row_form2[u' Name '],
+                       row_form3[u' group '],], axis =1)
     
     form1.to_csv(File_Path + "TPEX_ID.csv", index = False, encoding = "utf-8")
     return TPEX_id
     
 if __name__ == '__main__':
     query_public_trade_TPEX_ID()
-    print "process done"
+    print ("process done")
