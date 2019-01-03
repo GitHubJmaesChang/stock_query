@@ -47,11 +47,8 @@ def fetch_data(url, cmp_id, cmp_name, group):
                 cmp_name.append(idx[2])
                 group.append(idx[6])
 
-def query_public_trade_TWSE_ID():
+def query_public_trade_TWSE_ID(name, TWSE_id, group):
     url = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=2"
-    name =[]
-    TWSE_id=[]
-    group =[]
     fetch_data(url, TWSE_id, name, group)
     row_form1 = pd.DataFrame({ u' ID '     : TWSE_id})
     row_form2 = pd.DataFrame({ u' Name '   : name})
@@ -63,11 +60,8 @@ def query_public_trade_TWSE_ID():
     form1.to_csv(File_Path + "TWSE_ID.csv", index = False, encoding = "utf-8")
     return TWSE_id
 
-def query_public_trade_TPEX_ID():
+def query_public_trade_TPEX_ID(name, TPEX_id, group):
     url = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=4"
-    name =[]
-    TPEX_id=[]
-    group =[]
     fetch_data(url, TPEX_id, name, group)
     row_form1 = pd.DataFrame({ u' ID '     : TPEX_id})
     row_form2 = pd.DataFrame({ u' Name '   : name})
@@ -80,5 +74,8 @@ def query_public_trade_TPEX_ID():
     return TPEX_id
     
 if __name__ == '__main__':
-    query_public_trade_TPEX_ID()
+    name_test=[]
+    TWSE_id_test=[]
+    group_test =[]
+    query_public_trade_TPEX_ID(name_test, TWSE_id_test, group_test)
     print ("process done")

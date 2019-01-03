@@ -22,7 +22,7 @@ headers ={
 	    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36'	
           }
 
-def fill_table(idxID, balance_sheet_fetch, cash_flow_sheet_fetch, income_statement_sheet_fetch):
+def fill_table(idxName, idxID, idxGroup, balance_sheet_fetch, cash_flow_sheet_fetch, income_statement_sheet_fetch):
     
     #balance_sheet_fetch = {}
     search_start = 0
@@ -43,35 +43,40 @@ def fill_table(idxID, balance_sheet_fetch, cash_flow_sheet_fetch, income_stateme
         for cell in members :
             income_statement_sheet_fetch.update({cell : 0})
     
-    pd0 =  pd.DataFrame({"ID" : str(idxID)}, index=[0])
-    pd1 =  pd.DataFrame(data=balance_sheet_fetch, index=[0])
-    pd2 =  pd.DataFrame(data=cash_flow_sheet_fetch, index=[0])
-    pd3 =  pd.DataFrame(data=income_statement_sheet_fetch, index=[0])
+    pd0 =  pd.DataFrame({"Name" : str(idxName)}, index=[0])
+    pd1 =  pd.DataFrame({"ID" : str(idxID)}, index=[0])
+    pd2 =  pd.DataFrame({"Group" : str(idxGroup)}, index=[0])
+    
+    pd3 =  pd.DataFrame(data=balance_sheet_fetch, index=[0])
+    pd4 =  pd.DataFrame(data=cash_flow_sheet_fetch, index=[0])
+    pd5 =  pd.DataFrame(data=income_statement_sheet_fetch, index=[0])
     
     #母公司淨利比例
-    pd4 =  pd.DataFrame({"母公司淨利比例" : float(0.0)}, index=[0])
+    pd6 =  pd.DataFrame({"母公司淨利比例" : float(0.0)}, index=[0])
     #業外占營收比例
-    pd5 =  pd.DataFrame({"業外占營收比例" : float(0.0)}, index=[0])
+    pd7 =  pd.DataFrame({"業外占營收比例" : float(0.0)}, index=[0])
     #存貨周轉率
-    pd6 =  pd.DataFrame({"存貨周轉率" : float(0.0)}, index=[0])
+    pd8 =  pd.DataFrame({"存貨周轉率" : float(0.0)}, index=[0])
     #毛利率
-    pd7 =  pd.DataFrame({"毛利率" : float(0.0)}, index=[0])
+    pd9 =  pd.DataFrame({"毛利率" : float(0.0)}, index=[0])
     #營業利益
-    pd8 =  pd.DataFrame({"營業利益" : float(0.0)}, index=[0])
+    pd10 =  pd.DataFrame({"營業利益" : float(0.0)}, index=[0])
     #營業利益
-    pd9 =  pd.DataFrame({"淨利率" : float(0.0)}, index=[0]) 
+    pd11 =  pd.DataFrame({"淨利率" : float(0.0)}, index=[0]) 
     #original Roe
-    pd10 =  pd.DataFrame({"ROE_Org" : float(0.0)}, index=[0])
+    pd12 =  pd.DataFrame({"ROE_Org" : float(0.0)}, index=[0])
     #total income Roe
-    pd11 =  pd.DataFrame({"ROE" : float(0.0)}, index=[0])
+    pd13 =  pd.DataFrame({"ROE" : float(0.0)}, index=[0])
     #total Roa
-    pd12 =  pd.DataFrame({"ROA" : float(0.0)},index=[0])
-    frame_table = pd.concat([pd0, pd1, pd2, pd3, pd4, pd5, pd6, pd7, pd8, pd9, pd10, pd11, pd12], axis=1, sort=False)
+    pd14 =  pd.DataFrame({"ROA" : float(0.0)},index=[0])
+    frame_table = pd.concat([pd0, pd1, pd2, pd3, pd4, pd5, pd6, pd7, pd8, pd9, pd10, pd11, pd12, pd13, pd14], axis=1, sort=False)
     return frame_table
 
 def fetch_entire_finacialStatement(year,
                                    section,
+                                   company_name,
                                    company_id,
+                                   company_group,
                                    report_url_mode, 
                                    balance_sheet_fetch,
                                    cash_flow_sheet_fetch,
@@ -145,14 +150,17 @@ def fetch_entire_finacialStatement(year,
                 if(row_item == (income_statement_sheet_table.shape[0]-1)):
                     income_statement_sheet_fetch.update({cell : 0})
 
-    pd0 =  pd.DataFrame({"ID" : str(company_id)}, index=[0])
-    pd1 =  pd.DataFrame(data=balance_sheet_fetch, index=[0])
-    pd2 =  pd.DataFrame(data=cash_flow_sheet_fetch, index=[0])
-    pd3 =  pd.DataFrame(data=income_statement_sheet_fetch, index=[0])
+    pd0 =  pd.DataFrame({"Name" : str(company_name)}, index=[0])
+    pd1 =  pd.DataFrame({"ID" : str(company_id)}, index=[0])
+    pd2 =  pd.DataFrame({"Group" : str(company_group)}, index=[0])
+    
+    pd3 =  pd.DataFrame(data=balance_sheet_fetch, index=[0])
+    pd4 =  pd.DataFrame(data=cash_flow_sheet_fetch, index=[0])
+    pd5 =  pd.DataFrame(data=income_statement_sheet_fetch, index=[0])
     
     #母公司淨利比例
     data1 = float(cash_flow_sheet_fetch[u'營業利益（損失）']) + float(cash_flow_sheet_fetch[u'營業外收入及支出合計'])
-    data2 = float(cash_flow_sheet_fetch[u'母公司業主（淨利／損）'])
+    data2 = float(cash_flow_sheet_fetch[u'營業利益（損失）'])
     if(data1 ==0):
         print ("exception error happened")
         temp = 0.0
@@ -160,7 +168,7 @@ def fetch_entire_finacialStatement(year,
         temp = float(data2 / data1)
         
     print ("母公司淨利比例 : " + str(temp) )
-    pd4 =  pd.DataFrame({"母公司淨利比例" : temp }, index=[0])
+    pd6 =  pd.DataFrame({"母公司淨利比例" : temp }, index=[0])
 
     #業外占營收比例
     data1 = float(cash_flow_sheet_fetch[u'營業利益（損失）']) + float(cash_flow_sheet_fetch[u'營業外收入及支出合計'])
@@ -173,7 +181,7 @@ def fetch_entire_finacialStatement(year,
         temp = float(data2 / data1)
         
     print ("業外占營收比例 : " + str(temp) )
-    pd5 =  pd.DataFrame({"業外占營收比例" : temp },index=[0])
+    pd7 =  pd.DataFrame({"業外占營收比例" : temp },index=[0])
 
     
     #存貨周轉率
@@ -187,7 +195,7 @@ def fetch_entire_finacialStatement(year,
         temp = float(data2 / data1)
 
     print ("存貨周轉率 : " + str(temp) )
-    pd6 =  pd.DataFrame({"存貨周轉率" : temp }, index=[0])
+    pd8 =  pd.DataFrame({"存貨周轉率" : temp }, index=[0])
     
     #毛利率
     data1 = float(cash_flow_sheet_fetch[u'營業收入合計'])
@@ -200,7 +208,7 @@ def fetch_entire_finacialStatement(year,
         temp = float(data2 / data1)
         
     print ("毛利率 : " + str(temp) )
-    pd7 =  pd.DataFrame({"毛利率" : temp }, index=[0])
+    pd9 =  pd.DataFrame({"毛利率" : temp }, index=[0])
     
     #營業利益
     data1 = float(cash_flow_sheet_fetch[u'營業收入合計'])
@@ -212,7 +220,7 @@ def fetch_entire_finacialStatement(year,
         temp = float(data2 / data1)
         
     print ("營業利益 : " + str(temp) )
-    pd8 =  pd.DataFrame({"營業利益" : temp }, index=[0])
+    pd10 =  pd.DataFrame({"營業利益" : temp }, index=[0])
 
     #淨利率
     data2 = float(cash_flow_sheet_fetch[u'本期淨利（淨損）'])
@@ -224,7 +232,7 @@ def fetch_entire_finacialStatement(year,
         temp = float(data2 / data1)
         
     print ("淨利率 : " + str(temp) )
-    pd9 =  pd.DataFrame({"淨利率" : temp }, index=[0])
+    pd11 =  pd.DataFrame({"淨利率" : temp }, index=[0])
 
     #original Roe
     data1 = float(balance_sheet_fetch[u'權益總額'])
@@ -241,7 +249,7 @@ def fetch_entire_finacialStatement(year,
     else:
         print ("ROE_Org : -" + str(abs(temp)) )
      
-    pd10 =  pd.DataFrame({"ROE_Org" : temp }, index=[0])
+    pd12 =  pd.DataFrame({"ROE_Org" : temp }, index=[0])
     
     #total income Roe
     data1 = float(balance_sheet_fetch[u'權益總額'])
@@ -254,7 +262,7 @@ def fetch_entire_finacialStatement(year,
         temp = float(data2 / data1)
 
     print ("ROE : " + str(temp) )
-    pd11 =  pd.DataFrame({"ROE" : temp }, index=[0])
+    pd13 =  pd.DataFrame({"ROE" : temp }, index=[0])
     
     #total Roa
     data1 = float(balance_sheet_fetch[u'負債及權益總計'])
@@ -267,10 +275,10 @@ def fetch_entire_finacialStatement(year,
         temp = float(data2 / data1)
 
     print ("ROA : " + str(temp) )
-    pd12 =  pd.DataFrame({"ROA" : temp }, index=[0])
+    pd14 =  pd.DataFrame({"ROA" : temp }, index=[0])
 
     
-    frame_table = pd.concat([pd0, pd1, pd2, pd3, pd4, pd5, pd6, pd7, pd8, pd9, pd10, pd11, pd12], axis=1, sort=False)
+    frame_table = pd.concat([pd0, pd1, pd2, pd3, pd4, pd5, pd6, pd7, pd8, pd9, pd10, pd11, pd12, pd13, pd14], axis=1, sort=False)
     return frame_table
                 
 """
@@ -282,10 +290,12 @@ def fetch_entire_finacialStatement(year,
 def financialStatement_prepare(year, section, fetch_table_type):
 
     id_table = []
+    name_table=[]
+    group_table=[]
     if(fetch_table_type == "TWSE"):
-        id_table = query_public_trade_TWSE_ID()
+        id_table = query_public_trade_TWSE_ID(name_table, id_table, group_table)
     else:
-        id_table = query_public_trade_TPEX_ID()
+        id_table = query_public_trade_TPEX_ID(name_table, id_table, group_table)
 
     print (id_table)
 
@@ -296,7 +306,7 @@ def financialStatement_prepare(year, section, fetch_table_type):
     cash_flow_sheet_fetch = {}
     income_statement_sheet_fetch = {}
 
-    pd1 = fill_table("99999", balance_sheet_fetch, cash_flow_sheet_fetch, income_statement_sheet_fetch)
+    pd1 = fill_table("99999", "99999", "99999", balance_sheet_fetch, cash_flow_sheet_fetch, income_statement_sheet_fetch)
     #fetch_entire_finacialStatement("2018","3" ,"1108", balance_sheet_fetch, cash_flow_sheet_fetch, income_statement_sheet_fetch)
 
     url_type1 ="&REPORT_ID=C"
@@ -309,13 +319,13 @@ def financialStatement_prepare(year, section, fetch_table_type):
         print ("start process")
         # fill the ID table to "0"
         if(retry_idx >= 10): #retry times
-            pdx = fill_table(str(id_table[idx]), balance_sheet_fetch, cash_flow_sheet_fetch, income_statement_sheet_fetch)
+            pdx = fill_table(str(name_table[idx]), str(id_table[idx]), str(group_table[idx]), balance_sheet_fetch, cash_flow_sheet_fetch, income_statement_sheet_fetch)
             pd1 = pd1.append(pdx)
             idx = idx + 1
             retry_idx = 0
         try :
             print ("access data from proxy server")                
-            pdx = fetch_entire_finacialStatement(year, section ,str(id_table[idx]),url,
+            pdx = fetch_entire_finacialStatement(year, section ,str(name_table[idx]), str(id_table[idx]), str(group_table[idx]),url,
                                                  balance_sheet_fetch, cash_flow_sheet_fetch, income_statement_sheet_fetch)
         except Exception as e:
             print ("retry")
@@ -335,7 +345,6 @@ def financialStatement_prepare(year, section, fetch_table_type):
         idx = idx + 1
         if(idx >= len(id_table)):
             break
-
 
     PATH_FILE = ""
     CSV_FILE_NAME = str(year) + "_" + str(section) + "_"
