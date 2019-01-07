@@ -219,8 +219,8 @@ def fetch_entire_finacialStatement(year,
     else :
         temp = float(data2 / data1)
         
-    print ("營業利益 : " + str(temp) )
-    pd10 =  pd.DataFrame({"營業利益" : temp }, index=[0])
+    print ("營業利益率 : " + str(temp) )
+    pd10 =  pd.DataFrame({"營業利益率" : temp }, index=[0])
 
     #淨利率
     data2 = float(cash_flow_sheet_fetch[u'本期淨利（淨損）'])
@@ -374,4 +374,7 @@ def financialStatement_prepare(year, section, fetch_table_type):
 
 
 if __name__ == '__main__':
-    financialStatement_prepare("2018", "3", "TPEX")
+    financialStatement_prepare("2018", "2", "TPEX")
+    print ("TPEX done")
+    financialStatement_prepare("2018", "2", "TWSE")
+    print ("TWSE done")
