@@ -4,7 +4,10 @@ import pandas as pd
 import requests
 from io import StringIO
 import time
-import cell_items_name  
+from cell_items_name import balance_sheet
+from cell_items_name import income_statement_sheet
+from cell_items_name import cash_flow_sheet
+
 from rand_proxy import htmlRequest
 from query_company_id import query_public_trade_TWSE_ID
 from query_company_id import query_public_trade_TPEX_ID
@@ -26,30 +29,30 @@ def fill_table(idxName, idxID, idxGroup, balance_sheet_fetch, cash_flow_sheet_fe
     
     #balance_sheet_fetch = {}
     search_start = 0
-    for idx, members in cell_items_name.balance_sheet.items():
+    for idx, members in balance_sheet.items():
         for cell in members :
                 balance_sheet_fetch.update({cell : 0})
 
 
     #cash_flow_sheet_fetch = {}
     search_start = 0
-    for idx, members in cell_items_name.cash_flow_sheet.items():
+    for idx, members in income_statement_sheet.items():
         for cell in members :
-            cash_flow_sheet_fetch.update({cell : 0})
+            income_statement_sheet_fetch.update({cell : 0})
                 
     #income_statement_sheet_fetch = {}
     search_start = 0
-    for idx, members in cell_items_name.income_statement_sheet.items():
+    for idx, members in cash_flow_sheet.items():
         for cell in members :
-            income_statement_sheet_fetch.update({cell : 0})
+            cash_flow_sheet_fetch.update({cell : 0})
     
     pd0 =  pd.DataFrame({"Name" : str(idxName)}, index=[0])
     pd1 =  pd.DataFrame({"ID" : str(idxID)}, index=[0])
     pd2 =  pd.DataFrame({"Group" : str(idxGroup)}, index=[0])
     
     pd3 =  pd.DataFrame(data=balance_sheet_fetch, index=[0])
-    pd4 =  pd.DataFrame(data=cash_flow_sheet_fetch, index=[0])
-    pd5 =  pd.DataFrame(data=income_statement_sheet_fetch, index=[0])
+    pd4 =  pd.DataFrame(data=income_statement_sheet_fetch, index=[0])
+    pd5 =  pd.DataFrame(data=cash_flow_sheet_fetch, index=[0])
     
     #母公司淨利比例
     pd6 =  pd.DataFrame({"母公司淨利比例" : float(0.0)}, index=[0])
@@ -106,15 +109,14 @@ def fetch_entire_finacialStatement(year,
 
 
     print ("fetch data start")
-    
     balance_sheet_table = DataFrame_form[1]
-    cash_flow_sheet_table = DataFrame_form[2]
-    income_statement_sheet_table = DataFrame_form[3]
+    income_statement_sheet_table = DataFrame_form[2]
+    cash_flow_sheet_table = DataFrame_form[3]
 
     print ("fetch balance_sheet_fetch start")
     #balance_sheet_fetch = {}
     search_start = 0
-    for idx, members in cell_items_name.balance_sheet.items():
+    for idx, members in balance_sheet.items():
         for cell in members :
             for row_item in range (search_start, balance_sheet_table.shape[0]):
                 if balance_sheet_table.loc[row_item][0] == cell:
@@ -124,43 +126,43 @@ def fetch_entire_finacialStatement(year,
                 if(row_item == (balance_sheet_table.shape[0]-1)):
                     balance_sheet_fetch.update({cell : 0})
 
-    print ("fetch cash_flow_sheet_fetch start")
+    print ("fetch income_statement_sheet_table start")
     #cash_flow_sheet_fetch = {}
     search_start = 0
-    for idx, members in cell_items_name.cash_flow_sheet.items():
-        for cell in members :
-            for row_item in range (search_start, cash_flow_sheet_table.shape[0]):
-                if cash_flow_sheet_table.loc[row_item][0] == cell:
-                    cash_flow_sheet_fetch.update({cell : cash_flow_sheet_table.loc[row_item][1]})
-                    search_start = row_item
-                    break
-                if(row_item == (cash_flow_sheet_table.shape[0]-1)):
-                    cash_flow_sheet_fetch.update({cell : 0})
-
-    print ("fetch cash_flow_sheet_fetch start")
-    #income_statement_sheet_fetch = {}
-    search_start = 0
-    for idx, members in cell_items_name.income_statement_sheet.items():
+    for idx, members in income_statement_sheet_table.items():
         for cell in members :
             for row_item in range (search_start, income_statement_sheet_table.shape[0]):
                 if income_statement_sheet_table.loc[row_item][0] == cell:
-                    income_statement_sheet_fetch.update({cell: income_statement_sheet_table.loc[row_item][1]})
+                    income_statement_sheet_fetch.update({cell : income_statement_sheet_table.loc[row_item][1]})
                     search_start = row_item
                     break
                 if(row_item == (income_statement_sheet_table.shape[0]-1)):
                     income_statement_sheet_fetch.update({cell : 0})
+
+    print ("fetch cash_flow_sheet_fetch start") 
+    #income_statement_sheet_fetch = {}
+    search_start = 0
+    for idx, members in cash_flow_sheet_table.items():
+        for cell in members :
+            for row_item in range (search_start, cash_flow_sheet_table.shape[0]):
+                if cash_flow_sheet_table.loc[row_item][0] == cell:
+                    cash_flow_sheet_fetch.update({cell: cash_flow_sheet_table.loc[row_item][1]})
+                    search_start = row_item
+                    break
+                if(row_item == (cash_flow_sheet_table.shape[0]-1)):
+                    cash_flow_sheet_fetch.update({cell : 0})
 
     pd0 =  pd.DataFrame({"Name" : str(company_name)}, index=[0])
     pd1 =  pd.DataFrame({"ID" : str(company_id)}, index=[0])
     pd2 =  pd.DataFrame({"Group" : str(company_group)}, index=[0])
     
     pd3 =  pd.DataFrame(data=balance_sheet_fetch, index=[0])
-    pd4 =  pd.DataFrame(data=cash_flow_sheet_fetch, index=[0])
-    pd5 =  pd.DataFrame(data=income_statement_sheet_fetch, index=[0])
+    pd4 =  pd.DataFrame(data=income_statement_sheet_fetch, index=[0])
+    pd5 =  pd.DataFrame(data=cash_flow_sheet_fetch, index=[0])
     
     #母公司淨利比例
-    data1 = float(cash_flow_sheet_fetch[u'營業利益（損失）']) + float(cash_flow_sheet_fetch[u'營業外收入及支出合計'])
-    data2 = float(cash_flow_sheet_fetch[u'營業利益（損失）'])
+    data1 = float(income_statement_sheet_fetch[u'營業利益（損失）']) + float(income_statement_sheet_fetch[u'營業外收入及支出合計'])
+    data2 = float(income_statement_sheet_fetch[u'營業利益（損失）'])
     if(data1 ==0):
         print ("exception error happened")
         temp = 0.0
@@ -171,8 +173,8 @@ def fetch_entire_finacialStatement(year,
     pd6 =  pd.DataFrame({"母公司淨利比例" : temp }, index=[0])
 
     #業外占營收比例
-    data1 = float(cash_flow_sheet_fetch[u'營業利益（損失）']) + float(cash_flow_sheet_fetch[u'營業外收入及支出合計'])
-    data2 = float(cash_flow_sheet_fetch[u'營業外收入及支出合計'])
+    data1 = float(income_statement_sheet_fetch[u'營業利益（損失）']) + float(income_statement_sheet_fetch[u'營業外收入及支出合計'])
+    data2 = float(income_statement_sheet_fetch[u'營業外收入及支出合計'])
 
     if(data1 ==0):
         print ("exception error happened")
@@ -186,7 +188,7 @@ def fetch_entire_finacialStatement(year,
     
     #存貨周轉率
     data1 = float(balance_sheet_fetch[u'存貨'])
-    data2 = float(cash_flow_sheet_fetch[u'營業成本合計'])
+    data2 = float(income_statement_sheet_fetch[u'營業成本合計'])
 
     if(data1 ==0):
         print ("exception error happened")
@@ -198,8 +200,8 @@ def fetch_entire_finacialStatement(year,
     pd8 =  pd.DataFrame({"存貨周轉率" : temp }, index=[0])
     
     #毛利率
-    data1 = float(cash_flow_sheet_fetch[u'營業收入合計'])
-    data2 = float(cash_flow_sheet_fetch[u'營業毛利（毛損）淨額'])
+    data1 = float(income_statement_sheet_fetch[u'營業收入合計'])
+    data2 = float(income_statement_sheet_fetch[u'營業毛利（毛損）淨額'])
 
     if(data1 ==0):
         print ("exception error happened")
@@ -211,8 +213,8 @@ def fetch_entire_finacialStatement(year,
     pd9 =  pd.DataFrame({"毛利率" : temp }, index=[0])
     
     #營業利益
-    data1 = float(cash_flow_sheet_fetch[u'營業收入合計'])
-    data2 = float(cash_flow_sheet_fetch[u'營業利益（損失）'])
+    data1 = float(income_statement_sheet_fetch[u'營業收入合計'])
+    data2 = float(income_statement_sheet_fetch[u'營業利益（損失）'])
     if(data1 ==0):
         print ("exception error happened")
         temp = 0.0
@@ -223,8 +225,8 @@ def fetch_entire_finacialStatement(year,
     pd10 =  pd.DataFrame({"營業利益率" : temp }, index=[0])
 
     #淨利率
-    data2 = float(cash_flow_sheet_fetch[u'本期淨利（淨損）'])
-    data1 = float(cash_flow_sheet_fetch[u'營業收入合計'])
+    data2 = float(income_statement_sheet_fetch[u'本期淨利（淨損）'])
+    data1 = float(income_statement_sheet_fetch[u'營業收入合計'])
     if(data1 ==0):
         print ("exception error happened")
         temp = 0.0
@@ -236,7 +238,7 @@ def fetch_entire_finacialStatement(year,
 
     #original Roe
     data1 = float(balance_sheet_fetch[u'權益總額'])
-    data2 = float(cash_flow_sheet_fetch[u'本期淨利（淨損）'] )- float(cash_flow_sheet_fetch[u'營業外收入及支出合計'])
+    data2 = float(income_statement_sheet_fetch[u'本期淨利（淨損）'] )- float(income_statement_sheet_fetch[u'營業外收入及支出合計'])
 
     if(data1 ==0):
         print ("exception error happened")
@@ -253,7 +255,7 @@ def fetch_entire_finacialStatement(year,
     
     #total income Roe
     data1 = float(balance_sheet_fetch[u'權益總額'])
-    data2 = float(cash_flow_sheet_fetch[u'本期淨利（淨損）'])
+    data2 = float(income_statement_sheet_fetch[u'本期淨利（淨損）'])
 
     if(data1 ==0):
         print ("exception error happened")
@@ -266,7 +268,7 @@ def fetch_entire_finacialStatement(year,
     
     #total Roa
     data1 = float(balance_sheet_fetch[u'負債及權益總計'])
-    data2 = float(cash_flow_sheet_fetch[u'本期淨利（淨損）'])
+    data2 = float(income_statement_sheet_fetch[u'本期淨利（淨損）'])
 
     if(data1 ==0):
         print ("exception error happened")

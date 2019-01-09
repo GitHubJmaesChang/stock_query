@@ -125,8 +125,10 @@ def insertCompanyFinancialStatement(path, date, quarterly, stock_type):
 	table = pd.read_csv(path + file_name)
 	for idx in range(0, table.shape[0]):
                 database_InsertCompany(str(table.iloc[idx]['Name']), str(table.iloc[idx]['ID']), str(table.iloc[idx]['Group']))
+
+                database_InsertCompanyGroup(str(table.iloc[idx]['ID']), str(table.iloc[idx]['Group']))
                 
-		database_InsertFinancialStatement(str(table.iloc[idx]['ID']),
+		database_InsertBalanceSheet(str(table.iloc[idx]['ID']),
                                                   str(table.iloc[idx]['現金及約當現金']),
 						  str(table.iloc[idx]['應收票據淨額']),
                                                   str(table.iloc[idx]['應收帳款淨額']),
@@ -151,7 +153,7 @@ def insertCompanyFinancialStatement(path, date, quarterly, stock_type):
                                                   str(table.iloc[idx]['負債及權益總計']),
                                                   date)
 
-		database_InsertIncomeStatement(str(table.iloc[idx]['ID']),
+		database_InsertIncomeStatementSheet(str(table.iloc[idx]['ID']),
                                                str(table.iloc[idx]['營業收入合計']),
                                                str(table.iloc[idx]['營業成本合計']),
                                                str(table.iloc[idx]['營業毛利（毛損）淨額']),
@@ -168,7 +170,7 @@ def insertCompanyFinancialStatement(path, date, quarterly, stock_type):
                                                str(table.iloc[idx]['基本每股盈餘合計']),
                                                date)
 		
-		database_InsertCalStatement(str(table.iloc[idx]['ID']),
+		database_InsertCashFlowSsheet(str(table.iloc[idx]['ID']),
                                             str(table.iloc[idx]['營業活動之淨現金流入（流出）']),
                                             str(table.iloc[idx]['投資活動之淨現金流入（流出）']),
                                             str(table.iloc[idx]['籌資活動之淨現金流入（流出）']),

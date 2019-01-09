@@ -31,7 +31,7 @@ balance_sheet = {
    15 : [u'負債及權益總計'],
    }
 
-cash_flow_sheet={
+income_statement_sheet={
    1 : [u'營業收入合計'],
    2 : [u'營業成本合計'], 
    3 : [u'營業毛利（毛損）淨額'], 
@@ -44,7 +44,7 @@ cash_flow_sheet={
    10 : [u'基本每股盈餘合計'],
    }
 
-income_statement_sheet={
+cash_flow_sheet={
    1 : [u'營業活動之淨現金流入（流出）'],
    2 : [u'投資活動之淨現金流入（流出）'], 
    3 : [u'籌資活動之淨現金流入（流出）'], 
