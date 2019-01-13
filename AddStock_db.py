@@ -103,83 +103,100 @@ def insertFinancailSeate_to_database(path, date, quarterly):
 
 
 def insertCompanyFinancialStatement(path, date, quarterly, stock_type):
-	sdate = date.split("-")
-	year = sdate[0]
-	month = sdate[1]
-	day = sdate[2]
-	file_name = str(year) + "_"+ str(quarterly)
-	
-	if(stock_type == "TWSE"):
+
+        sdate = date.split("-")
+        year = sdate[0]
+        month = sdate[1]
+        day = sdate[2]
+
+        file_name = str(year) + "_"+ str(quarterly)
+
+        if(stock_type == "TWSE"):
                 file_name +=  "TWSE_financialStatement.csv"
         else:
                 file_name +=  "TPEX_financialStatement.csv"
 
-	intial_db()
 
-	print("Process file: [" + file_name + "]")
+        intial_db()
 
-	if((0) == check_file_exist(path + file_name)):
-		print(("insertFinancailSeate_to_database : No such file name : "), file_name)
-		return (0)
+        print("Process file: [" + file_name + "]")
 
-	table = pd.read_csv(path + file_name)
-	for idx in range(0, table.shape[0]):
-                database_InsertCompany(str(table.iloc[idx]['Name']), str(table.iloc[idx]['ID']), str(table.iloc[idx]['Group']))
+        if((0) == check_file_exist(path + file_name)):
+                print(("insertFinancailSeate_to_database : No such file name : "), file_name)
+                return (0)
 
-                database_InsertCompanyGroup(str(table.iloc[idx]['ID']), str(table.iloc[idx]['Group']))
+        table = pd.read_csv(path + file_name)
+
+        balance_sheet = [None]*64 
+        Income_sheet  = [None]*64 
+        Cash_sheet    = [None]*64
+        valueable_sheet   = [None]*64
+
+        for idx in range(0, table.shape[0]):
+                database_InsertCompany(str(table.iloc[idx]['Name']), str(table.iloc[idx]['ID']))
+                balance_sheet[0] = str(table.iloc[idx]['現金及約當現金'])
+                balance_sheet[1] = str(table.iloc[idx]['應收票據淨額'])
+                balance_sheet[2] = str(table.iloc[idx]['應收帳款淨額'])
+                balance_sheet[3] = str(table.iloc[idx]['應收帳款－關係人淨額'])
+                balance_sheet[4] = str(table.iloc[idx]['其他應收款'])
+                balance_sheet[5] = str(table.iloc[idx]['其他應收款－關係人'])
+                balance_sheet[6] = str(table.iloc[idx]['存貨'])
+                balance_sheet[7] = str(table.iloc[idx]['預付款項'])
+                balance_sheet[8] = str(table.iloc[idx]['流動資產合計'])
+                balance_sheet[9] = str(table.iloc[idx]['非流動資產合計'])
+                balance_sheet[10] = str(table.iloc[idx]['資產總計'])
+                balance_sheet[11] = str(table.iloc[idx]['短期借款'])
+                balance_sheet[12] = str(table.iloc[idx]['應付帳款'])
+                balance_sheet[13] = str(table.iloc[idx]['應付帳款－關係人'])
+                balance_sheet[14] = str(table.iloc[idx]['其他應付款'])
+                balance_sheet[15] = str(table.iloc[idx]['流動負債合計'])
+                balance_sheet[16] = str(table.iloc[idx]['長期借款'])
+                balance_sheet[17] = str(table.iloc[idx]['非流動負債合計'])
+                balance_sheet[18] = str(table.iloc[idx]['負債總計'])
+                balance_sheet[19] = str(table.iloc[idx]['普通股股本'])
+                balance_sheet[20] = str(table.iloc[idx]['權益總計'])
+                balance_sheet[21] = str(table.iloc[idx]['負債及權益總計'])
                 
-		database_InsertBalanceSheet(str(table.iloc[idx]['ID']),
-                                                  str(table.iloc[idx]['現金及約當現金']),
-						  str(table.iloc[idx]['應收票據淨額']),
-                                                  str(table.iloc[idx]['應收帳款淨額']),
-                                                  str(table.iloc[idx]['應收帳款－關係人淨額']),
-                                                  str(table.iloc[idx]['其他應收款']),
-                                                  str(table.iloc[idx]['其他應收款－關係人']),
-                                                  str(table.iloc[idx]['存貨']),
-                                                  str(table.iloc[idx]['預付款項']),
-                                                  str(table.iloc[idx]['流動資產合計']),
-                                                  str(table.iloc[idx]['非流動資產合計']),
-                                                  str(table.iloc[idx]['資產總計']),
-                                                  str(table.iloc[idx]['短期借款']),
-                                                  str(table.iloc[idx]['應付帳款']),
-                                                  str(table.iloc[idx]['應付帳款－關係人']),
-                                                  str(table.iloc[idx]['其他應付款']),
-                                                  str(table.iloc[idx]['流動負債合計']),
-                                                  str(table.iloc[idx]['長期借款']),
-                                                  str(table.iloc[idx]['非流動負債合計']),
-                                                  str(table.iloc[idx]['負債總計']),
-                                                  str(table.iloc[idx]['普通股股本']),
-                                                  str(table.iloc[idx]['權益總計']),
-                                                  str(table.iloc[idx]['負債及權益總計']),
-                                                  date)
+                add_db_record.InsertBalanceSheet(str(table.iloc[idx]['ID']), balance_sheet, date)
 
-		database_InsertIncomeStatementSheet(str(table.iloc[idx]['ID']),
-                                               str(table.iloc[idx]['營業收入合計']),
-                                               str(table.iloc[idx]['營業成本合計']),
-                                               str(table.iloc[idx]['營業毛利（毛損）淨額']),
-                                               str(table.iloc[idx]['推銷費用']),
-                                               str(table.iloc[idx]['管理費用']),
-                                               str(table.iloc[idx]['研究發展費用']),
-                                               str(table.iloc[idx]['其他費用']),
-                                               str(table.iloc[idx]['營業費用合計']),
-                                               str(table.iloc[idx]['營業利益（損失）']),
-					       str(table.iloc[idx]['營業外收入及支出合計']),
-                                               str(table.iloc[idx]['繼續營業單位稅前淨利（淨損）']),
-					       str(table.iloc[idx]['本期淨利（淨損）'']),
-                                               str(table.iloc[idx]['母公司業主（淨利／損）']),
-                                               str(table.iloc[idx]['基本每股盈餘合計']),
-                                               date)
-		
-		database_InsertCashFlowSsheet(str(table.iloc[idx]['ID']),
-                                            str(table.iloc[idx]['營業活動之淨現金流入（流出）']),
-                                            str(table.iloc[idx]['投資活動之淨現金流入（流出）']),
-                                            str(table.iloc[idx]['籌資活動之淨現金流入（流出）']),
-                                            str(table.iloc[idx]['匯率變動對現金及約當現金之影響']),
-                                            str(table.iloc[idx]['本期現金及約當現金增加（減少）數']),
-                                            str(table.iloc[idx]['期初現金及約當現金餘額']),
-                                            str(table.iloc[idx]['期末現金及約當現金餘額']),
-                                            str(table.iloc[idx]['資產負債表帳列之現金及約當現金']),
-                                            date)                
+                Income_sheet[0] = str(table.iloc[idx]['營業收入合計'])
+                Income_sheet[1] = str(table.iloc[idx]['營業成本合計'])
+                Income_sheet[2] = str(table.iloc[idx]['營業毛利（毛損）淨額'])
+                Income_sheet[3] = str(table.iloc[idx]['推銷費用'])
+                Income_sheet[4] = str(table.iloc[idx]['管理費用'])
+                Income_sheet[5] = str(table.iloc[idx]['研究發展費用'])
+                Income_sheet[6] = str(table.iloc[idx]['其他費用'])
+                Income_sheet[7] = str(table.iloc[idx]['營業費用合計'])
+                Income_sheet[8] = str(table.iloc[idx]['營業利益（損失）'])
+                Income_sheet[9] = str(table.iloc[idx]['營業外收入及支出合計'])
+                Income_sheet[10] = str(table.iloc[idx]['繼續營業單位稅前淨利（淨損）'])
+                Income_sheet[11] = str(table.iloc[idx]['本期淨利（淨損）'])
+                Income_sheet[12] = str(table.iloc[idx]['母公司業主（淨利／損）'])
+                Income_sheet[13] = str(table.iloc[idx]['基本每股盈餘合計'])
+
+                add_db_record.InsertIncomeStatementSheet(str(table.iloc[idx]['ID']), Income_sheet, date)
+
+                Cash_sheet[0] = str(table.iloc[idx]['營業活動之淨現金流入（流出）'])
+                Cash_sheet[1] = str(table.iloc[idx]['投資活動之淨現金流入（流出）'])
+                Cash_sheet[2] = str(table.iloc[idx]['籌資活動之淨現金流入（流出）'])
+                Cash_sheet[3] = str(table.iloc[idx]['匯率變動對現金及約當現金之影響'])
+                Cash_sheet[4] = str(table.iloc[idx]['本期現金及約當現金增加（減少）數'])
+                Cash_sheet[5] = str(table.iloc[idx]['期初現金及約當現金餘額'])
+                Cash_sheet[6] = str(table.iloc[idx]['期末現金及約當現金餘額'])
+
+                add_db_record.InsertCashStatementSheet(str(table.iloc[idx]['ID']), Cash_sheet, date)
+
+                valueable_sheet[0] = fstr(table.iloc[idx]['母公司淨利比例'])
+                valueable_sheet[1] = fstr(table.iloc[idx]['業外占營收比例'])
+                valueable_sheet[2] = fstr(table.iloc[idx]['存貨周轉率'])
+                valueable_sheet[3] = fstr(table.iloc[idx]['毛利率'])
+                valueable_sheet[4] = fstr(table.iloc[idx]['營業利益'])
+                valueable_sheet[5] = fstr(table.iloc[idx]['淨利率'])
+                valueable_sheet[6] = fstr(table.iloc[idx]['ROE_Org'])
+                valueable_sheet[7] = fstr(table.iloc[idx]['ROE'])
+                valueable_sheet[8] = fstr(table.iloc[idx]['ROE'])
+
+                add_db_record.InsertCompanyEstimateSheet(str(table.iloc[idx]['ID']), valueable_sheet, date)
 	
                 
 	
@@ -342,7 +359,7 @@ def insertInsertMarginTradeDB(pathname):
 
 def test_verify_financaStatement():
 	insertFinancailSeate_to_database("./", "1","2017-05-15")
-	print "process done"
+	print ("process done")
 
 		
 if __name__ == '__main__':

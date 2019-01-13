@@ -571,6 +571,334 @@ def InsertMarginTrade(stockID, MarginBuy, MarginSell, MarginRemine, ShortSellBuy
 	return(0)
 
 
+def InsertBalanceSheet(stockID, dataGroup, date):
+        if (stockID.strip() == "" or date.strip() == ""):
+                dbgPrint("InsertIncomeStatement: StockID and Date cannot be empty")
+                return(-1)
+    
+        #if not (stockID.lstrip('-+').isdigit()):
+        #	dbgPrint("InsertIncomeStatement: StockID must be a digit")
+        #	return(-1)
+
+        if ((stockID.lstrip('-+').isdigit() == False) and (not isfloat(stockID))):
+                dbgPrint("InsertCalStatement: stockID must be a digit")
+                return(-1)
+        else:
+                # Convert stockID from float to in then string
+                stockID = str(int(float(stockID)))
+		
+        for idx in range(1, dataGroup.len()):
+                if(not dataGroup[idx].strip() == "") and (not dataGroup[idx].lstrip('-+').isdigit()):
+                        dbgPrint("dataGroup[" + idx +"]" + "=" + dataGroup[idx])
+                        return(-1)
+        try:
+                valid_date(date)
+                # Get CoId
+                cursor.execute("SELECT CoId FROM Company WHERE StockID = %s", (stockID,))
+                row = cursor.fetchall()
+
+                if(cursor.rowcount <= 0):
+                        dbgPrint("BalanceStatementSheet Error: Cannot locate Company ID" + str(cursor.rowcount))
+                        return(-1)
+
+                if(check_record(str(row[0][0]), date, "", "BalanceStatementSheet") != 0):
+                        dbgPrint("BalanceStatementSheet: Error: Record already exist, please make sure no duplicates")
+                        return(-1)
+
+                add_is = ("INSERT INTO BalanceStatementSheet " \
+			  "(CoId, \
+                            CashAndCashEquivalents, \
+			    NotesReceivableNet, \
+			    AccountsReceivableNet, \
+			    AccountsReceivableRelatedNet, \
+			    OthersAccountsReceivable, \
+			    OthersAccountsReceivableRelated, \
+			    Inventories, \
+			    Prepayments, \
+			    TotalCurrentAssets, \
+			    TotalNonCurrentAssets, \
+			    TotalAssets, \
+			    ShortTermDebt, \
+			    AccountsPayable, \
+			    AccountsPayableRelated, \
+			    OtherAccountsPayable, \
+			    TotalCurrentDebt, \
+			    LongTermDebtPayable, \
+			    TotalNonCurrentDebt, \
+			    TotalLiabilities, \
+			    CapitalCommonStock, \
+			    TotalEquity, \
+			    TotalLiabilitiesAndEquity, \
+			    Date) " \
+			   "VALUES (%(_coid)s, %(_data[0])s, %(_data[1])s, %(_data[2])s, %(_data[3])s, %(_data[4])s, %(_data[5])s, \
+			   %(_data[6])s, %(_data[7])s, %(_data[8])s, %(_data[9])s, %(_data[10])s, %(_data[11])s, %(_data[12])s, \
+			   %(_data[13])s, %(_data[14])s, %(_data[15])s, %(_data[16])s, %(_data[17])s, %(_data[18])s, %(_data[19])s, \
+			   %(_data[20])s, %(_data[21])s, %(_date)s)")
+
+                data_is = {
+			'_coid': int(row[0][0]),
+			'_data[0]': int(dataGroup[0]),
+                        '_data[1]': int(dataGroup[1]),
+                        '_data[2]': int(dataGroup[2]),
+                        '_data[3]': int(dataGroup[3]),
+                        '_data[4]': int(dataGroup[4]),
+                        '_data[5]': int(dataGroup[5]),
+                        '_data[6]': int(dataGroup[6]),
+                        '_data[7]': int(dataGroup[7]),
+                        '_data[8]': int(dataGroup[8]),
+                        '_data[9]': int(dataGroup[9]),
+                        '_data[10]': int(dataGroup[10]),
+                        '_data[11]': int(dataGroup[11]),
+                        '_data[12]': int(dataGroup[12]),
+                        '_data[13]': int(dataGroup[13]),
+                        '_data[14]': int(dataGroup[14]),
+                        '_data[15]': int(dataGroup[15]),
+                        '_data[16]': int(dataGroup[16]),
+                        '_data[17]': int(dataGroup[17]),
+                        '_data[18]': int(dataGroup[18]),
+                        '_data[19]': int(dataGroup[19]),
+                        '_data[20]': int(dataGroup[20]),
+                        '_data[21]': int(dataGroup[21]),
+			'_date': date,
+			}
+                cursor.execute(add_is, data_is)
+                db.commit()
+        except mcon.Error as err:
+                dbgPrint("BalanceStatementSheet: Connect to DB Error [" + str(err) + "] ")
+                return(-1)
+
+        dbgPrint("BalanceStatementSheet: Insert Complete " + str(data_is))
+        return(0)
+
+def InsertIncomeStatementSheet(stockID, dataGroup, date):
+        if (stockID.strip() == "" or date.strip() == ""):
+                dbgPrint("IncomeStatementSheet: StockID and Date cannot be empty")
+                return(-1)
+    
+        #if not (stockID.lstrip('-+').isdigit()):
+        #	dbgPrint("InsertIncomeStatement: StockID must be a digit")
+        #	return(-1)
+
+        if ((stockID.lstrip('-+').isdigit() == False) and (not isfloat(stockID))):
+                dbgPrint("IncomeStatementSheet: stockID must be a digit")
+                return(-1)
+        else:
+                # Convert stockID from float to in then string
+                stockID = str(int(float(stockID)))
+		
+        for idx in range(1, dataGroup.len()):
+                if(not dataGroup[idx].strip() == "") and (not dataGroup[idx].lstrip('-+').isdigit()):
+                        dbgPrint("dataGroup[" + idx +"]" + "=" + dataGroup[idx])
+                        return(-1)
+        try:
+                valid_date(date)
+                # Get CoId
+                cursor.execute("SELECT CoId FROM Company WHERE StockID = %s", (stockID,))
+                row = cursor.fetchall()
+
+                if(cursor.rowcount <= 0):
+                        dbgPrint("IncomeStatementSheet Error: Cannot locate Company ID" + str(cursor.rowcount))
+                        return(-1)
+
+                if(check_record(str(row[0][0]), date, "", "IncomeStatementSheet") != 0):
+                        dbgPrint("IncomeStatementSheet: Error: Record already exist, please make sure no duplicates")
+                        return(-1)
+
+
+                add_is = ("INSERT INTO IncomeStatementSheet " \
+                          "(CoId, \
+			    GrossSales, \
+			    CostOfGoodsSold, \
+			    GrossProfitNet, \
+			    CostPromotion, \
+			    CostADM, \
+			    CostExpenseRD, \
+			    CostOther, \
+			    TotalCostOfExpenses, \
+			    OperateIncome, \
+			    TotalNonOpIncome, \
+			    PreTaxIncome, \
+			    PureIncome, \
+			    CNIS, \
+			    Date) " \
+			   "VALUES (%(_coid)s, %(_data[0])s, %(_data[1])s, %(_data[2])s, %(_data[3])s, %(_data[4])s, %(_data[5])s, \
+			   %(_data[6])s, %(_data[7])s, %(_data[8])s, %(_data[9])s, %(_data[10])s, %(_data[11])s, %(_data[12])s, %(_date)s)")
+
+                data_is = {
+			'_coid': int(row[0][0]),
+			'_data[0]': int(dataGroup[0]),
+                        '_data[1]': int(dataGroup[1]),
+                        '_data[2]': int(dataGroup[2]),
+                        '_data[3]': int(dataGroup[3]),
+                        '_data[4]': int(dataGroup[4]),
+                        '_data[5]': int(dataGroup[5]),
+                        '_data[6]': int(dataGroup[6]),
+                        '_data[7]': int(dataGroup[7]),
+                        '_data[8]': int(dataGroup[8]),
+                        '_data[9]': int(dataGroup[9]),
+                        '_data[10]': int(dataGroup[10]),
+                        '_data[11]': int(dataGroup[11]),
+                        '_data[12]': int(dataGroup[12]),
+			'_date': date,}
+                 
+                cursor.execute(add_is, data_is)
+                db.commit()
+
+        except mcon.Error as err:
+                dbgPrint("IncomeStatementSheet: Connect to DB Error [" + str(err) + "] ")
+                return(-1)
+
+        dbgPrint("IncomeStatementSheet: Insert Complete " + str(data_is))
+        return(0) 
+
+def InsertCashStatementSheet(stockID, dataGroup, date):
+        if (stockID.strip() == "" or date.strip() == ""):
+                dbgPrint("CashStatementSheet: StockID and Date cannot be empty")
+                return(-1)
+    
+        #if not (stockID.lstrip('-+').isdigit()):
+        #	dbgPrint("InsertIncomeStatement: StockID must be a digit")
+        #	return(-1)
+
+        if ((stockID.lstrip('-+').isdigit() == False) and (not isfloat(stockID))):
+                dbgPrint("CashStatementSheet: stockID must be a digit")
+                return(-1)
+        else:
+                # Convert stockID from float to in then string
+                stockID = str(int(float(stockID)))
+		
+        for idx in range(1, dataGroup.len()):
+                if(not dataGroup[idx].strip() == "") and (not dataGroup[idx].lstrip('-+').isdigit()):
+                        dbgPrint("dataGroup[" + idx +"]" + "=" + dataGroup[idx])
+                        return(-1)
+        try:
+                valid_date(date)
+                # Get CoId
+                cursor.execute("SELECT CoId FROM Company WHERE StockID = %s", (stockID,))
+                row = cursor.fetchall()
+
+                if(cursor.rowcount <= 0):
+                        dbgPrint("CashStatementSheet Error: Cannot locate Company ID" + str(cursor.rowcount))
+                        return(-1)
+
+                if(check_record(str(row[0][0]), date, "", "CashStatementSheet") != 0):
+                        dbgPrint("CashStatementSheet: Error: Record already exist, please make sure no duplicates")
+                        return(-1)
+
+                add_is = ("INSERT INTO CashStatementSheet " \
+			  "(CoId, \
+			    OperatingCashFlows, \
+			    InvestCashProvided, \
+			    FinanceCashFlows, \
+			    ExchangeRateChangeOnCash, \
+			    CashNetIncrease, \
+			    StartCashOfYear, \
+			    EndCashOfYear, \
+			    Date) " \
+			   "VALUES (%(_coid)s, %(_data[0])s, %(_data[1])s, %(_data[2])s, %(_data[3])s, %(_data[4])s, %(_data[5])s,  %(_data[6])s, %(_date)s)")
+
+                data_is = {
+			'_coid': int(row[0][0]),
+			'_data[0]': int(dataGroup[0]),
+                        '_data[1]': int(dataGroup[1]),
+                        '_data[2]': int(dataGroup[2]),
+                        '_data[3]': int(dataGroup[3]),
+                        '_data[4]': int(dataGroup[4]),
+                        '_data[5]': int(dataGroup[5]),
+                        '_data[6]': int(dataGroup[6]),
+			'_date': date,
+			}
+
+		cursor.execute(add_is, data_is)
+		db.commit()
+
+	except mcon.Error as err:
+		 dbgPrint("CashStatementSheet: Connect to DB Error [" + str(err) + "] ")
+		 return(-1)
+
+
+	dbgPrint("CashStatementSheet: Insert Complete " + str(data_is))
+	return(0)
+
+def InsertCompanyEstimateSheet(stockID, dataGroup, date):
+        if (stockID.strip() == "" or date.strip() == ""):
+                dbgPrint("CompanyEstimateSheet: StockID and Date cannot be empty")
+                return(-1)
+    
+        #if not (stockID.lstrip('-+').isdigit()):
+        #	dbgPrint("InsertIncomeStatement: StockID must be a digit")
+        #	return(-1)
+
+        if ((stockID.lstrip('-+').isdigit() == False) and (not isfloat(stockID))):
+                dbgPrint("CompanyEstimateSheet: stockID must be a digit")
+                return(-1)
+        else:
+                # Convert stockID from float to in then string
+                stockID = str(int(float(stockID)))
+		
+        for idx in range(1, dataGroup.len()):
+                if(not dataGroup[idx].strip() == ""):
+                        dbgPrint("dataGroup[" + idx +"]" + "=" + dataGroup[idx])
+                        return(-1)
+        try:
+                valid_date(date)
+                # Get CoId
+                cursor.execute("SELECT CoId FROM Company WHERE StockID = %s", (stockID,))
+                row = cursor.fetchall()
+
+                if(cursor.rowcount <= 0):
+                        dbgPrint("CompanyEstimateSheet Error: Cannot locate Company ID" + str(cursor.rowcount))
+                        return(-1)
+
+                if(check_record(str(row[0][0]), date, "", "CompanyEstimateSheet") != 0):
+                        dbgPrint("CompanyEstimateSheet: Error: Record already exist, please make sure no duplicates")
+                        return(-1)
+        
+
+		add_is = ("INSERT INTO CompanyEstimateSheet " \
+			  "(CoId, \
+			    OriginalIncomeRate, \
+			    OutIncomeRate, \
+			    InventoryTurnoverRate, \
+			    GrossMarginRate, \
+			    OrgProfitRate, \
+			    PurIncomeRate, \
+			    ROE_Org, \
+			    ROE, \
+			    ROA, \
+			    EPS, \
+			    Date) " \
+			   "VALUES (%(_coid)s, %(_data[0])s, %(_data[1])s, %(_data[2])s, %(_data[3])s, %(_data[4])s, %(_data[5])s, \
+                                    %(_data[6])s, %(_data[7])s, %(_data[8])s, %(_data[9])s, %(_date)s)")
+		
+		data_is = {
+			'_coid': int(row[0][0]),
+			'_data[0]': float(dataGroup[0]),
+                        '_data[1]': float(dataGroup[1]),
+                        '_data[2]': float(dataGroup[2]),
+                        '_data[3]': float(dataGroup[3]),
+                        '_data[4]': float(dataGroup[4]),
+                        '_data[5]': float(dataGroup[5]),
+                        '_data[6]': float(dataGroup[6]),
+                        '_data[7]': float(dataGroup[7]),
+                        '_data[8]': float(dataGroup[8]),
+                        '_data[9]': float(dataGroup[9]),
+			'_date': date,
+			}
+
+		cursor.execute(add_is, data_is)
+		db.commit()
+
+
+	except mcon.Error as err:
+		 dbgPrint("CompanyEstimateSheet: Connect to DB Error [" + str(err) + "] ")
+		 return(-1)
+
+
+	dbgPrint("CompanyEstimateSheet: Insert Complete " + str(data_is))
+	return(0)
+
+
 if	__name__ == '__main__':
 	ConnectDB("localhost", "stock", "ftdi1234")
 	InsertCompany("2075", "abc")

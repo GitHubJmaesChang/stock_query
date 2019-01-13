@@ -70,6 +70,162 @@ def CreatFinancialTable(db):
 				) DEFAULT CHARSET=utf8 ENGINE=INNODB \
 			") 
 
+		print("Create Company Group Table")
+		# Table: Company 
+		# 公司代號, 產業別
+		# colums are created in the order as listed above.
+		cursor.execute("create table IF NOT EXISTS CompanyGroup( \
+			FinId INT AUTO_INCREMENT PRIMARY KEY, \
+			CoId INT NOT NULL,\
+			CompanyGroup varchar(20), \
+			FOREIGN KEY (CoId) REFERENCES Company(CoId) \
+			) DEFAULT CHARSET=utf8 ENGINE=INNODB \
+			")
+
+		print("Create BalanceStatementSheet Table")
+                #現金及約當現金 : Cash_and_cash_equivalents 
+                #應收票據淨額 : Notes_receivable_net
+                #應收帳款淨額 : Accounts_receivable_net 
+                #應收帳款－關係人淨額 : Accounts_receivable_related_net
+                #其他應收款 : Others_accounts_receivable
+                #其他應收款－關係人 : Others_accounts_receivable_related
+                #存貨 :Inventories 
+                #預付款項 : Prepayments 
+                #流動資產合計 TotalCurrentAssets
+                #非流動資產合計 TotalNonCurrentAssets
+                #資產總計 TotalAssets
+                #短期借款 Short_term_debt 
+                #應付帳款 Accounts_payable
+                #應付帳款－關係人 Accounts_payable_related
+                #其他應付款 Other_Accounts_payable
+                #流動負債合計 TotalCurrentDebt
+                #長期借款  long_term_debt_payable
+                #非流動負債合計 TotalNonCurrentDebt
+                #負債總計 TotalLiabilities
+                #普通股股本 capital_common_stock
+                #權益總計 Total_equity
+                #負債及權益總計 Total_liabilities_and_equity
+		# colums are created in the order as listed above.
+		
+		cursor.execute("create table IF NOT EXISTS BalanceStatementSheet( \
+			FinId INT AUTO_INCREMENT PRIMARY KEY, \
+			CoId INT NOT NULL, \
+			CashAndCashEquivalents BIGINT, \
+			NotesReceivableNet BIGINT, \
+			AccountsReceivableNet BIGINT, \
+			AccountsReceivableRelatedNet BIGINT, \
+			OthersAccountsReceivable BIGINT, \
+			OthersAccountsReceivableRelated BIGINT, \
+			Inventories BIGINT, \
+			Prepayments BIGINT, \
+			TotalCurrentAssets BIGINT, \
+			TotalNonCurrentAssets BIGINT, \
+			TotalAssets BIGINT, \
+			ShortTermDebt BIGINT, \
+			AccountsPayable BIGINT, \
+			AccountsPayableRelated BIGINT, \
+			OtherAccountsPayable BIGINT, \
+			TotalCurrentDebt BIGINT, \
+			LongTermDebtPayable BIGINT, \
+			TotalNonCurrentDebt BIGINT, \
+			TotalLiabilities BIGINT, \
+			CapitalCommonStock BIGINT, \
+			TotalEquity BIGINT, \
+			TotalLiabilitiesAndEquity BIGINT, \
+			Date varchar(20), \
+			FOREIGN KEY (CoId) REFERENCES Company(CoId) \
+			) DEFAULT CHARSET=utf8 ENGINE=INNODB \
+			")
+
+		print("Create IncomeStatementSheet Table")
+                
+                #營業收入合計 GrossSales
+                #營業成本合計 CostOfGoodsSold
+                #營業毛利（毛損）淨額 GrossProfitNet
+                #推銷費用 CostPromotion
+                #管理費用 CostADM
+                #研究發展費用 CostExpenseRD
+                #其他費用 CostOther
+                #營業費用合計 TotalCostOfExpenses
+                #營業利益（損失） OperateIncome
+                #營業外收入及支出合計 TotalNonOpIncome
+                #繼續營業單位稅前淨利（淨損） PreTaxIncome
+                #本期淨利（淨損）PureIncome
+                #母公司業主（淨利／損） CNIS (Consolidated Net Income Attributed to Stockholders of the Company)
+
+		cursor.execute("create table IF NOT EXISTS IncomeStatementSheet( \
+			FinId INT AUTO_INCREMENT PRIMARY KEY, \
+			CoId INT NOT NULL, \
+			GrossSales BIGINT, \
+			CostOfGoodsSold BIGINT, \
+			GrossProfitNet BIGINT, \
+			CostPromotion BIGINT, \
+			CostADM BIGINT, \
+			CostExpenseRD BIGINT, \
+			CostOther BIGINT, \
+			TotalCostOfExpenses BIGINT, \
+			OperateIncome BIGINT, \
+			TotalNonOpIncome BIGINT, \
+			PreTaxIncome BIGINT, \
+			PureIncome BIGINT, \
+			CNIS BIGINT, \
+			Date varchar(20), \
+			FOREIGN KEY (CoId) REFERENCES Company(CoId) \
+			) DEFAULT CHARSET=utf8 ENGINE=INNODB \
+			")
+		print("Create CashStatementSheet Table")
+                
+                #營業活動之淨現金流入（流出）OperatingCashFlows
+                #投資活動之淨現金流入（流出）InvestCashProvided
+                #籌資活動之淨現金流入（流出）FinanceCashFlows
+                #匯率變動對現金及約當現金之影響  ExchangeRateChangeOnCash
+                #本期現金及約當現金增加（減少）數 CashNetIncrease
+                #期初現金及約當現金餘額 StartCashOfYear
+                #期末現金及約當現金餘額 EndCashOfYear
+
+		cursor.execute("create table IF NOT EXISTS CashStatementSheet( \
+			FinId INT AUTO_INCREMENT PRIMARY KEY, \
+			CoId INT NOT NULL, \
+			OperatingCashFlows BIGINT, \
+			InvestCashProvided BIGINT, \
+			FinanceCashFlows BIGINT, \
+			ExchangeRateChangeOnCash BIGINT, \
+			CashNetIncrease BIGINT, \
+			StartCashOfYear BIGINT, \
+			EndCashOfYear BIGINT, \
+			Date varchar(20), \
+			FOREIGN KEY (CoId) REFERENCES Company(CoId) \
+			) DEFAULT CHARSET=utf8 ENGINE=INNODB \
+			")
+
+		print("Create CompanyEstimateSheet Table")
+                #母公司淨利比例 OriginalIncomeRate
+                #業外占營收比例 OutIncomeRate
+                #存貨周轉率 InventoryTurnoverRate
+                #毛利率 GrossMarginRate
+                #營業利益 OrgProfitRate
+                #淨利率 PurIncomeRate
+                #ROE_Org
+                #ROE
+                #ROE
+		#EPS
+		cursor.execute("create table IF NOT EXISTS CompanyEstimateSheet( \
+			FinId INT AUTO_INCREMENT PRIMARY KEY, \
+			CoId INT NOT NULL, \
+			OriginalIncomeRate DOUBLE, \
+			OutIncomeRate DOUBLE, \
+			InventoryTurnoverRate DOUBLE, \
+			GrossMarginRate DOUBLE, \
+			OrgProfitRate DOUBLE, \
+			PurIncomeRate DOUBLE, \
+			ROE_Org DOUBLE, \
+			ROE DOUBLE, \
+			ROA DOUBLE, \
+			EPS DOUBLE, \
+			Date varchar(20), \
+			FOREIGN KEY (CoId) REFERENCES Company(CoId) \
+			) DEFAULT CHARSET=utf8 ENGINE=INNODB \
+			")             
 
 		print("Create FinancialStatement Table")
 		# Table: FinancialStatement
@@ -202,4 +358,4 @@ def CreatFinancialTable(db):
 		return(-1)
 
 if  __name__ == '__main__':
-        InitDB()
+        InitDB("localhost" , "root", "1234")
