@@ -808,17 +808,15 @@ def InsertCashStatementSheet(stockID, dataGroup, date):
                         '_data[6]': int(dataGroup[6]),
 			'_date': date,
 			}
+                cursor.execute(add_is, data_is)
+                db.commit()
 
-		cursor.execute(add_is, data_is)
-		db.commit()
+        except mcon.Error as err:
+                dbgPrint("CashStatementSheet: Connect to DB Error [" + str(err) + "] ")
+                return(-1)
+        dbgPrint("CashStatementSheet: Insert Complete " + str(data_is))
+        return (0)
 
-	except mcon.Error as err:
-		 dbgPrint("CashStatementSheet: Connect to DB Error [" + str(err) + "] ")
-		 return(-1)
-
-
-	dbgPrint("CashStatementSheet: Insert Complete " + str(data_is))
-	return(0)
 
 def InsertCompanyEstimateSheet(stockID, dataGroup, date):
         if (stockID.strip() == "" or date.strip() == ""):
@@ -853,9 +851,8 @@ def InsertCompanyEstimateSheet(stockID, dataGroup, date):
                 if(check_record(str(row[0][0]), date, "", "CompanyEstimateSheet") != 0):
                         dbgPrint("CompanyEstimateSheet: Error: Record already exist, please make sure no duplicates")
                         return(-1)
-        
-
-		add_is = ("INSERT INTO CompanyEstimateSheet " \
+                
+                add_is = ("INSERT INTO CompanyEstimateSheet " \
 			  "(CoId, \
 			    OriginalIncomeRate, \
 			    OutIncomeRate, \
@@ -870,8 +867,8 @@ def InsertCompanyEstimateSheet(stockID, dataGroup, date):
 			    Date) " \
 			   "VALUES (%(_coid)s, %(_data[0])s, %(_data[1])s, %(_data[2])s, %(_data[3])s, %(_data[4])s, %(_data[5])s, \
                                     %(_data[6])s, %(_data[7])s, %(_data[8])s, %(_data[9])s, %(_date)s)")
-		
-		data_is = {
+                
+                data_is = {
 			'_coid': int(row[0][0]),
 			'_data[0]': float(dataGroup[0]),
                         '_data[1]': float(dataGroup[1]),
@@ -885,19 +882,17 @@ def InsertCompanyEstimateSheet(stockID, dataGroup, date):
                         '_data[9]': float(dataGroup[9]),
 			'_date': date,
 			}
+                
+                cursor.execute(add_is, data_is) 
+                db.commit()
 
-		cursor.execute(add_is, data_is)
-		db.commit()
-
-
-	except mcon.Error as err:
-		 dbgPrint("CompanyEstimateSheet: Connect to DB Error [" + str(err) + "] ")
-		 return(-1)
-
-
-	dbgPrint("CompanyEstimateSheet: Insert Complete " + str(data_is))
-	return(0)
-
+        except mcon.Error as err:
+                dbgPrint("CompanyEstimateSheet: Connect to DB Error [" + str(err) + "] ")
+                return(-1)
+        
+        dbgPrint("CompanyEstimateSheet: Insert Complete " + str(data_is))
+        return(0)
+        
 
 if	__name__ == '__main__':
 	ConnectDB("localhost", "stock", "ftdi1234")
