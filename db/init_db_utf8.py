@@ -14,7 +14,7 @@ def InitDB( dbhost, dbuser,dbpassword):
 	db = MS.connect(host=dbhost,  # the host
 		user=dbuser,       # username
 		passwd=dbpassword,
-		charset='utf8',
+		charset='utf8mb4',
 		use_unicode=True)
 
 	cursor = db.cursor()
@@ -48,7 +48,7 @@ def InitDB( dbhost, dbuser,dbpassword):
 	print("Create Tables")
 	res = CreatFinancialTable(db)
 	db.close()
-	if res < 0:
+	if (res == (-1)):
 		return(-1)
 
 	return(0)

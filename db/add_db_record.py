@@ -44,7 +44,7 @@ def ConnectDB(host_addr, dbname, dbpasswrod):
 			user="root",	# username
 			passwd=dbpasswrod,
 			database=dbname,
-			charset='utf8',
+			charset='utf8mb4',
 			use_unicode=True)
 
 		cursor = db.cursor()
@@ -587,9 +587,10 @@ def InsertBalanceSheet(stockID, dataGroup, date):
                 # Convert stockID from float to in then string
                 stockID = str(int(float(stockID)))
 		
-        for idx in range(1, dataGroup.len()):
-                if(not dataGroup[idx].strip() == "") and (not dataGroup[idx].lstrip('-+').isdigit()):
-                        dbgPrint("dataGroup[" + idx +"]" + "=" + dataGroup[idx])
+        for idx in range(0, len(dataGroup)):
+                if(dataGroup[idx].strip() == ""):
+                        print (dataGroup[idx].strip() )
+                        dbgPrint("dataGroup[" + str(idx) +"]" + "=" + dataGroup[idx])
                         return(-1)
         try:
                 valid_date(date)
@@ -686,9 +687,9 @@ def InsertIncomeStatementSheet(stockID, dataGroup, date):
                 # Convert stockID from float to in then string
                 stockID = str(int(float(stockID)))
 		
-        for idx in range(1, dataGroup.len()):
-                if(not dataGroup[idx].strip() == "") and (not dataGroup[idx].lstrip('-+').isdigit()):
-                        dbgPrint("dataGroup[" + idx +"]" + "=" + dataGroup[idx])
+        for idx in range(1, len(dataGroup)):
+                if(dataGroup[idx].strip() == ""):
+                        dbgPrint("dataGroup[" + str(idx) +"]" + "=" + dataGroup[idx])
                         return(-1)
         try:
                 valid_date(date)
@@ -767,9 +768,9 @@ def InsertCashStatementSheet(stockID, dataGroup, date):
                 # Convert stockID from float to in then string
                 stockID = str(int(float(stockID)))
 		
-        for idx in range(1, dataGroup.len()):
-                if(not dataGroup[idx].strip() == "") and (not dataGroup[idx].lstrip('-+').isdigit()):
-                        dbgPrint("dataGroup[" + idx +"]" + "=" + dataGroup[idx])
+        for idx in range(1, len(dataGroup)):
+                if(dataGroup[idx].strip() == ""):
+                        dbgPrint("dataGroup[" + str(idx) +"]" + "=" + dataGroup[idx])
                         return(-1)
         try:
                 valid_date(date)
@@ -834,9 +835,9 @@ def InsertCompanyEstimateSheet(stockID, dataGroup, date):
                 # Convert stockID from float to in then string
                 stockID = str(int(float(stockID)))
 		
-        for idx in range(1, dataGroup.len()):
-                if(not dataGroup[idx].strip() == ""):
-                        dbgPrint("dataGroup[" + idx +"]" + "=" + dataGroup[idx])
+        for idx in range(1, len(dataGroup)):
+                if(dataGroup[idx].strip() == ""):
+                        dbgPrint("dataGroup[" + str(idx) +"]" + "=" + dataGroup[idx])
                         return(-1)
         try:
                 valid_date(date)
@@ -895,7 +896,7 @@ def InsertCompanyEstimateSheet(stockID, dataGroup, date):
         
 
 if	__name__ == '__main__':
-	ConnectDB("localhost", "stock", "ftdi1234")
+	ConnectDB("localhost", "abcd", "1234")
 	InsertCompany("2075", "abc")
 	#InsertFinancialStatement("2075", "abc", "1234567890", "1234567890", "2018-09-27")
 	#InsertIncomeStatement("2075","3333333333","4444444444","5555555555","6666666666","7777777777","2018-09-27")

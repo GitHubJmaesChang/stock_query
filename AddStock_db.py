@@ -23,15 +23,13 @@ def check_file_exist(filename):
 
 # crate database : 
 def intial_db():
-	init_db_utf8.InitDB("localhost", "root", "ftdi1234")
-	add_db_record.ConnectDB("localhost", "stock", "ftdi1234")
-
-
+	init_db_utf8.InitDB("localhost", "root", "1234")
+	add_db_record.ConnectDB("localhost", "stock", "1234")
 
 # insert base_financail report into data base :
 
 def database_InsertCompany(name_id, name):
-	print("company ID = " + name_id + "name = " + name)
+	print("company ID = " + name_id + " name = " + name)
 	add_db_record.InsertCompany((name_id), (name) )
 
 def database_InsertFinancialStatement(stockID, asset, equity, date):
@@ -112,14 +110,14 @@ def insertCompanyFinancialStatement(path, date, quarterly, stock_type):
         file_name = str(year) + "_"+ str(quarterly)
 
         if(stock_type == "TWSE"):
-                file_name +=  "TWSE_financialStatement.csv"
+                file_name +=  "_TWSE_financialStatement.csv"
         else:
-                file_name +=  "TPEX_financialStatement.csv"
+                file_name +=  "_TPEX_financialStatement.csv"
 
 
         intial_db()
 
-        print("Process file: [" + file_name + "]")
+        print("Process file: [" +path + file_name + "]")
 
         if((0) == check_file_exist(path + file_name)):
                 print(("insertFinancailSeate_to_database : No such file name : "), file_name)
@@ -127,13 +125,14 @@ def insertCompanyFinancialStatement(path, date, quarterly, stock_type):
 
         table = pd.read_csv(path + file_name)
 
-        balance_sheet = [None]*64 
-        Income_sheet  = [None]*64 
-        Cash_sheet    = [None]*64
-        valueable_sheet   = [None]*64
+        balance_sheet = ["0"]*64 
+        Income_sheet  = ["0"]*64 
+        Cash_sheet    = ["0"]*64
+        valueable_sheet   = ["0.0"]*64
 
         for idx in range(0, table.shape[0]):
-                database_InsertCompany(str(table.iloc[idx]['Name']), str(table.iloc[idx]['ID']))
+                database_InsertCompany(str(table.iloc[idx]['ID']), str(table.iloc[idx]['Name']) )
+                
                 balance_sheet[0] = str(table.iloc[idx]['現金及約當現金'])
                 balance_sheet[1] = str(table.iloc[idx]['應收票據淨額'])
                 balance_sheet[2] = str(table.iloc[idx]['應收帳款淨額'])
@@ -154,9 +153,10 @@ def insertCompanyFinancialStatement(path, date, quarterly, stock_type):
                 balance_sheet[17] = str(table.iloc[idx]['非流動負債合計'])
                 balance_sheet[18] = str(table.iloc[idx]['負債總計'])
                 balance_sheet[19] = str(table.iloc[idx]['普通股股本'])
-                balance_sheet[20] = str(table.iloc[idx]['權益總計'])
+                balance_sheet[20] = str(table.iloc[idx]['權益總額'])
                 balance_sheet[21] = str(table.iloc[idx]['負債及權益總計'])
-                
+                print (balance_sheet)
+                print (str(table.iloc[idx]['ID']))
                 add_db_record.InsertBalanceSheet(str(table.iloc[idx]['ID']), balance_sheet, date)
 
                 Income_sheet[0] = str(table.iloc[idx]['營業收入合計'])
@@ -172,7 +172,6 @@ def insertCompanyFinancialStatement(path, date, quarterly, stock_type):
                 Income_sheet[10] = str(table.iloc[idx]['繼續營業單位稅前淨利（淨損）'])
                 Income_sheet[11] = str(table.iloc[idx]['本期淨利（淨損）'])
                 Income_sheet[12] = str(table.iloc[idx]['母公司業主（淨利／損）'])
-                Income_sheet[13] = str(table.iloc[idx]['基本每股盈餘合計'])
 
                 add_db_record.InsertIncomeStatementSheet(str(table.iloc[idx]['ID']), Income_sheet, date)
 
@@ -195,6 +194,7 @@ def insertCompanyFinancialStatement(path, date, quarterly, stock_type):
                 valueable_sheet[6] = fstr(table.iloc[idx]['ROE_Org'])
                 valueable_sheet[7] = fstr(table.iloc[idx]['ROE'])
                 valueable_sheet[8] = fstr(table.iloc[idx]['ROE'])
+                valueable_sheet[9] = fstr(table.iloc[idx]['基本每股盈餘合計'])
 
                 add_db_record.InsertCompanyEstimateSheet(str(table.iloc[idx]['ID']), valueable_sheet, date)
 	
@@ -366,10 +366,11 @@ if __name__ == '__main__':
 	#insertMonthlyRevenueDB("./", "2018-09-01")
 	#print("**********2018_9_MonthRevenue insert done***************")
 	#inserFoundationExchangeDB("/home/thomaschen/tmp/test_run/CrawlerData/FoundationExchange/20130721_FoundationExchange.csv")
-	inserFoundationExchangeDB("/home/thomaschen/tmp/test_run/CrawlerData/FoundationExchange/20130115_FoundationExchange.csv")
+	#inserFoundationExchangeDB("/home/thomaschen/tmp/test_run/CrawlerData/FoundationExchange/20130115_FoundationExchange.csv")
 	#print("**********20181105_FoundationExchange insert done***************")
 	#insertInsertStockExchangeDB("./", "2018-11-05")
 	#print("**********20181105_stockExchange insert done***************")
 	#insertInsertMarginTradeDB("./", "2018-11-05")
 	#print("**********20181105_MarginTrade insert done***************")
+	insertCompanyFinancialStatement("D:/Stock/finacial/", "2018-11-15", "3", "TWSE")
 
