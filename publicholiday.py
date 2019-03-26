@@ -37,22 +37,22 @@ def removeYear(text):
 	return(result)
 
 def removeBracket(text):
-        if(isinstance(text, float)):
-                return("")
-        
-	start = text.find("(") 
-        end = text.find(")")  
 
-        if((end == -1) and (start == -1)):
-                print("Parenthesis Not found")
-                return(text)
+	if(isinstance(text, float)):
+		return("")
+
+	start = text.find("(")
+	end = text.find(")")
+
+	if((end == -1) and (start == -1)):
+		print("Parenthesis Not found")
+		return(text) 
 	elif((end == -1) or (start == -1) or (start > end)):
 		print("Incorrect parenthesis")
-		return(text)
-        else:
+		return(text) 
+	else:
 		print("Remove ()")
 		text = text[:start] + text[(end+1):]
-
 
 	result = removeBracket(text)
 	return(result)
@@ -88,16 +88,17 @@ def isTradeDate(date, fullcheck):
 
 	# extract year and date to check if it is a trading date
 	sdate = date.split("-")
-        year = sdate[0]
-       	month = sdate[1].lstrip('0')
-        day = sdate[2].lstrip('0')
+	year = sdate[0]
+	month = sdate[1].lstrip('0')
+	day = sdate[2].lstrip('0')
 
 	tw_year = int(year) - 1911
 	tw_date = month + day
 
 
 	# only accept tw years from 91 to 107
-	if((tw_year < 91) or (tw_year > 107)):
+	this_year = datetime.datetime.today().strftime('%Y')
+	if((tw_year < 91) or (tw_year > int(this_year))):
 		print("Error: year is out of range")
 		return(-1)
 
@@ -112,7 +113,8 @@ def isTradeDate(date, fullcheck):
 	resp = rand_proxy.htmlRequest(url, "post", payload)
 	table = pd.read_html(resp.text, header=0)[0]
 	offDate = []
-	for i in xrange(len(table)):
+	for i in range(len(table)):
+	#for i in xrange(len(table)):
 		date = table.iloc[i][1]
 
 		noBrkt = removeBracket(date)
@@ -134,13 +136,15 @@ def isTradeDate(date, fullcheck):
 
 # Function to obtain all public holidays from the website:
 # http://www.twse.com.tw/zh/holidaySchedule/holidaySchedule
-def buildTradeDate():
+def buildTradeDate(StartYear, EndYear):
 	today = datetime.datetime.today().strftime('%Y-%m-%d')
 	sdate = today.split("-")
 	year = sdate[0]
 	startYear = int(sdate[0]) - 5
 
-	for i in range(startYear, int(year) + 1):
+	print("Start Year" + str(StartYear) + "EndYear" + str(EndYear) )
+
+	for i in range(int(StartYear), int(EndYear) + 1):
 		print("build year: " + str(i))
 		res = isTradeDate(str(i) + "-1-1", False)
 		if(res != 1):
@@ -181,16 +185,16 @@ def isWeekend(date):
 
 # Function to validate the given date string is in the format of YYYY-MM-DD
 def validDate(strDate):
-         try:
-                 datetime.datetime.strptime(strDate, '%Y-%m-%d')
-		 return(True)
-         except ValueError:
-                 print("valid_date: Incorrect DATE format, should be YYYY-MM-DD")
-		 return(False)
+	try:
+		datetime.datetime.strptime(strDate, '%Y-%m-%d')
+		return(True)
+	except ValueError:
+		print("valid_date: Incorrect DATE format, should be YYYY-MM-DD")
+	return(False)
 
 
 if __name__ == '__main__':
-	buildTradeDate()
+	buildTradeDate("2014" , datetime.datetime.now().year)
 	#isTradeDate("2018-3-01")
 	#isWeekend(str(sys.argv[1]))
 

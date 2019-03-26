@@ -16,13 +16,20 @@ import sys
 import glob
 import os
 
+from QueryStock_Infor import data_query_financialStatementByQuarterTPEX
+from QueryStock_Infor import data_query_financialStatementByQuarterTWSE
+
+
+Monthly_Query_date =[ "01-20", "02-20", "03-20", "04-20", "05-20", "06-20", "07-20", "08-20", "09-20", "10-20", "11-20", "12-20"]
+
+Quanter_report_date = { "05-17", "08-17", "11-17", "04-02"}
 
 query_dict = {
 		'FoundationExchange': data_query_institutional_investors_info,
 		'MarginTrade': data_query_margin_and_short_trade,
 		'StockExchange': data_query_stock_dailydata
-		#'MonthlyRevenue': data_query_month_income
 			 }
+query_monthly = {'MonthlyRevenue': data_query_month_income}
 
 table_dict = {
 		'FoundationExchange': "FoundationExchange",
@@ -33,10 +40,10 @@ table_dict = {
 buildOffDateTable = False
 
 daily_job = [
-				"/home/thomaschen/tmp/stock_query/CrawlerData/FoundationExchange/", \
-				"/home/thomaschen/tmp/stock_query/CrawlerData/StockExchange/", \
-				"/home/thomaschen/tmp/stock_query/CrawlerData/MarginTrade/" \
-			]
+        "/home/thomaschen/tmp/stock_query/CrawlerData/FoundationExchange/", \
+        "/home/thomaschen/tmp/stock_query/CrawlerData/StockExchange/", \
+        "/home/thomaschen/tmp/stock_query/CrawlerData/MarginTrade/" \
+	    ]
 
 def daterange(start_date, end_date):
 	for n in range(int ((end_date - start_date).days)):
@@ -73,7 +80,7 @@ def do_Crawl(startDate, endDate, path):
 	
 	if(buildOffDateTable == False):
 		print("do_Crawl: buildOffDateTable")
-		buildTradeDate()
+		buildTradeDate("2014", datetime.datetime.now().year)
 		buildOffDateTable = True
 	
 	# Check function key
@@ -182,7 +189,7 @@ def auto_query():
 	#directory = "/home/thomaschen/tmp/stock_query/CrawlerData/FoundationExchange/"
 	directory = "/home/thomaschen/tmp/stock_query/CrawlerData/StockExchange/"
 
-	buildTradeDate()
+	buildTradeDate("2014", datetime.datetime.now().year)
 
 	print("complete building years")
 
@@ -197,6 +204,35 @@ def auto_query():
 			data_query_institutional_investors_info(directory, sdate)
 		else:
 			print("auto_query result: [0]:off [-1]:error : (" + str(res) + ")")
+
+def query_specify_report_by_date(sYear, edYear, path):
+        start_date = date(int(sYear), 1, 1)
+        end_date = datetime.datetime.today().date()
+        
+        print("start Year " + str(sYear) )
+        print("end Year " + str(edYear) )
+        
+        directory = path
+        buildTradeDate(str(sYear), datetime.datetime.now().year)
+        
+        print("*******sstart to fetch*********")
+        for IdxYear in range(int(sYear), int(edYear)):
+                for single_date in daterange(start_date, end_date):
+                        sdate = single_date.strftime("%m-%d")
+                        for t_date in Monthly_Query_date:
+                                print("current date is " + str(t_date) + "sdate is " + str(single_date))
+                                if(t_date == sdate):
+                                        print("fetch the monthly data")
+                                        print(str(int(single_date.strftime("%m"))))
+                                        data_query_month_income(directory, IdxYear, int(single_date.strftime("%m")))
+                        for t_date in Quanter_report_date:
+                                print(t_date)
+                                if(t_date == sdate):
+                                        print("fetch the Qulter data")
+                                        data_query_financialStatementByQuarterTPEX(directory, IdxYear, str(single_date.strftime("%m")))
+                                        data_query_financialStatementByQuarterTWSE(directory, IdxYear, str(single_date.strftime("%m")))
+                                
+                
 
 def test_main():
 	for p in daily_job:
@@ -213,6 +249,7 @@ def main(path):
 if __name__ == '__main__':
 	#auto_query()		
 	#test_main()
-	main(str(sys.argv[1]))
+        query_specify_report_by_date("2016", datetime.datetime.now().year, "D:/Stock/data_folder/")
+	#main(str(sys.argv[1]))
 
 

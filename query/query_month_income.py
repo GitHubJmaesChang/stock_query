@@ -5,6 +5,8 @@ import pandas as pd
 import requests
 from io import StringIO
 import time
+from rand_proxy import htmlRequest
+
 
 Savefiledir = 'D:/Stock/finacial/'
 
@@ -23,15 +25,24 @@ def monthly_report(path, year, month):
     if china_year <= 98:
         url = 'http://mops.twse.com.tw/nas/t21/sii/t21sc03_'+str(china_year)+'_'+str(month)+'.html'
 
-    print url
+    print (url)
 
     # 偽瀏覽器
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
     
     # 下載該年月的網站，並用pandas轉換成 dataframe
-    r = requests.get(url, headers=headers)
-    r.encoding = 'big5'
-    html_df = pd.read_html(StringIO(r.text))
+    try:
+        html_report = htmlRequest(url, "get", "")
+        html_report.encoding = 'big5'
+        html_df = pd.read_html(StringIO(html_report.text))
+        print ("DataFrame create success")
+    except Exception as e:
+        print ("exception happened")
+        print(e)
+
+    #r = requests.get(url, headers=headers)
+    #r.encoding = 'big5'
+    #html_df = pd.read_html(StringIO(r.text))
     
     # 處理一下資料
     if html_df[0].shape[0] > 500:
@@ -52,5 +63,5 @@ def monthly_report(path, year, month):
 
 
 if  __name__ == '__main__':
-    print (monthly_report(Savefiledir, 2018, 9))
-    print "query all stock info sdone"
+    print (monthly_report(Savefiledir, 2019, 1))
+    print ("query all stock info sdone")

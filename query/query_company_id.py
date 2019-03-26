@@ -4,11 +4,15 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 import pandas as pd
 import time
 import requests
 from lxml import etree
 from collections import namedtuple
+sys.path.insert(0,"..")
+sys.path.insert(1,"..\stock_query\query")
+from rand_proxy import htmlRequest
 
 #from query import query_company_data
 #from query import query_stock_date
@@ -29,7 +33,8 @@ def make_row_tuple(typ, row):
     return ROW(typ, code, name, *row[2: -1])
 
 def fetch_data(url, cmp_id, cmp_name, group):
-    r = requests.get(url)
+    #r = requests.get(url)
+    r = htmlRequest(url, "get", "")
     root = etree.HTML(r.text)
     trs = root.xpath('//tr')[1:]
     result = []

@@ -76,7 +76,6 @@ def random_proxy():
 	return random.randint(0, len(proxyList) - 1)
 
 
-
 def htmlRequest(url, restful, payload):
 	global refreshProxyList
 	global refreshReqProxy

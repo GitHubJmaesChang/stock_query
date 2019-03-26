@@ -151,6 +151,6 @@ def daily_information(FilePath, sdate):
 
 if	__name__ == '__main__':
 	daily_information(Savefiledir , "2013-02-05")
-	print "query stock data done"
+	print ("query stock data done")
 
 

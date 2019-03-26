@@ -7,6 +7,7 @@ import time
 from cell_items_name import balance_sheet
 from cell_items_name import income_statement_sheet
 from cell_items_name import cash_flow_sheet
+from cell_items_name import value_estimate_sheet
 
 from rand_proxy import htmlRequest
 from query_company_id import query_public_trade_TWSE_ID
@@ -27,22 +28,25 @@ headers ={
 
 def fill_table(idxName, idxID, idxGroup, balance_sheet_fetch, cash_flow_sheet_fetch, income_statement_sheet_fetch):
     
-    #balance_sheet_fetch = {}
+    balance = balance_sheet()
+    print (balance)
     search_start = 0
-    for idx, members in balance_sheet.items():
+    for idx, members in balance.items():
         for cell in members :
                 balance_sheet_fetch.update({cell : 0})
 
 
-    #cash_flow_sheet_fetch = {}
+    income = income_statement_sheet()
+    print (income)
     search_start = 0
-    for idx, members in income_statement_sheet.items():
+    for idx, members in income.items():
         for cell in members :
             income_statement_sheet_fetch.update({cell : 0})
-                
-    #income_statement_sheet_fetch = {}
+
+    cash = cash_flow_sheet()
+    print(cash)
     search_start = 0
-    for idx, members in cash_flow_sheet.items():
+    for idx, members in cash.items():
         for cell in members :
             cash_flow_sheet_fetch.update({cell : 0})
     
@@ -114,9 +118,9 @@ def fetch_entire_finacialStatement(year,
     cash_flow_sheet_table = DataFrame_form[3]
 
     print ("fetch balance_sheet_fetch start")
-    #balance_sheet_fetch = {}
+    balance = balance_sheet()
     search_start = 0
-    for idx, members in balance_sheet.items():
+    for idx, members in balance.items():
         for cell in members :
             for row_item in range (search_start, balance_sheet_table.shape[0]):
                 if balance_sheet_table.loc[row_item][0] == cell:
@@ -127,9 +131,9 @@ def fetch_entire_finacialStatement(year,
                     balance_sheet_fetch.update({cell : 0})
 
     print ("fetch income_statement_sheet_table start")
-    #cash_flow_sheet_fetch = {}
+    income = income_statement_sheet()
     search_start = 0
-    for idx, members in income_statement_sheet_table.items():
+    for idx, members in income.items():
         for cell in members :
             for row_item in range (search_start, income_statement_sheet_table.shape[0]):
                 if income_statement_sheet_table.loc[row_item][0] == cell:
@@ -140,9 +144,9 @@ def fetch_entire_finacialStatement(year,
                     income_statement_sheet_fetch.update({cell : 0})
 
     print ("fetch cash_flow_sheet_fetch start") 
-    #income_statement_sheet_fetch = {}
+    cash = cash_flow_sheet()
     search_start = 0
-    for idx, members in cash_flow_sheet_table.items():
+    for idx, members in cash.items():
         for cell in members :
             for row_item in range (search_start, cash_flow_sheet_table.shape[0]):
                 if cash_flow_sheet_table.loc[row_item][0] == cell:
@@ -289,7 +293,7 @@ def fetch_entire_finacialStatement(year,
             print balance_sheet_table[cell]
 """
 
-def financialStatement_prepare(year, section, fetch_table_type):
+def financialStatement_prepare(filePath, year, section, fetch_table_type):
 
     id_table = []
     name_table=[]
@@ -309,6 +313,7 @@ def financialStatement_prepare(year, section, fetch_table_type):
     income_statement_sheet_fetch = {}
 
     pd1 = fill_table("99999", "99999", "99999", balance_sheet_fetch, cash_flow_sheet_fetch, income_statement_sheet_fetch)
+
     #fetch_entire_finacialStatement("2018","3" ,"1108", balance_sheet_fetch, cash_flow_sheet_fetch, income_statement_sheet_fetch)
 
     url_type1 ="&REPORT_ID=C"
@@ -352,23 +357,24 @@ def financialStatement_prepare(year, section, fetch_table_type):
     CSV_FILE_NAME = str(year) + "_" + str(section) + "_"
     
     if(fetch_table_type == "TWSE"):
-        PATH_FILE = "D:/Stock/finacial/" + CSV_FILE_NAME + "TWSE_financialStatement.csv"
+        PATH_FILE = filePath + CSV_FILE_NAME + "TWSE_financialStatement.csv"
     else:
-        PATH_FILE = "D:/Stock/finacial/" + CSV_FILE_NAME + "TPEX_financialStatement.csv"
+        PATH_FILE = filePath + CSV_FILE_NAME + "TPEX_financialStatement.csv"
     
     pd1.to_csv(PATH_FILE, index = False, encoding = "utf-8")
 
     estimate_table = []
-    for idx, members in cell_items_name.value_estimate.items():
+    estimate_item = value_estimate_sheet()
+    for idx, members in save_item.items():
         for cell in members :
             estimate_table.append(pd1[cell])
 
     value_table = pd.concat(estimate_table, axis=1)
     
     if(fetch_table_type == "TWSE"):
-        PATH_FILE = "D:/Stock/finacial/" + CSV_FILE_NAME + "TWSE_EXTable.csv"
+        PATH_FILE = filePath + CSV_FILE_NAME + "TWSE_EXTable.csv"
     else:
-        PATH_FILE = "D:/Stock/finacial/" + CSV_FILE_NAME + "TPEX_EXTable.csv"
+        PATH_FILE = filePath + CSV_FILE_NAME + "TPEX_EXTable.csv"
 
     value_table.to_csv(PATH_FILE, index = False, encoding = "utf-8")
     
@@ -376,7 +382,7 @@ def financialStatement_prepare(year, section, fetch_table_type):
 
 
 if __name__ == '__main__':
-    financialStatement_prepare("2018", "2", "TPEX")
+    financialStatement_prepare("D:/Stock/finacial/", "2018", "2", "TPEX")
     print ("TPEX done")
-    financialStatement_prepare("2018", "2", "TWSE")
+    financialStatement_prepare("D:/Stock/finacial/", "2018", "2", "TWSE")
     print ("TWSE done")

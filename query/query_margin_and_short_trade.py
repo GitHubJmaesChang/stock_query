@@ -5,6 +5,7 @@
 # 融資, 融券
 
 import os
+import sys
 import requests
 import pandas as pd
 import numpy as np
@@ -15,6 +16,7 @@ import pdb
 import codecs
 import calendar
 from collections import OrderedDict
+sys.path.append("..")
 from rand_proxy import htmlRequest
 
 
@@ -167,4 +169,4 @@ def daily_information(FilePath, sdate):
 
 if	__name__ == '__main__':
 	daily_information(Savefiledir , "2018-11-05")
-	print "query all stock info sdone"
+	print ("query all stock info sdone")

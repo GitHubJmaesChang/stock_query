@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 import requests
 import pandas as pd
 import numpy as np
@@ -12,8 +13,10 @@ import pdb
 import codecs
 import calendar
 from collections import OrderedDict
-import cell_items_name
+sys.path.insert(0,"..")
+sys.path.insert(1,"..\stock_query\query")
 from rand_proxy import htmlRequest
+
 
 Savefiledir = './'
 url="http://www.twse.com.tw/fund/T86?response=html&date="
@@ -26,6 +29,16 @@ stock_dict = {
 	22:'生技醫療', 23:'油電燃氣', 24:'半導體', 25:'電腦周邊設備', 26:'光電',
 	27:'通信網路', 28:'電子零組件', 29:'電子通路', 30:'資訊服務', 31:'其他電子',
 }
+
+fundation_table= {
+        '2013' : [u'證券代號', u'證券名稱', u'外資買進股數', u'外資賣出股數', u'投信買進股數', u'投信賣出股數', u'自營商買進股數', u'自營商賣出股數', u'三大法人買賣超股數' ] ,
+        '2014' : [u'證券代號', u'證券名稱', u'外資買進股數', u'外資賣出股數', u'投信買進股數', u'投信賣出股數', u'自營商買進股數', u'自營商賣出股數', u'三大法人買賣超股數' ] ,
+        '2015' : [u'證券代號', u'證券名稱', u'外資買進股數', u'外資賣出股數', u'投信買進股數', u'投信賣出股數', u'自營商買進股數(自行買賣)', u'自營商賣出股數(自行買賣)', u'三大法人買賣超股數' ] ,
+        '2016' : [u'證券代號', u'證券名稱', u'外資買進股數', u'外資賣出股數', u'投信買進股數', u'投信賣出股數', u'自營商買進股數(自行買賣)', u'自營商賣出股數(自行買賣)', u'三大法人買賣超股數' ] ,
+        '2017' : [u'證券代號', u'證券名稱', u'外資買進股數', u'外資賣出股數', u'投信買進股數', u'投信賣出股數', u'自營商買進股數(自行買賣)', u'自營商賣出股數(自行買賣)', u'三大法人買賣超股數' ] ,
+        '2018' : [u'證券代號', u'證券名稱', u'外陸資買進股數(不含外資自營商)', u'外陸資賣出股數(不含外資自營商)',u'投信買進股數', u'投信賣出股數', u'自營商買進股數(自行買賣)', u'自營商賣出股數(自行買賣)', u'三大法人買賣超股數'] ,
+        '2019' : [u'證券代號', u'證券名稱', u'外陸資買進股數(不含外資自營商)', u'外陸資賣出股數(不含外資自營商)',u'投信買進股數', u'投信賣出股數', u'自營商買進股數(自行買賣)', u'自營商賣出股數(自行買賣)', u'三大法人買賣超股數'] ,
+        }
 
 def invest_table_by_type(date , mode):
 	
@@ -61,15 +74,15 @@ def merge_invest_data(stock_num, name,
 			pd_data):
 
 	mutil_coumns = pd.IndexSlice
-	stock_id = cell_items_name.fundation_table_request[query_year][0]
-	stock_name = cell_items_name.fundation_table_request[query_year][1] 
-	stock_infom1 = cell_items_name.fundation_table_request[query_year][2] 
-	stock_infom2 = cell_items_name.fundation_table_request[query_year][3] 
-	stock_infom3 = cell_items_name.fundation_table_request[query_year][4] 
-	stock_infom4 = cell_items_name.fundation_table_request[query_year][5] 
-	stock_infom5 = cell_items_name.fundation_table_request[query_year][6]
-	stock_infom6 = cell_items_name.fundation_table_request[query_year][7] 
-	stock_infom7 = cell_items_name.fundation_table_request[query_year][8] 
+	stock_id = fundation_table_request[query_year][0]
+	stock_name = fundation_table_request[query_year][1] 
+	stock_infom1 = fundation_table_request[query_year][2] 
+	stock_infom2 = fundation_table_request[query_year][3] 
+	stock_infom3 = fundation_table_request[query_year][4] 
+	stock_infom4 = fundation_table_request[query_year][5] 
+	stock_infom5 = fundation_table_request[query_year][6]
+	stock_infom6 = fundation_table_request[query_year][7] 
+	stock_infom7 = fundation_table_request[query_year][8] 
 	
 	for idx in range(0, pd_data.shape[0]):
 		stock_num.append(pd_data.loc[mutil_coumns[idx], mutil_coumns[:, stock_id ]][0])
@@ -169,4 +182,4 @@ def daily_institutional_info(FilePath, sdate):
 
 if	__name__ == '__main__':
 	daily_institutional_info(Savefiledir , "2013-01-05")
-	print "query all stock info sdone"
+	print ("query all stock info sdone")

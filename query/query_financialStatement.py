@@ -25,7 +25,7 @@ headers = {
           }
 def csv_create(path, target, year, season):
     filename = path + target + str(year) +'_s'+ str(season) + '.csv'
-    print filename
+    print (filename)
     return filename
 def statement_comprehensive_income_to_csv(year, season, url, path):
     if year>=1000:
@@ -148,11 +148,11 @@ def Stock_query_data(year, season, query_table, path):
         print('type does not match')
 def query_stock_sheet(year, season, path):
     income = Stock_query_data(year, season,'綜合損益彙總表', path)
-    print "incom sheet done"
+    print ("incom sheet done")
     balance = Stock_query_data(year, season,'資產負債彙總表', path)
-    print "blance sheet done"
+    print ("blance sheet done")
     Stock_query_data(year, season,'營益分析彙總表', path)
-    print "benefit sheet done"
+    print ("benefit sheet done")
 
 def Stock_roe_roa_eps_prepare(year, season, path):
     if year>=1000:

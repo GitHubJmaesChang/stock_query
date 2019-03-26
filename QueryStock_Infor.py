@@ -13,6 +13,8 @@ from query import query_margin_and_short_trade
 from query import query_month_income
 from query import query_stock_dailydata
 from query import query_stock_info_by_ID
+from query import query_entire_id_information
+from query import cell_items_name
 from publicholiday import validDate
 from publicholiday import isTradeDate
 
@@ -58,7 +60,20 @@ def data_query_month_income(path, year, month):
 #           ->date = "20181031"
 def data_query_stock_dailydata(path, date):
     query_stock_dailydata.daily_information(path , date)
+    
+# to query entire TPEX financail Statement report
+# parameter ->path = "to save the csv file"
+#           ->year = "2018"
+#           ->Quarter = "2"
+def data_query_financialStatementByQuarterTPEX(path, year, quarter):
+    query_entire_id_information.financialStatement_prepare(path, year, quarter, "TPEX")
 
+# to query entire TWSE financail Statement report
+# parameter ->path = "to save the csv file"
+#           ->year = "2018"
+#           ->Quarter = "2"
+def data_query_financialStatementByQuarterTWSE(path, year, quarter):
+    query_entire_id_information.financialStatement_prepare(path, year, quarter, "TWSE")
 
 def data_query_stock_info_by_ID(path, Stock_id):
     query_stock_info_by_ID.stock_query(Stock_id, path)
@@ -98,9 +113,9 @@ def checkQueryCommand(directory, date):
 
 
 if __name__ == '__main__':
-	if(checkQueryCommandInput(sys.argv) == True):
-		data_query_institutional_investors_info(argv[1], argv[2])
-    #data_query_institutional_investors_info("D:/Stock/finacial/", "20181105")
+	#if(checkQueryCommandInput(sys.argv) == True):
+	#	data_query_institutional_investors_info(argv[1], argv[2])
+    data_query_institutional_investors_info("D:/Stock/finacial/", "20181105")
     #time.sleep(60)
     #data_query_margin_and_short_trade("D:/Stock/finacial/", "20181105")
     #time.sleep(70)

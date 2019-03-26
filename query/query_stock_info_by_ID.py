@@ -28,15 +28,15 @@ this_year_month_days=[]
 
 def calender_days(year):
     int_year = int(year)
-    print int_year
+    print (int_year)
     last_year_month_days.append(int_year-1)
     this_year_month_days.append(int_year)    
     for month in range(1,12):
         last_year_month_days.append(calendar.monthrange(int_year-1, month)[1])
         this_year_month_days.append(calendar.monthrange(int_year, month)[1])
 
-    print last_year_month_days
-    print this_year_month_days
+    print (last_year_month_days)
+    print (this_year_month_days)
 
     
 def query_stock_value_by_continue_days_and_save_csv(file_path, stock_number):
@@ -74,9 +74,9 @@ def query_stock_value_by_continue_days_and_save_csv(file_path, stock_number):
             idx_mon = '0'
         idx_mon += str(idx)
         query_date = str(this_year_month_days[0])+ idx_mon + str(table[idx])
-        print query_date
+        print ("date" + str(query_date))
         query_addr = url + query_date + stock+ stock_number
-        print query_addr
+        print ("Net addr" + str(squery_addr))
         r = requests.get(query_addr,headers=headers)
         time.sleep(5)
         df = pd.read_html(r.text)

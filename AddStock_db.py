@@ -373,4 +373,5 @@ if __name__ == '__main__':
 	#insertInsertMarginTradeDB("./", "2018-11-05")
 	#print("**********20181105_MarginTrade insert done***************")
 	insertCompanyFinancialStatement("D:/Stock/finacial/", "2018-11-15", "3", "TWSE")
+	insertCompanyFinancialStatement("D:/Stock/finacial/", "2018-11-15", "3", "TPEX")
 
